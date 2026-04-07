@@ -4,7 +4,7 @@ import Messages from './Messages';
 import FullLogo from '../../shared/logo/FullLogo';
 import Profile from './Profile';
 import SidebarLayout from '../sidebar/Sidebar';
-import { useTheme } from 'src/components/provider/theme-provider';
+import { useTheme } from 'src/theme/theme-provider';
 
 import { Sheet, SheetContent, SheetTitle } from 'src/components/ui/sheet';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';

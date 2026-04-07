@@ -5,7 +5,7 @@ import rocket from 'src/assets/images/backgrounds/rocket.png';
 import FullLogo from '../../shared/logo/FullLogo';
 import { Link, useLocation } from 'react-router';
 import { Button } from 'src/components/ui/button';
-import { useTheme } from 'src/components/provider/theme-provider';
+import { useTheme } from 'src/theme/theme-provider';
 import { AMLogo, AMMenu, AMMenuItem, AMSidebar, AMSubmenu } from 'tailwind-sidebar';
 import 'tailwind-sidebar/styles.css';
 
@@ -71,7 +71,6 @@ const renderSidebarItems = (
           isSelected ? '!bg-transparent !text-primary' : ''
         }`
       : `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground`;
-
     return (
       <div onClick={onClose}>
         <AMMenuItem
