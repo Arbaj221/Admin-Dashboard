@@ -1,38 +1,30 @@
-import { TopCards } from "src/components/dashboards/modern/TopCards";
-import { RevenueUpdate } from "src/components/dashboards/modern/RevenueUpdate";
-import { YearlyBreakup } from "src/components/dashboards/modern/YearlyBreakup";
-import { MonthlyEarning } from "src/components/dashboards/modern/MonthlyEarning";
-import { RecentTransaction } from "src/components/dashboards/modern/RecentTransaction";
-import { ProductPerformance } from "src/components/dashboards/modern/ProuctPerformance";
-import { Footer } from "src/components/dashboards/modern/Footer";
-import ProfileWelcome from "src/components/dashboards/modern/ProfileWelcome";
+import userImg from '../../../assets/images/profile/user-1.jpg';
+import supportImg from '../../../assets/images/dashboard/customer-support-img.png';
 
 const Moderndash = () => {
     return (
         <>
             <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12">
-                    <ProfileWelcome />
+                    <div className="relative flex items-center justify-between bg-lightsecondary rounded-lg p-6">
+                        <div className="flex items-center gap-3">
+                            <div>
+                                <img src={userImg} alt="user-img" width={50} height={50} className="rounded-full" />
+                            </div>
+                            <div className="flex flex-col gap-0.5">
+                                <h5 className="card-title">Welcome back! John 👋</h5>
+                                <p className="text-muted-foreground">Check your reports</p>
+                            </div>
+                        </div>
+
+                        {/* Support Image */}
+                        <div className="hidden sm:block absolute right-8 bottom-0">
+                            <img src={supportImg} alt="support-img" width={145} height={95} />
+                        </div>
+                    </div>
                 </div>
-                <div className="col-span-12">
-                    <TopCards />
-                </div>
-                <div className="lg:col-span-8 col-span-12 flex">
-                    <RevenueUpdate />
-                </div>
-                <div className="lg:col-span-4 col-span-12 ">
-                    <YearlyBreakup />
-                    <MonthlyEarning />
-                </div>
-                <div className="lg:col-span-4 col-span-12">
-                    <RecentTransaction />
-                </div>
-                <div className="lg:col-span-8 col-span-12 flex">
-                    <ProductPerformance />
-                </div>
-                <div className="col-span-12">
-                    <Footer />
-                </div>
+
+
             </div>
 
         </>
