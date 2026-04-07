@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router';
-import Sidebar from './vertical/sidebar/Sidebar';
-import Header from './vertical/header/Header';
+import Sidebar from './Sidebar';
+import Header from './header/Header';
 
 const FullLayout: FC = () => {
   return (

@@ -1,9 +1,9 @@
 import { useState, useEffect, useEffectEvent } from 'react';
 import { Icon } from '@iconify/react';
 import Messages from './Messages';
-import FullLogo from '../../shared/logo/FullLogo';
+import FullLogo from '../../../assets/images/logos/FullLogo';
 import Profile from './Profile';
-import SidebarLayout from '../sidebar/Sidebar';
+import SidebarLayout from '../Sidebar';
 import { useTheme } from 'src/theme/theme-provider';
 
 import { Sheet, SheetContent, SheetTitle } from 'src/components/ui/sheet';

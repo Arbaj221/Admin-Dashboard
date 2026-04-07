@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import CardBox from 'src/components/shared/CardBox';
 import AuthForgotPassword from '../authforms/AuthForgotPassword';
-import FullLogo from 'src/layouts/full/shared/logo/FullLogo';
+import FullLogo from 'src/assets/images/logos/FullLogo';
 import { Button } from 'src/components/ui/button';
 
 const ForgotPassword = () => {

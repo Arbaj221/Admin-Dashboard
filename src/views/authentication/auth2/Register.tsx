@@ -4,7 +4,7 @@ import CardBox from "src/components/shared/CardBox";
 import AuthRegister from "../authforms/AuthRegister";
 import SocialButtons from "../authforms/SocialButtons";
 
-import FullLogo from "src/layouts/full/shared/logo/FullLogo";
+import FullLogo from "src/assets/images/logos/FullLogo";
 
 
 

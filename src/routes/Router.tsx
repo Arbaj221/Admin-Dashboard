@@ -5,8 +5,8 @@ import { Navigate, createBrowserRouter } from 'react-router';
 import Loadable from '../components/shared/loadable/Loadable';
 
 /* ***Layouts**** */
-const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
-const BlankLayout = Loadable(lazy(() => import('../features/shared/pages/BlankLayout')));
+const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
+const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
 
 // authentication
 
