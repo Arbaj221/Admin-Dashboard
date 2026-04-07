@@ -19,22 +19,10 @@ const Maintainance = Loadable(lazy(() => import('../modules/shared/pages/Maintai
 // Dashboards
 const Modern = Loadable(lazy(() => import('../modules/dashboards/Modern')));
 
-//pages
-const UserProfile = Loadable(lazy(() => import('../modules/user-profile/UserProfile')));
-
-/* ****Apps***** */
-const Notes = Loadable(lazy(() => import('../modules/notes/Notes')));
-const Form = Loadable(lazy(() => import('../modules/form/Form')));
-const Table = Loadable(lazy(() => import('../modules/table/Table')));
-const Tickets = Loadable(lazy(() => import('../modules/tickets/Tickets')));
-const CreateTickets = Loadable(lazy(() => import('../modules/tickets/CreateTickets')));
-const Blog = Loadable(lazy(() => import('../modules/blog/Blog')));
-const BlogDetail = Loadable(lazy(() => import('../modules/blog/BlogDetail')));
 
 const Error = Loadable(lazy(() => import('../modules/shared/pages/Error')));
 
 // // icons
-const SolarIcon = Loadable(lazy(() => import('../modules/icons/SolarIcon')));
 
 const SamplePage = lazy(() => import('../modules/sample-page/SamplePage'));
 
@@ -45,17 +33,8 @@ const Router = [
     children: [
       { path: '/', exact: true, element: <Modern /> },
       { path: '/sample-page', exact: true, element: <SamplePage /> },
-      { path: '*', element: <Navigate to="/auth/404" /> },
+      { path: '*', element: <Navigate to="/auth/404" /> }
 
-      { path: '/apps/notes', element: <Notes /> },
-      { path: '/utilities/form', element: <Form /> },
-      { path: '/utilities/table', element: <Table /> },
-      { path: '/apps/tickets', element: <Tickets /> },
-      { path: '/apps/tickets/create', element: <CreateTickets /> },
-      { path: '/apps/blog/post', element: <Blog /> },
-      { path: '/apps/blog/detail/:id', element: <BlogDetail /> },
-      { path: '/user-profile', element: <UserProfile /> },
-      { path: '/icons/iconify', element: <SolarIcon /> },
     ],
   },
   {
