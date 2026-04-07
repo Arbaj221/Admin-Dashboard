@@ -21,7 +21,7 @@ const Login = () => {
             <div className="flex gap-2 text-base text-ld font-medium mt-6 items-center justify-center">
               <p>New to TailwindAdmin?</p>
               <Link
-                to={"/auth/auth2/register"}
+                to={"/register"}
                 className="text-primary text-sm font-medium"
               >
                 Create an account

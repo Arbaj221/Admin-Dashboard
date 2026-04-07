@@ -56,7 +56,7 @@ const SidebarContent: MenuItem[] = [
           {
             id: uniqueId(),
             name: 'Boxed Login',
-            url: '/auth/auth2/login',
+            url: '/login',
             isPro: false,
           },
         ],
@@ -69,7 +69,7 @@ const SidebarContent: MenuItem[] = [
           {
             id: uniqueId(),
             name: 'Boxed Register',
-            url: '/auth/auth2/register',
+            url: '/register',
             isPro: false,
           },
         ],

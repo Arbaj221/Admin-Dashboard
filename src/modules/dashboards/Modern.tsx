@@ -1,5 +1,5 @@
-import userImg from '../../../assets/images/profile/user-1.jpg';
-import supportImg from '../../../assets/images/dashboard/customer-support-img.png';
+import userImg from '../../assets/images/profile/user-1.jpg';
+import supportImg from '../../assets/images/dashboard/customer-support-img.png';
 
 const Moderndash = () => {
     return (

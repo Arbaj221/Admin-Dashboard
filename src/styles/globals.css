@@ -30,7 +30,35 @@ body {
   --radius-lg: 7px;
   --radius-tw: 12px;
 
-  --leading-21: 21px;
+  /* ADD: Typography tokens */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-21: 21px; /* already here, just fix mapping below */
+
+  /* ADD: Spacing scale (extend your existing ones) */
+  --spacing-15: 15px;
+  --spacing-30: 30px;
+  --spacing-60: 60px;
+
+  /* ADD: Transition tokens */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
 
   --gap-30: 30px;
 
@@ -38,6 +66,8 @@ body {
   --padding-30: 30px;
 
   --margin-30: 30px;
+   --width-logo: 40px;
+  --height-logo: 40px;
 }
 
 @theme inline {
@@ -100,6 +130,27 @@ body {
   --color-erroremphasis: var(--error-emphasis);
   --color-successemphasis: var(--success-emphasis);
   --color-infoemphasis: var(--info-emphasis);
+
+  /* FIX: Map spacing so p-30, gap-30 etc work */
+  --spacing-15: var(--spacing-15);
+  --spacing-30: var(--spacing-30);
+  --spacing-60: var(--spacing-60);
+
+  /* FIX: Map leading-21 */
+  --leading-21: var(--leading-21);
+
+  /* ADD: Map font sizes as Tailwind text-* classes */
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+  --text-2xl: var(--text-2xl);
+
+  /* ADD: Map transitions */
+  --duration-fast: var(--duration-fast);
+  --duration-base: var(--duration-base);
+  --ease-default: var(--ease-default);
 }
 
 :root {

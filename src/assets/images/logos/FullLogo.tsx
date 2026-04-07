@@ -1,24 +1,20 @@
-
-
-
-
-
-
-
-import Logo from "src/assets/images/logos/dark-logo.svg";
-import Logowhite from "src/assets/images/logos/light-logo.svg";
-
-
 const FullLogo = () => {
   return (
-
-
-    <>
-      {/* Dark Logo   */}
-      <img src={Logo} alt="logo" className="block dark:hidden rtl:scale-x-[-1]" />
-      {/* Light Logo  */}
-      <img src={Logowhite} alt="logo" className="hidden dark:block rtl:scale-x-[-1]" />
-    </>
+   <div className='flex justify-center items-center'>
+      <img
+        src="https://crm.prospectvine.com/assets/img/logo.png"
+        alt=""
+        className='w-logo h-logo block dark:hidden rtl:scale-x-[-1]'
+      />
+      <img
+        src="https://crm.prospectvine.com/assets/img/app_logo_mini.png"
+        alt=""
+        className='w-logo h-logo hidden dark:block rtl:scale-x-[-1]'
+      />
+      <span className='text-foreground font-bold text-lg'>
+        ProspectVine CRM
+      </span>
+    </div>
   );
 };
 

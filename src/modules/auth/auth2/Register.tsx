@@ -22,7 +22,7 @@ const Register = () => {
             <div className="flex gap-2 text-base text-ld font-medium mt-6 items-center justify-start">
               <p>Already have an Account?</p>
               <Link
-                to={"/auth/auth2/login"}
+                to={"/login"}
                 className="text-primary text-sm font-medium"
               >
                 Sign in
