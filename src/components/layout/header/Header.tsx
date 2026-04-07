@@ -63,11 +63,11 @@ const Header = () => {
           isSticky ? 'bg-white dark:bg-dark shadow-md fixed w-full' : 'bg-transparent'
         }`}
       >
-        <nav className="rounded-none bg-transparent dark:bg-transparent py-4 px-6 !max-w-full flex justify-between items-center">
+        <nav className="rounded-none bg-transparent dark:bg-transparent py-4 px-6 max-w-full! flex justify-between items-center">
           {/* Mobile Toggle Icon */}
           <span
             onClick={() => setIsOpen(true)}
-            className="px-[15px] hover:text-primary dark:hover:text-primary text-foreground dark:text-muted-foreground relative after:absolute after:w-10 after:h-10 after:rounded-full hover:after:bg-lightprimary  after:bg-transparent rounded-full xl:hidden flex justify-center items-center cursor-pointer"
+            className="px-15 hover:text-primary dark:hover:text-primary text-foreground dark:text-muted-foreground relative after:absolute after:w-10 after:h-10 after:rounded-full hover:after:bg-lightprimary  after:bg-transparent rounded-full xl:hidden flex justify-center items-center cursor-pointer"
           >
             <Icon icon="tabler:menu-2" height={20} />
           </span>
@@ -81,7 +81,7 @@ const Header = () => {
             <FullLogo />
           </div>
 
-          <div className="xl:!block !hidden md:!hidden">
+          <div className="xl:block! hidden! md:hidden!">
             <div className="flex gap-0 items-center">
               {/* Theme Toggle */}
               {theme === 'light' ? (

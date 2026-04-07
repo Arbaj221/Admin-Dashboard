@@ -10,33 +10,33 @@ const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLay
 
 // authentication
 
-const Login2 = Loadable(lazy(() => import('../views/authentication/auth2/Login')));
+const Login2 = Loadable(lazy(() => import('../modules/auth/auth2/Login')));
 
-const Register2 = Loadable(lazy(() => import('../views/authentication/auth2/Register')));
+const Register2 = Loadable(lazy(() => import('../modules/auth/auth2/Register')));
 
-const Maintainance = Loadable(lazy(() => import('../views/authentication/Maintainance')));
+const Maintainance = Loadable(lazy(() => import('../modules/shared/pages/Maintainance')));
 
 // Dashboards
-const Modern = Loadable(lazy(() => import('../views/dashboards/Modern')));
+const Modern = Loadable(lazy(() => import('../modules/dashboards/Modern')));
 
 //pages
-const UserProfile = Loadable(lazy(() => import('../views/pages/user-profile/UserProfile')));
+const UserProfile = Loadable(lazy(() => import('../modules/user-profile/UserProfile')));
 
 /* ****Apps***** */
-const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
-const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
-const Table = Loadable(lazy(() => import('../views/utilities/table/Table')));
-const Tickets = Loadable(lazy(() => import('../views/apps/tickets/Tickets')));
-const CreateTickets = Loadable(lazy(() => import('../views/apps/tickets/CreateTickets')));
-const Blog = Loadable(lazy(() => import('../views/apps/blog/Blog')));
-const BlogDetail = Loadable(lazy(() => import('../views/apps/blog/BlogDetail')));
+const Notes = Loadable(lazy(() => import('../modules/notes/Notes')));
+const Form = Loadable(lazy(() => import('../modules/form/Form')));
+const Table = Loadable(lazy(() => import('../modules/table/Table')));
+const Tickets = Loadable(lazy(() => import('../modules/tickets/Tickets')));
+const CreateTickets = Loadable(lazy(() => import('../modules/tickets/CreateTickets')));
+const Blog = Loadable(lazy(() => import('../modules/blog/Blog')));
+const BlogDetail = Loadable(lazy(() => import('../modules/blog/BlogDetail')));
 
-const Error = Loadable(lazy(() => import('../views/authentication/Error')));
+const Error = Loadable(lazy(() => import('../modules/shared/pages/Error')));
 
 // // icons
-const SolarIcon = Loadable(lazy(() => import('../views/icons/SolarIcon')));
+const SolarIcon = Loadable(lazy(() => import('../modules/icons/SolarIcon')));
 
-// const SamplePage = lazy(() => import('../views/sample-page/SamplePage'));
+const SamplePage = lazy(() => import('../modules/sample-page/SamplePage'));
 
 const Router = [
   {
@@ -44,7 +44,7 @@ const Router = [
     element: <FullLayout />,
     children: [
       { path: '/', exact: true, element: <Modern /> },
-      // { path: '/', exact: true, element: <SamplePage /> },
+      { path: '/sample-page', exact: true, element: <SamplePage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
 
       { path: '/apps/notes', element: <Notes /> },
