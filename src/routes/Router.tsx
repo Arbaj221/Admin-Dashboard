@@ -2,11 +2,11 @@
 // @ts-ignore
 import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router';
-import Loadable from '../layouts/full/shared/loadable/Loadable';
+import Loadable from '../components/shared/loadable/Loadable';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
-const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
+const BlankLayout = Loadable(lazy(() => import('../features/shared/pages/BlankLayout')));
 
 // authentication
 

@@ -1,6 +1,6 @@
 
 import Form from "src/components/utilities/form";
-import BreadcrumbComp from 'src/layouts/full/shared/breadcrumb/BreadcrumbComp';
+import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
 
 const BCrumb = [
   {

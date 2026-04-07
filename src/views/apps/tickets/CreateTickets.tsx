@@ -1,5 +1,5 @@
 import CreateTicketForm from 'src/components/apps/tickets/CreateTicketForm';
-import BreadcrumbComp from 'src/layouts/full/shared/breadcrumb/BreadcrumbComp';
+import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
 import { TicketProvider } from 'src/context/ticket-context/index';
 
 const BCrumb = [

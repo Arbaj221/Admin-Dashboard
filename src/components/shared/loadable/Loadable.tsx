@@ -1,5 +1,5 @@
 import { Suspense, ComponentType, FC } from 'react';
-import Spinner from '../../../../views/spinner/Spinner';
+import Spinner from '../spinner/Spinner';
 
 const Loadable = <P extends object>(
   Component: ComponentType<P>

@@ -1,5 +1,5 @@
 import TicketsApp from "src/components/apps/tickets";
-import BreadcrumbComp from 'src/layouts/full/shared/breadcrumb/BreadcrumbComp';
+import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
 
 const BCrumb = [
   {

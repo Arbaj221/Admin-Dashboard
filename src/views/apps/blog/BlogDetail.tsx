@@ -1,7 +1,7 @@
 import BlogDetailData from 'src/components/apps/blog/detail';
 
 import { BlogProvider } from 'src/context/blog-context/index';
-import BreadcrumbComp from 'src/layouts/full/shared/breadcrumb/BreadcrumbComp';
+import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
 
 const BCrumb = [
   {

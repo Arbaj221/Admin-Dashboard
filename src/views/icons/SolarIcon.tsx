@@ -1,7 +1,7 @@
 import { Card } from 'src/components/ui/card';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import BreadcrumbComp from 'src/layouts/full/shared/breadcrumb/BreadcrumbComp';
+import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
 
 const BCrumb = [
   {

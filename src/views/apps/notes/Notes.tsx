@@ -1,6 +1,6 @@
 
 import NotesApp from "src/components/apps/notes";
-import BreadcrumbComp from 'src/layouts/full/shared/breadcrumb/BreadcrumbComp';
+import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
 
 
 

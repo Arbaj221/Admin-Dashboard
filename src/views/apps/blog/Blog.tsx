@@ -1,5 +1,5 @@
 
-import BreadcrumbComp from 'src/layouts/full/shared/breadcrumb/BreadcrumbComp';
+import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
 import BlogPost from "src/components/apps/blog/BlogPost";
 
 const BCrumb = [

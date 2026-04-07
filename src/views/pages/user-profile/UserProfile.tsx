@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react/dist/iconify.js"
 import { useState, useEffect } from "react";
-import BreadcrumbComp from "src/layouts/full/shared/breadcrumb/BreadcrumbComp";
+import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
 import CardBox from "src/components/shared/CardBox";
 import profileImg from "src/assets/images/profile/user-1.jpg"
 import { Button } from "src/components/ui/button";
