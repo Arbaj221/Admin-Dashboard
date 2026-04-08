@@ -13,11 +13,16 @@ const NavDropdown = ({ item, currentPath }: { item: MenuItem; currentPath: strin
   const [isOpen, setIsOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const isActive = item.children?.some(
-    (child) =>
-      child.url === currentPath ||
-      child.children?.some((sub) => sub.url === currentPath),
+  const isActive = item.children?.some((child) =>
+    child.url === currentPath ||
+    child.children?.some((sub) => sub.url === currentPath),
   );
+
+  //   const isActive = item.children?.some(
+  //   (child) =>
+  //     (child.url && currentPath.startsWith(child.url)) ||
+  //     child.children?.some((sub) => sub.url && currentPath.startsWith(sub.url)),
+  // );
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -104,7 +109,9 @@ const NavDropdown = ({ item, currentPath }: { item: MenuItem; currentPath: strin
 
 // Single nav link (no children)
 const NavLink = ({ item, currentPath }: { item: MenuItem; currentPath: string }) => {
-  const isActive = currentPath === item.url;
+  const isActive = item.url === '/'
+    ? currentPath === '/'  // exact match for home
+    : item.url ? currentPath.startsWith(item.url) : false;
 
   return (
     <Link
