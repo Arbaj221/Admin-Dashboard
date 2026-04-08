@@ -4,7 +4,7 @@ import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router';
 import Loadable from '../components/shared/loadable/Loadable';
 import ProtectedRoute from './ProtectedRoute';
-import userRoutes from 'src/modules/users/userRoutes';
+import userRoutes from 'src/modules/users/routes';
 import clientRoutes from 'src/modules/clients/routes';
 import UserProfile from 'src/modules/userProfile/UserProfile';
 

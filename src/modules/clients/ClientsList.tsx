@@ -1,9 +1,21 @@
+import BreadcrumbComp from "src/components/shared/breadcrumb/BreadcrumbComp";
 
 
 const ClientsList = () => {
-  return (
-    <div>ClientsList</div>
-  )
+     const BCrumb = [
+        {
+            to: "/",
+            title: "Home",
+        },
+        {
+            title: "Clients",
+        },
+    ];
+    return (
+        <>
+            <BreadcrumbComp title="Clients" items={BCrumb} />
+        </>
+    )
 }
 
 export default ClientsList
