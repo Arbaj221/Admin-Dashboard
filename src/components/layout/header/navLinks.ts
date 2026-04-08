@@ -32,73 +32,83 @@ export interface MenuItem {
 import { uniqueId } from 'lodash';
 
 const NavbarContent: MenuItem[] = [
-  // ==================== NON-PRO SECTIONS ====================
-  {
-    heading: 'Home',
-    children: [
-      {
-        name: 'Modern',
-        icon: 'solar:widget-2-linear',
-        id: uniqueId(),
-        url: '/',
-        isPro: false,
-      },
-    ],
-  },
-  {
-    heading: 'Users',
-    children: [
-      {
-        name: 'Users',
-        icon: 'solar:widget-2-linear',
-        id: uniqueId(),
-        url: '/users',
-      },
-    ],
-  },
-
-  {
-    heading: 'pages',
-    children: [
-      {
-        name: 'Sample Page',
-        icon: 'solar:document-add-linear',
-        id: uniqueId(),
-        url: '/sample-page',
-      }
-    ],
-  },
-  {
-    heading: 'Auth',
-    children: [
-      {
-        name: 'Login',
-        id: uniqueId(),
-        icon: 'solar:login-2-linear',
+    // ==================== NON-PRO SECTIONS ====================
+    {
+        heading: 'Home',
         children: [
-          {
-            id: uniqueId(),
-            name: 'Boxed Login',
-            url: '/login',
-            isPro: false,
-          },
+            {
+                name: 'Modern',
+                icon: 'solar:widget-2-linear',
+                id: uniqueId(),
+                url: '/',
+                isPro: false,
+            },
         ],
-      },
-      {
-        name: 'Register',
-        id: uniqueId(),
-        icon: 'solar:user-plus-rounded-linear',
+    },
+    {
+        heading: 'Users',
         children: [
-          {
-            id: uniqueId(),
-            name: 'Boxed Register',
-            url: '/register',
-            isPro: false,
-          },
+            {
+                name: 'Users',
+                icon: 'solar:widget-2-linear',
+                id: uniqueId(),
+                url: '/users',
+            },
         ],
-      },
-    ],
-  }
+    },
+    {
+        heading: 'Clients',
+        children: [
+            {
+                name: 'Clients',
+                icon: 'solar:widget-2-linear',
+                id: uniqueId(),
+                url: '/clients',
+            },
+        ],
+    },
+    {
+        heading: 'pages',
+        children: [
+            {
+                name: 'Sample Page',
+                icon: 'solar:document-add-linear',
+                id: uniqueId(),
+                url: '/sample-page',
+            }
+        ],
+    },
+    {
+        heading: 'Auth',
+        children: [
+            {
+                name: 'Login',
+                id: uniqueId(),
+                icon: 'solar:login-2-linear',
+                children: [
+                    {
+                        id: uniqueId(),
+                        name: 'Boxed Login',
+                        url: '/login',
+                        isPro: false,
+                    },
+                ],
+            },
+            {
+                name: 'Register',
+                id: uniqueId(),
+                icon: 'solar:user-plus-rounded-linear',
+                children: [
+                    {
+                        id: uniqueId(),
+                        name: 'Boxed Register',
+                        url: '/register',
+                        isPro: false,
+                    },
+                ],
+            },
+        ],
+    }
 ];
 
 export default NavbarContent;

@@ -6,6 +6,7 @@ import Search from './Search';
 import { Link, useLocation } from 'react-router';
 import FullLogo from '../../../assets/images/logos/FullLogo';
 import NavbarContent, { MenuItem } from './navLinks';
+import Messages from './Messages';
 
 // Dropdown component for nav items with children
 const NavDropdown = ({ item, currentPath }: { item: MenuItem; currentPath: string }) => {
@@ -230,6 +231,10 @@ const Header = () => {
                 <Icon icon="solar:sun-bold-duotone" width="20" className="group-hover:text-primary" />
               )}
             </span>
+          </div>
+
+          <div className="">
+            <Messages />
           </div>
 
           <div className="">
