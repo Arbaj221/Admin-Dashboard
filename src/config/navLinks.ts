@@ -10,7 +10,6 @@ export interface ChildItem {
     subtitle?: string;
     badge?: boolean;
     badgeType?: string;
-    isPro?: boolean;
 }
 
 export interface MenuItem {
@@ -26,7 +25,6 @@ export interface MenuItem {
     subtitle?: string;
     badgeType?: string;
     badge?: boolean;
-    isPro?: boolean;
 }
 
 import { uniqueId } from 'lodash';
@@ -41,7 +39,6 @@ const NavbarContent: MenuItem[] = [
                 icon: 'solar:widget-2-linear',
                 id: uniqueId(),
                 url: '/',
-                isPro: false,
             },
         ],
     },
@@ -90,7 +87,6 @@ const NavbarContent: MenuItem[] = [
                         id: uniqueId(),
                         name: 'Boxed Login',
                         url: '/login',
-                        isPro: false,
                     },
                 ],
             },
@@ -103,7 +99,6 @@ const NavbarContent: MenuItem[] = [
                         id: uniqueId(),
                         name: 'Boxed Register',
                         url: '/register',
-                        isPro: false,
                     },
                 ],
             },

@@ -75,11 +75,6 @@ const NavDropdown = ({ item, currentPath }: { item: MenuItem; currentPath: strin
                       }`}
                   >
                     {sub.name}
-                    {sub.isPro && (
-                      <span className="ml-auto text-xs bg-lightsecondary text-secondary px-1.5 py-0.5 rounded">
-                        Pro
-                      </span>
-                    )}
                   </Link>
                 ))}
               </div>
@@ -99,11 +94,6 @@ const NavDropdown = ({ item, currentPath }: { item: MenuItem; currentPath: strin
             >
               {child.icon && <Icon icon={child.icon} width={16} />}
               {child.name}
-              {child.isPro && (
-                <span className="ml-auto text-xs bg-lightsecondary text-secondary px-1.5 py-0.5 rounded">
-                  Pro
-                </span>
-              )}
             </Link>
           );
         })}
