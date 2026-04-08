@@ -4,6 +4,7 @@ import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router';
 import Loadable from '../components/shared/loadable/Loadable';
 import ProtectedRoute from './ProtectedRoute';
+import userRoutes from 'src/modules/users/userRoutes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
@@ -20,9 +21,9 @@ const Router = [
     element:  <ProtectedRoute><FullLayout /></ProtectedRoute>,
     children: [
       { path: '/', exact: true, element: <Modern /> },
+      ...userRoutes,
       { path: '/sample-page', exact: true, element: <SamplePage /> },
-      { path: '*', element: <Navigate to="/auth/404" /> }
-
+      { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },
   {
@@ -30,9 +31,7 @@ const Router = [
     element: <BlankLayout />,
     children: [
       { path: '/login', element: <Login2 /> },
-
       { path: '/register', element: <Register2 /> },
-
       { path: '/auth/maintenance', element: <Maintainance /> },
       { path: '404', element: <Error /> },
       { path: '/auth/404', element: <Error /> },

@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router';
-import Sidebar from './Sidebar';
 import Header from './header/Header';
 
 const FullLayout: FC = () => {
@@ -8,10 +7,6 @@ const FullLayout: FC = () => {
     <>
       <div className="flex w-full min-h-screen">
         <div className="page-wrapper flex w-full ">
-          {/* Header/sidebar */}
-          <div className="xl:block hidden">
-            <Sidebar />
-          </div>
           <div className="body-wrapper w-full bg-white dark:bg-dark">
             {/* Top Header  */}
             <Header />

@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Icon } from '@iconify/react';
-import SidebarContent, { ChildItem, MenuItem } from '../../../components/layout/sidebaritems';
 import { Link } from 'react-router';
 import SimpleBar from 'simplebar-react';
 import { Input } from 'src/components/ui/input';
+import NavbarContent, { ChildItem, MenuItem } from './navLinks';
 
 interface SearchResult {
   name: string
@@ -44,7 +44,7 @@ function Search() {
   // Memoize filtered results
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    return searchItems(SidebarContent, query);
+    return searchItems(NavbarContent, query);
   }, [query]);
 
   return (
