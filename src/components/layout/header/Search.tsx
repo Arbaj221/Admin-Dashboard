@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import { Link } from 'react-router';
 import SimpleBar from 'simplebar-react';
 import { Input } from 'src/components/ui/input';
-import NavbarContent, { ChildItem, MenuItem } from './navLinks';
+import NavbarContent, { ChildItem, MenuItem } from '../../../config/navLinks';
 
 interface SearchResult {
   name: string

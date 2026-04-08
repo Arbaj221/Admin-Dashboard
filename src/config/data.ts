@@ -249,7 +249,7 @@ const profileDD: ProfileType[] = [
     title: 'My Profile',
     subtitle: 'Account settings',
     icon: "tabler:user",
-    url: '/',
+    url: '/user-profile',
   }
 ];
 

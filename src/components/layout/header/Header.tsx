@@ -5,7 +5,7 @@ import { useTheme } from 'src/theme/theme-provider';
 import Search from './Search';
 import { Link, useLocation } from 'react-router';
 import FullLogo from '../../../assets/images/logos/FullLogo';
-import NavbarContent, { MenuItem } from './navLinks';
+import NavbarContent, { MenuItem } from '../../../config/navLinks';
 import Messages from './Messages';
 
 // Dropdown component for nav items with children

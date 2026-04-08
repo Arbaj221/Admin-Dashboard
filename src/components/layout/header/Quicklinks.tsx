@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import * as QuicklinksData from './data';
+import * as QuicklinksData from '../../../config/data';
 
 const Quicklinks = () => {
   return (

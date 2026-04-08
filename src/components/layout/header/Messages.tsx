@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon } from '@iconify/react';
-import * as MessagesData from './data';
+import * as MessagesData from '../../../config/data';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { Link } from 'react-router';
