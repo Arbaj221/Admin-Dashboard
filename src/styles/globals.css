@@ -188,6 +188,7 @@ body {
   --white: #ffffff;
   --dark: #1c2536;
   --bodytext: #5a6a85bf;
+  --surface: #1c2536;
 
   /* Light Variants */
   --lightprimary: color-mix(in oklab, var(--primary) 12%, transparent);
@@ -246,7 +247,8 @@ body {
   --error: #ef4444;
   --white: #ffffff;
   --dark: #1c2536;
-  --bodytext: #5a6a85bf;
+  --bodytext: #7c8fac;
+  --surface: #ffffff;
 
   /* Light Variants */
   --lightprimary: color-mix(in oklab, var(--primary) 20%, transparent);
