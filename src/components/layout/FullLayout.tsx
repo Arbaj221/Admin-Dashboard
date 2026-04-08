@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router';
-import Header from './header/Header';
+import Navbar from './Navbar';
 
 const FullLayout: FC = () => {
   return (
@@ -9,7 +9,7 @@ const FullLayout: FC = () => {
         <div className="page-wrapper flex w-full ">
           <div className="body-wrapper w-full bg-white dark:bg-dark">
             {/* Top Header  */}
-            <Header />
+            <Navbar />
 
             {/* Body Content  */}
             <div className={'container mx-auto px-6 py-30'}>

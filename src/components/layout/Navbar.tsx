@@ -1,12 +1,12 @@
 import { useState, useEffect, useEffectEvent, useRef } from 'react';
 import { Icon } from '@iconify/react';
-import Profile from './Profile';
+import Profile from './navbar-items/Profile';
 import { useTheme } from 'src/theme/theme-provider';
-import Search from './Search';
+import Search from './navbar-items/Search';
 import { Link, useLocation } from 'react-router';
-import FullLogo from '../../../assets/images/logos/FullLogo';
-import NavbarContent, { MenuItem } from '../../../config/navLinks';
-import Messages from './Messages';
+import FullLogo from '../../assets/images/logos/FullLogo';
+import NavbarContent, { MenuItem } from '../../config/navLinks';
+import Messages from './navbar-items/Messages';
 
 // Dropdown component for nav items with children
 const NavDropdown = ({ item, currentPath }: { item: MenuItem; currentPath: string }) => {
@@ -120,7 +120,7 @@ const NavLink = ({ item, currentPath }: { item: MenuItem; currentPath: string })
   );
 };
 
-const Header = () => {
+const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [isSticky, setIsSticky] = useState(false);
   const location = useLocation();
@@ -238,4 +238,4 @@ const Header = () => {
 
 };
 
-export default Header;
+export default Navbar;
