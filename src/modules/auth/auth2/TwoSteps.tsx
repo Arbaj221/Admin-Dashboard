@@ -9,7 +9,7 @@ const TwoSteps = () => {
     <>
       <div className="relative overflow-hidden h-screen bg-lightprimary dark:bg-darkprimary">
         <div className="flex h-full justify-center items-center px-4">
-          <CardBox className="md:w-[450px] w-full border-none">
+          <CardBox className="md:w-450 w-full border-none">
             <div className="mx-auto mb-6">
               <FullLogo />
             </div>

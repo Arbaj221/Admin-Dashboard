@@ -26,7 +26,7 @@ const Profile = () => {
 
         <DropdownMenuContent
           align="end"
-          className="w-screen sm:w-[200px] pb-6 pt-4 rounded-sm"
+          className="w-screen sm:w-200 pb-6 pt-4 rounded-sm"
         >
           <SimpleBar>
             {profileData.profileDD.map((items, index) => (

@@ -40,10 +40,10 @@ body {
   --text-2xl: 1.5rem;
   --text-3xl: 1.875rem;
 
-  --font-normal: 400;
-  --font-medium: 500;
-  --font-semibold: 600;
-  --font-bold: 700;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
   --leading-tight: 1.25;
   --leading-normal: 1.5;
@@ -53,6 +53,13 @@ body {
   --spacing-15: 15px;
   --spacing-30: 30px;
   --spacing-60: 60px;
+
+  --spacing-100: 100px;
+  --spacing-120: 120px;
+  --spacing-140: 140px;
+  --spacing-200: 200px;
+  --spacing-300: 300px;
+  --spacing-450: 450px;
 
   /* ADD: Transition tokens */
   --duration-fast: 150ms;
@@ -64,10 +71,6 @@ body {
 
   --padding-15: 15px;
   --padding-30: 30px;
-
-  --margin-30: 30px;
-   --width-logo: 40px;
-  --height-logo: 40px;
 }
 
 @theme inline {
@@ -131,21 +134,10 @@ body {
   --color-successemphasis: var(--success-emphasis);
   --color-infoemphasis: var(--info-emphasis);
 
-  /* FIX: Map spacing so p-30, gap-30 etc work */
-  --spacing-15: var(--spacing-15);
-  --spacing-30: var(--spacing-30);
-  --spacing-60: var(--spacing-60);
 
   /* FIX: Map leading-21 */
   --leading-21: var(--leading-21);
 
-  /* ADD: Map font sizes as Tailwind text-* classes */
-  --text-xs: var(--text-xs);
-  --text-sm: var(--text-sm);
-  --text-base: var(--text-base);
-  --text-lg: var(--text-lg);
-  --text-xl: var(--text-xl);
-  --text-2xl: var(--text-2xl);
 
   /* ADD: Map transitions */
   --duration-fast: var(--duration-fast);

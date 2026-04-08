@@ -57,7 +57,7 @@ const BreadcrumbComp = ({ title, items = [] }: BreadCrumbType) => {
           </ol>
         </div>
 
-        <div className="col-span-2 flex justify-center -mb-7 max-h-[120px] max-w-[140px]">
+        <div className="col-span-2 flex justify-center -mb-7 max-h-120 max-w-140">
           <div className="hidden sm:block absolute right-7 bottom-0">
             <img src={breadcrumbBg} alt="support-img" width={145} height={95} />
           </div>

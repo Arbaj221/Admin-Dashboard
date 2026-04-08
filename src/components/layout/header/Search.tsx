@@ -83,7 +83,7 @@ function Search() {
                   <Icon icon="iconoir:component" width={18} height={18} />
                   <div className="ps-3">
                     <h5 className="mb-1 text-sm group-hover/link:text-primary">{item.name}</h5>
-                    <span className="text-xs block truncate text-muted-foreground">{item.path}</span>
+                    <span className="text-xs block truncate text-muted-foreground ">{item.path}</span>
                   </div>
                 </div>
               </Link>
