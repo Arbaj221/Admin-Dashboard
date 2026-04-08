@@ -20,7 +20,7 @@ const Messages = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="relative">
-            <span className="relative after:absolute after:w-10 after:h-10 after:rounded-full hover:text-primary after:-top-1/2 hover:after:bg-lightprimary text-foreground dark:text-muted-foreground rounded-full flex justify-center items-center cursor-pointer group-hover/menu:after:bg-lightprimary group-hover/menu:!text-primary">
+            <span className="relative after:absolute after:w-10 after:h-10 after:rounded-full hover:text-primary after:-top-1/2 hover:after:bg-lightprimary text-foreground dark:text-muted-foreground rounded-full flex justify-center items-center cursor-pointer group-hover/menu:after:bg-lightprimary group-hover/menu:text-primary!">
               <Icon icon="tabler:bell-ringing" height={20} />
             </span>
             <span className="rounded-full absolute -end-1.5 -top-1 text-xs h-2 w-2 bg-primary flex justify-center items-center"></span>

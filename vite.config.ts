@@ -38,4 +38,7 @@ export default defineConfig({
         outDir: 'dist', // ✅ this is required for Netlify
     },
     plugins: [svgr(), react()],
+    server: {
+        host: true
+    }
 });

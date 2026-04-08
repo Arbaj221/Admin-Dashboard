@@ -1,25 +1,31 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router';
 import Navbar from './Navbar';
+import Footer from './Footer';
 
 const FullLayout: FC = () => {
   return (
     <>
       <div className="flex w-full min-h-screen">
-        <div className="page-wrapper flex w-full ">
-          <div className="body-wrapper w-full bg-white dark:bg-dark">
-            {/* Top Header  */}
-            <Navbar />
+      <div className="page-wrapper flex w-full">
 
-            {/* Body Content  */}
-            <div className={'container mx-auto px-6 py-30'}>
-              <main className="grow">
-                <Outlet />
-              </main>
-            </div>
+        {/* Add flex flex-col here */}
+        <div className="body-wrapper w-full bg-white dark:bg-dark flex flex-col min-h-screen">
+          
+          <Navbar />
+
+          {/* Add flex-1 here so it grows and pushes footer down */}
+          <div className="container mx-auto px-6 py-30 flex-1">
+            <main className="grow">
+              <Outlet />
+            </main>
           </div>
+
+          <Footer />
         </div>
+
       </div>
+    </div>
     </>
   );
 };
