@@ -1,47 +1,110 @@
-# Getting Started with Create React App
+# Admin Dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, responsive Admin Dashboard built with **React.js**, **TypeScript**, **Tailwind CSS**, **Radix UI**, and **ApexCharts** — powered by **Vite** for a fast development experience.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🛠 Tech Stack
 
-### `npm start`
+| Technology | Purpose |
+|---|---|
+| [React.js](https://react.dev/) | UI library |
+| [TypeScript](https://www.typescriptlang.org/) | Type-safe JavaScript |
+| [Vite](https://vitejs.dev/) | Build tool & dev server |
+| [Tailwind CSS](https://tailwindcss.com/) | Utility-first styling |
+| [Radix UI](https://www.radix-ui.com/) | Accessible UI components |
+| [ApexCharts](https://apexcharts.com/) | Charts & data visualization |
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🚀 Getting Started
 
-### `npm test`
+Follow the steps below to run this project on your local machine.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
 
-### `npm run build`
+Make sure you have the following installed before proceeding:
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- npm (comes bundled with Node.js)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 1. Install Dependencies
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Before running the app, you need to install all the required packages listed in `package.json`.
 
-### `npm run eject`
+> 💡 **What is `package.json`?** It's a file that lists all the libraries your project depends on. Running `npm install` reads that file and downloads everything automatically.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+npm install
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 2. Start the Development Server
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```bash
+npm run dev
+```
 
-## Learn More
+This starts the app in development mode. Open [http://localhost:5173](http://localhost:5173) in your browser to view it.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+> The page will automatically reload whenever you make changes to the code.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
+### 3. Build for Production
+
+When you're ready to deploy the app, run:
+
+```bash
+npm run build
+```
+
+This bundles and optimizes the app for production. The output will be placed in the `dist/` folder.
+
+---
+
+### 4. Preview the Production Build
+
+After building, you can preview the production version locally:
+
+```bash
+npm run preview
+```
+
+> This is useful for testing the production build before actually deploying it.
+
+---
+
+## 📁 Project Structure
+
+```
+admin-dashboard/
+├── public/          # Static assets
+├── src/             # Source code
+│   ├── assets/      # Images, icons, etc.
+│   ├── components/  # Reusable UI components
+│   ├── config/      # App Configurations
+│   ├── routes/      # App Routes
+│   ├── Modules/     # Page-level components
+│   └── main.tsx     # App entry point
+│   └── style/       # Global CSS
+├── package.json     # Project dependencies & scripts
+├── postcss.config.ts
+├── tsconfig.json
+└── vite.config.ts
+```
+
+---
+
+## 📚 Important Links
+
+- [React Documentation](https://react.dev/)
+- [Vite Documentation](https://vitejs.dev/)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Radix UI Documentation](https://www.radix-ui.com/docs/primitives/overview/introduction)
+- [ApexCharts Documentation](https://apexcharts.com/docs/installation/)
+
+---
