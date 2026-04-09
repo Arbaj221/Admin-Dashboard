@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import FullLogo from "src/assets/images/logos/FullLogo";
 
 import { Button } from "src/components/ui/button";
@@ -8,11 +8,14 @@ import { Label } from "src/components/ui/label";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/"
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     localStorage.setItem("isAuth", "true");
-    navigate("/");
+    navigate(from, { replace: true });
   };
 
   return (
