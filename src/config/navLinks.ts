@@ -99,7 +99,7 @@ const NavbarContent: MenuItem[] = [
                     {
                         id: uniqueId(),
                         name: 'Campaign Ops View',
-                        url: '/campaigns',
+                        url: '/campaigns-opc-view',
                     },
                 ],
             },
@@ -116,17 +116,17 @@ const NavbarContent: MenuItem[] = [
                     {
                         id: uniqueId(),
                         name: 'batches',
-                        url: '/login',
+                        url: '/sentinel-batches',
                     },
                     {
                         id: uniqueId(),
                         name: 'Jobs',
-                        url: '/login',
+                        url: '/sentinel-jobs',
                     },
                     {
                         id: uniqueId(),
                         name: 'Campaigns',
-                        url: '/login',
+                        url: '/sentinel-campaigns',
                     },
                 ],
             },

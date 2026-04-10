@@ -8,7 +8,11 @@ import userRoutes from 'src/modules/users/routes';
 import clientRoutes from 'src/modules/clients/routes';
 import UserProfile from 'src/modules/userProfile/UserProfile';
 import VendorRoutes from 'src/modules/vendors/routes';
-import CampaignRoutes from 'src/modules/campaigns/routes';
+import SentinelBatchesRoute from 'src/modules/sentinel/batches/routes';
+import SentinelJobsRoute from 'src/modules/sentinel/jobs/routes';
+import SentinelCampaignsRoute from 'src/modules/sentinel/campaigns/routes';
+import CampaignOpcRoutes from 'src/modules/campaigns/campaignOpcView/routes';
+import CampaignRoutes from 'src/modules/campaigns/manageCampaigns/routes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
@@ -22,13 +26,17 @@ const SamplePage = lazy(() => import('../modules/sample-page/SamplePage'));
 const Router = [
   {
     path: '/',
-    element:  <ProtectedRoute><FullLayout /></ProtectedRoute>,
+    element: <ProtectedRoute><FullLayout /></ProtectedRoute>,
     children: [
       { path: '/', exact: true, element: <Modern /> },
       ...userRoutes,
       ...clientRoutes,
       ...VendorRoutes,
       ...CampaignRoutes,
+      ...SentinelBatchesRoute,
+      ...SentinelCampaignsRoute,
+      ...SentinelJobsRoute,
+      ...CampaignOpcRoutes,
       { path: '/user-profile', exact: true, element: <UserProfile /> },
       { path: '/sample-page', exact: true, element: <SamplePage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
