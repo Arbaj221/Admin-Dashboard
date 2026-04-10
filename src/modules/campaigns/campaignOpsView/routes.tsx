@@ -1,13 +1,13 @@
 import { RouteObject } from 'react-router-dom';
 import CampaignOpcView from './list';
 
-const CampaignOpcRoutes: RouteObject[] = [
+const CampaignOpsRoutes: RouteObject[] = [
     {
-        path: '/campaigns-opc-view',
+        path: '/campaigns-ops-view',
         element: <CampaignOpcView />,
     }
     
 ];
 
 
-export default CampaignOpcRoutes
+export default CampaignOpsRoutes

@@ -99,7 +99,7 @@ const NavbarContent: MenuItem[] = [
                     {
                         id: uniqueId(),
                         name: 'Campaign Ops View',
-                        url: '/campaigns-opc-view',
+                        url: '/campaigns-ops-view',
                     },
                 ],
             },

@@ -12,6 +12,7 @@ const CampaignsList = () => {
 
   const BCrumb = [
     { to: '/', title: 'Home' },
+    { to: '/campaigns-ops-view', title: 'Campaigns Opc View' },
     { title: 'Campaigns' },
   ];
 

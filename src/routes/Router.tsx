@@ -11,7 +11,7 @@ import VendorRoutes from 'src/modules/vendors/routes';
 import SentinelBatchesRoute from 'src/modules/sentinel/batches/routes';
 import SentinelJobsRoute from 'src/modules/sentinel/jobs/routes';
 import SentinelCampaignsRoute from 'src/modules/sentinel/campaigns/routes';
-import CampaignOpcRoutes from 'src/modules/campaigns/campaignOpcView/routes';
+import CampaignOpcRoutes from 'src/modules/campaigns/campaignOpsView/routes';
 import CampaignRoutes from 'src/modules/campaigns/manageCampaigns/routes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
