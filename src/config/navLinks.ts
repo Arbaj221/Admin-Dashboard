@@ -43,17 +43,6 @@ const NavbarContent: MenuItem[] = [
         ],
     },
     {
-        heading: 'pages',
-        children: [
-            {
-                name: 'Sample Page',
-                icon: 'solar:document-add-linear',
-                id: uniqueId(),
-                url: '/sample-page',
-            }
-        ],
-    },
-    {
         heading: 'Admin',
         children: [
             {
@@ -93,7 +82,7 @@ const NavbarContent: MenuItem[] = [
                     {
                         id: uniqueId(),
                         name: 'Manage Vendors',
-                        url: '/register',
+                        url: '/vendors',
                     },
                 ],
             },

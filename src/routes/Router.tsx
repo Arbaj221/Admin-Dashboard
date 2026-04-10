@@ -7,6 +7,7 @@ import ProtectedRoute from './ProtectedRoute';
 import userRoutes from 'src/modules/users/routes';
 import clientRoutes from 'src/modules/clients/routes';
 import UserProfile from 'src/modules/userProfile/UserProfile';
+import VendorRoutes from 'src/modules/vendors/routes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
@@ -25,6 +26,7 @@ const Router = [
       { path: '/', exact: true, element: <Modern /> },
       ...userRoutes,
       ...clientRoutes,
+      ...VendorRoutes,
       { path: '/user-profile', exact: true, element: <UserProfile /> },
       { path: '/sample-page', exact: true, element: <SamplePage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
