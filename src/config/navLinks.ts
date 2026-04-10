@@ -43,28 +43,6 @@ const NavbarContent: MenuItem[] = [
         ],
     },
     {
-        heading: 'Users',
-        children: [
-            {
-                name: 'Users',
-                icon: 'solar:widget-2-linear',
-                id: uniqueId(),
-                url: '/users',
-            },
-        ],
-    },
-    {
-        heading: 'Clients',
-        children: [
-            {
-                name: 'Clients',
-                icon: 'solar:widget-2-linear',
-                id: uniqueId(),
-                url: '/clients',
-            },
-        ],
-    },
-    {
         heading: 'pages',
         children: [
             {
@@ -76,29 +54,90 @@ const NavbarContent: MenuItem[] = [
         ],
     },
     {
-        heading: 'Auth',
+        heading: 'Admin',
         children: [
             {
-                name: 'Login',
+                name: 'Users',
+                icon: 'solar:widget-2-linear',
+                id: uniqueId(),
+                children: [
+                    {
+                        id: uniqueId(),
+                        name: 'Users',
+                        url: '/users',
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        heading: 'Sales',
+        children: [
+            {
+                name: 'Clients',
                 id: uniqueId(),
                 icon: 'solar:login-2-linear',
                 children: [
                     {
                         id: uniqueId(),
-                        name: 'Boxed Login',
-                        url: '/login',
+                        name: 'Manage Clients',
+                        url: '/clients',
                     },
                 ],
             },
             {
-                name: 'Register',
+                name: 'Vendors',
                 id: uniqueId(),
                 icon: 'solar:user-plus-rounded-linear',
                 children: [
                     {
                         id: uniqueId(),
-                        name: 'Boxed Register',
+                        name: 'Manage Vendors',
                         url: '/register',
+                    },
+                ],
+            },
+            {
+                name: 'Campaign',
+                id: uniqueId(),
+                icon: 'solar:user-plus-rounded-linear',
+                children: [
+                    {
+                        id: uniqueId(),
+                        name: 'Manage Campaign',
+                        url: '/register',
+                    },
+                    {
+                        id: uniqueId(),
+                        name: 'Campaign Ops View',
+                        url: '/register',
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        heading: 'Operations',
+        children: [
+            {
+                name: 'Sentinel',
+                id: uniqueId(),
+                icon: 'solar:login-2-linear',
+                children: [
+                    {
+                        id: uniqueId(),
+                        name: 'batches',
+                        url: '/login',
+                    },
+                    {
+                        id: uniqueId(),
+                        name: 'Jobs',
+                        url: '/login',
+                    },
+                    {
+                        id: uniqueId(),
+                        name: 'Campaigns',
+                        url: '/login',
                     },
                 ],
             },

@@ -15,7 +15,7 @@ const FullLayout: FC = () => {
           <Navbar />
 
           {/* Add flex-1 here so it grows and pushes footer down */}
-          <div className="container mx-auto py-30 flex-1">
+          <div className="container mx-auto py-15 flex-1">
             <main className="grow">
               <Outlet />
             </main>
