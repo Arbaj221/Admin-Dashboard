@@ -9,23 +9,19 @@ import {
 import { Badge } from 'src/components/ui/badge';
 import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
-import { clientsData } from '../data/client.data';
-import { Link } from 'react-router';
+import { useNavigate } from 'react-router';
+import { Client } from '../types/client.types';
 
-export interface Client {
-  id: number;
-  code: string;
-  name: string;
-  person: string;
-  email: string;
-  number: string;
-  assignedTo: string;
-  status: 'Active' | 'Inactive';
+interface ClientsTableProps {
+  clients: Client[];
+  onDelete: (id: number) => void;
 }
 
 const tableHeadings = ['Code', 'Name', 'Person', 'Email', 'Number', 'Assigned To', 'Status', 'Actions'];
 
-const ClientsTable = () => {
+const ClientsTable = ({ clients, onDelete }: ClientsTableProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="overflow-x-auto border border-border rounded-md">
       <Table>
@@ -40,85 +36,93 @@ const ClientsTable = () => {
         </TableHeader>
 
         <TableBody>
-          {clientsData.map((client: any) => (
-            <TableRow key={client.id} className="hover:bg-lightprimary transition-colors">
-
-              {/* Code */}
-              <TableCell>
-                <span className="text-sm font-semibold text-primary">{client.code}</span>
+          {clients.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={tableHeadings.length} className="text-center py-8 text-muted-foreground">
+                No clients found.
               </TableCell>
+            </TableRow>
+          ) : (
+            clients.map((client: Client) => (
+              <TableRow key={client.id} className="hover:bg-lightprimary transition-colors">
 
-              {/* Name */}
-              <TableCell>
-                <span className="text-sm font-medium text-foreground whitespace-nowrap">
-                  {client.name}
-                </span>
-              </TableCell>
+                {/* Code */}
+                <TableCell>
+                  <span className="text-sm font-semibold text-primary">{client.code}</span>
+                </TableCell>
 
-              {/* Person */}
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-lightprimary text-primary flex items-center justify-center text-xs font-bold shrink-0">
-                    {client.person.charAt(0).toUpperCase()}
+                {/* Name */}
+                <TableCell>
+                  <span className="text-sm font-medium text-foreground whitespace-nowrap">
+                    {client.name}
+                  </span>
+                </TableCell>
+
+                {/* Person */}
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-lightprimary text-primary flex items-center justify-center text-xs font-bold shrink-0">
+                      {client.person.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-sm text-foreground whitespace-nowrap">{client.person}</span>
                   </div>
-                  <span className="text-sm text-foreground whitespace-nowrap">{client.person}</span>
-                </div>
-              </TableCell>
+                </TableCell>
 
-              {/* Email */}
-              <TableCell>
-                <span className="text-sm text-muted-foreground">{client.email}</span>
-              </TableCell>
+                {/* Email */}
+                <TableCell>
+                  <span className="text-sm text-muted-foreground">{client.email}</span>
+                </TableCell>
 
-              {/* Number */}
-              <TableCell>
-                <span className="text-sm text-muted-foreground whitespace-nowrap">{client.number}</span>
-              </TableCell>
+                {/* Number */}
+                <TableCell>
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">{client.number}</span>
+                </TableCell>
 
-              {/* Assigned To */}
-              <TableCell>
-                <span className="text-sm text-foreground whitespace-nowrap">{client.assignedTo}</span>
-              </TableCell>
+                {/* Assigned To */}
+                <TableCell>
+                  <span className="text-sm text-foreground whitespace-nowrap">{client.assignedTo}</span>
+                </TableCell>
 
-              {/* Status */}
-              <TableCell>
-                <Badge
-                  className={`text-xs rounded-full px-3 py-1 font-medium
-                    ${client.status === 'Active'
-                      ? 'bg-lightsuccess text-successemphasis'
-                      : 'bg-lighterror text-error'
-                    }`}
-                >
-                  {client.status}
-                </Badge>
-              </TableCell>
+                {/* Status */}
+                <TableCell>
+                  <Badge
+                    className={`text-xs rounded-full px-3 py-1 font-medium
+                      ${client.status === 'Active'
+                        ? 'bg-lightsuccess text-successemphasis'
+                        : 'bg-lighterror text-erroremphasis'
+                      }`}
+                  >
+                    {client.status}
+                  </Badge>
+                </TableCell>
 
-              {/* Actions */}
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Link to={`/clients/edit/${client.id}`}>
+                {/* Actions */}
+                <TableCell>
+                  <div className="flex items-center gap-2">
                     <Button
                       size="sm"
                       variant="lightprimary"
                       className="size-8! rounded-full"
                       title="Edit"
+                      onClick={() => navigate(`/clients/edit/${client.id}`)}
                     >
                       <Pencil className="size-4" />
                     </Button>
-                  </Link>
-                  <Button
-                    size="sm"
-                    variant="lighterror"
-                    className="size-8! rounded-full"
-                    title="Delete"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              </TableCell>
+                    <Button
+                      size="sm"
+                      variant="lighterror"
+                      className="size-8! rounded-full"
+                      title="Delete"
+                      onClick={() => onDelete(client.id)}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                </TableCell>
 
-            </TableRow>
-          ))}
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

@@ -8,3 +8,4 @@ export interface Client {
   assignedTo: string;
   status: 'Active' | 'Inactive';
 }
+ 
