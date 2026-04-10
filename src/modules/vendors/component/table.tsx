@@ -43,18 +43,18 @@ const VendorTable = ({ vendor, onDelete }: VendorTableProps) => {
               </TableCell>
             </TableRow>
           ) : (
-            vendor.map((client: Vendor) => (
-              <TableRow key={client.id} className="hover:bg-lightprimary transition-colors even:bg-muted/40">
+            vendor.map((vendor: Vendor) => (
+              <TableRow key={vendor.id} className="hover:bg-lightprimary transition-colors odd:bg-lightprimary/80">
 
                 {/* Code */}
                 <TableCell>
-                  <span className="text-sm font-semibold text-primary">{client.code}</span>
+                  <span className="text-sm font-semibold text-primary">{vendor.code}</span>
                 </TableCell>
 
                 {/* Name */}
                 <TableCell>
                   <span className="text-sm font-medium text-foreground whitespace-nowrap">
-                    {client.name}
+                    {vendor.name}
                   </span>
                 </TableCell>
 
@@ -62,37 +62,37 @@ const VendorTable = ({ vendor, onDelete }: VendorTableProps) => {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-lightprimary text-primary flex items-center justify-center text-xs font-bold shrink-0">
-                      {client.person.charAt(0).toUpperCase()}
+                      {vendor.person.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm text-foreground whitespace-nowrap">{client.person}</span>
+                    <span className="text-sm text-foreground whitespace-nowrap">{vendor.person}</span>
                   </div>
                 </TableCell>
 
                 {/* Email */}
                 <TableCell>
-                  <span className="text-sm text-muted-foreground">{client.email}</span>
+                  <span className="text-sm text-muted-foreground">{vendor.email}</span>
                 </TableCell>
 
                 {/* Number */}
                 <TableCell>
-                  <span className="text-sm text-muted-foreground whitespace-nowrap">{client.number}</span>
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">{vendor.number}</span>
                 </TableCell>
 
                 {/* Assigned To */}
                 <TableCell>
-                  <span className="text-sm text-foreground whitespace-nowrap">{client.assignedTo}</span>
+                  <span className="text-sm text-foreground whitespace-nowrap">{vendor.assignedTo}</span>
                 </TableCell>
 
                 {/* Status */}
                 <TableCell>
                   <Badge
                     className={`text-xs rounded-full px-3 py-1 font-medium
-                      ${client.status === 'Active'
+                      ${vendor.status === 'Active'
                         ? 'bg-lightsuccess text-successemphasis'
                         : 'bg-lighterror text-erroremphasis'
                       }`}
                   >
-                    {client.status}
+                    {vendor.status}
                   </Badge>
                 </TableCell>
 
@@ -104,7 +104,7 @@ const VendorTable = ({ vendor, onDelete }: VendorTableProps) => {
                       variant="lightprimary"
                       className="size-8! rounded-full"
                       title="Edit"
-                      onClick={() => navigate(`/vendors/edit/${client.id}`)}
+                      onClick={() => navigate(`/vendors/edit/${vendor.id}`)}
                     >
                       <Pencil className="size-4" />
                     </Button>
@@ -113,7 +113,7 @@ const VendorTable = ({ vendor, onDelete }: VendorTableProps) => {
                       variant="lighterror"
                       className="size-8! rounded-full"
                       title="Delete"
-                      onClick={() => onDelete(client.id)}
+                      onClick={() => onDelete(vendor.id)}
                     >
                       <Trash2 className="size-4" />
                     </Button>

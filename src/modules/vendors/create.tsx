@@ -10,7 +10,7 @@ const CreateVendor = () => {
 
   return (
     <>
-      <BreadcrumbComp title="Create Client" items={BCrumb} />
+      <BreadcrumbComp title="Create Vendor" items={BCrumb} />
       <VendorForm mode="create" />
     </>
   );

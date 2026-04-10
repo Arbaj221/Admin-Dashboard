@@ -44,7 +44,7 @@ const ClientsTable = ({ clients, onDelete }: ClientsTableProps) => {
             </TableRow>
           ) : (
             clients.map((client: Client) => (
-              <TableRow key={client.id} className="hover:bg-lightprimary transition-colors">
+              <TableRow key={client.id} className="hover:bg-lightprimary transition-colors odd:bg-lightprimary/80">
 
                 {/* Code */}
                 <TableCell>

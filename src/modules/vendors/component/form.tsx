@@ -117,16 +117,16 @@ const VendorForm = ({ mode, initialData }: VendorFormProps) => {
   const handleSubmit = () => {
     if (!validate()) return;
     // API call will go here
-    navigate('/clients');
+    navigate('/vendors');
   };
 
   return (
     <div className="flex flex-col gap-6">
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* ── Client Information ── */}
+        {/* ── Vendors Information ── */}
         <CardBox>
-          <h5 className="card-title mb-6">Client Information</h5>
+          <h5 className="card-title mb-6">Vendors Information</h5>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* Name */}
@@ -137,7 +137,7 @@ const VendorForm = ({ mode, initialData }: VendorFormProps) => {
               <Input
                 id="name"
                 type="text"
-                placeholder="Enter client name"
+                placeholder="Enter vendors name"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 className={`mt-2 ${errors.name ? 'border-error focus-visible:border-error' : ''}`}
@@ -237,7 +237,7 @@ const VendorForm = ({ mode, initialData }: VendorFormProps) => {
 
         {/* ── Contact Information ── */}
         <CardBox>
-          <h5 className="card-title mb-6">Client's Contact Information</h5>
+          <h5 className="card-title mb-6">Vendor's Contact Information</h5>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* First Name */}
@@ -339,7 +339,7 @@ const VendorForm = ({ mode, initialData }: VendorFormProps) => {
 
       {/* ── Billing Information ── */}
       <CardBox>
-        <h5 className="card-title mb-6">Client's Billing Information</h5>
+        <h5 className="card-title mb-6">Vendor's Billing Information</h5>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* Billing Name */}
@@ -423,7 +423,7 @@ const VendorForm = ({ mode, initialData }: VendorFormProps) => {
       <div className="flex items-center justify-end gap-3">
         <Button
           variant="outline"
-          onClick={() => navigate('/clients')}
+          onClick={() => navigate('/vendors')}
           className="px-6"
         >
           Cancel
@@ -432,7 +432,7 @@ const VendorForm = ({ mode, initialData }: VendorFormProps) => {
           onClick={handleSubmit}
           className="px-6 bg-primary hover:bg-primaryemphasis text-white"
         >
-          {mode === 'create' ? 'Save Client' : 'Update Client'}
+          {mode === 'create' ? 'Save Vendor' : 'Update Vendor'}
         </Button>
       </div>
 
