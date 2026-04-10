@@ -8,6 +8,7 @@ import userRoutes from 'src/modules/users/routes';
 import clientRoutes from 'src/modules/clients/routes';
 import UserProfile from 'src/modules/userProfile/UserProfile';
 import VendorRoutes from 'src/modules/vendors/routes';
+import CampaignRoutes from 'src/modules/campaigns/routes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
@@ -27,6 +28,7 @@ const Router = [
       ...userRoutes,
       ...clientRoutes,
       ...VendorRoutes,
+      ...CampaignRoutes,
       { path: '/user-profile', exact: true, element: <UserProfile /> },
       { path: '/sample-page', exact: true, element: <SamplePage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },

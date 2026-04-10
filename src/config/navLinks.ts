@@ -94,12 +94,12 @@ const NavbarContent: MenuItem[] = [
                     {
                         id: uniqueId(),
                         name: 'Manage Campaign',
-                        url: '/register',
+                        url: '/campaigns',
                     },
                     {
                         id: uniqueId(),
                         name: 'Campaign Ops View',
-                        url: '/register',
+                        url: '/campaigns',
                     },
                 ],
             },
