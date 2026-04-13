@@ -101,7 +101,7 @@ const SentinelBatchesTable = () => {
                 {/* ── Controls ── */}
                 <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
                     <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground whitespace-nowrap">Show entries</span>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">Show entries</span>
                         <Select value={String(pageSize)} onValueChange={handlePageSize}>
                             <SelectTrigger className="w-20">
                                 <SelectValue />
@@ -131,7 +131,7 @@ const SentinelBatchesTable = () => {
                 </div>
 
                 {/* ── Table ── */}
-                <div className="overflow-x-auto border border-border rounded-md">
+                <div className="border border-border rounded-md">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -139,7 +139,7 @@ const SentinelBatchesTable = () => {
                                     <TableHead
                                         key={col.key}
                                         className={`
-                      text-sm font-semibold whitespace-nowrap
+                      text-xs font-semibold whitespace-nowrap
                       border-r border-border last:border-r-0
                       ${col.sticky
                                                 ? `sticky ${stickyOffset(index)} z-20 bg-muted`
@@ -181,7 +181,7 @@ const SentinelBatchesTable = () => {
                                                 <TableCell
                                                     key={col.key}
                                                     className={`
-                            text-sm border-r border-border last:border-r-0
+                            text-xs border-r border-border last:border-r-0
                             ${col.sticky
                                                             ? `sticky ${stickyOffset(index)} z-10 border-r border-border
                                  bg-background `
@@ -225,7 +225,7 @@ const SentinelBatchesTable = () => {
 
                 {/* ── Pagination ── */}
                 <div className="flex items-center justify-between mt-4 flex-wrap gap-3">
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                         Showing{' '}
                         {filtered.length === 0 ? 0 : (page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)}{' '}
                         of {filtered.length} entries
@@ -239,7 +239,7 @@ const SentinelBatchesTable = () => {
                         >
                             Previous
                         </Button>
-                        <span className="text-sm text-muted-foreground px-1">
+                        <span className="text-xs text-muted-foreground px-1">
                             Page {page} of {totalPages}
                         </span>
                         <Button

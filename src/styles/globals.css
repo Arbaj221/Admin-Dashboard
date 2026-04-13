@@ -179,6 +179,8 @@ body {
   --sidebar-accent-foreground: var(--primary);
   --sidebar-border: var(--border);
   --sidebar-ring: #a1a1a1;
+  --sidebar-width: 270px;
+  --sidebar-collapsed-width: 72px;
 
   /* CUSTOM COLORS */
   --info: #8754ec;
@@ -286,6 +288,7 @@ body {
   }
 }
 
+
 @utility form-control {
   & input {
     @apply border rounded-md border-border bg-transparent ring-transparent dark:ring-transparent dark:bg-transparent w-full text-sm;
@@ -357,3 +360,5 @@ body {
     @apply pr-9!;
   }
 }
+
+

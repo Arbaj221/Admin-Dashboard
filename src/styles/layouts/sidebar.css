@@ -6,3 +6,11 @@
 [data-slot='badge'] {
   font-size: x-small;
 }
+
+.body-wrapper {
+  margin-left: var(--sidebar-width);
+}
+
+[data-collapsed="true"] .body-wrapper {
+  margin-left: var(--sidebar-collapsed-width);
+}

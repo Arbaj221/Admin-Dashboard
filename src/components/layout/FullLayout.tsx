@@ -18,10 +18,10 @@ const LayoutContent: FC = () => {
         </div>
 
         {/* Body — margin animates via CSS */}
-        <div
-          className="body-wrapper w-full bg-white dark:bg-dark flex flex-col min-h-screen transition-[margin-left] duration-300 ease-in-out"
-          style={{ marginLeft: collapsed ? '72px' : '270px' }}
-        >
+        {/* Body — margin is controlled via CSS using [data-collapsed] on .page-wrapper.
+           See sidebar.css → .body-wrapper and [data-collapsed="true"] .body-wrapper.
+           Do NOT add inline margin-left here — update --sidebar-width in globals.css instead. */}
+        <div className="body-wrapper w-full bg-white dark:bg-dark flex flex-col min-h-screen transition-[margin-left] duration-300 ease-in-out min-w-0 overflow-x-hidden">
           <Navbar />
 
           <div className="container mx-auto p-4 flex-1">
