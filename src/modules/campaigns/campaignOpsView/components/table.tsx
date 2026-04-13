@@ -7,12 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from 'src/components/ui/table';
-import { Badge } from 'src/components/ui/badge';
 import { Button } from 'src/components/ui/button';
 import { Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { OpsType } from '../types/ops.type';
 import { opsData } from '../data/opsView.data';
+import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 
 
 const tableHeadings = [
@@ -20,14 +19,6 @@ const tableHeadings = [
   'Method', 'Allocation', 'Delivered', 'Accepted', 'Deficit', 'Status', 'Actions',
 ];
 
-const typeBadgeClass = (type: OpsType['type']) => {
-  switch (type) {
-    case 'Email': return 'bg-lightinfo text-infoemphasis';
-    case 'BANT': return 'bg-lightwarning text-warningemphasis';
-    case 'Telemarketing': return 'bg-lightsecondary text-secondaryemphasis';
-    default: return 'bg-muted text-muted-foreground';
-  }
-};
 
 const CampaignOpsViewTable = () => {
   const navigate = useNavigate();
@@ -74,9 +65,7 @@ const CampaignOpsViewTable = () => {
 
                 {/* Type */}
                 <TableCell>
-                  <Badge className={`text-xs rounded-full px-3 py-1 font-medium ${typeBadgeClass(campaign.type)}`}>
-                    {campaign.type}
-                  </Badge>
+                  <StatusBadge value={campaign.type} />
                 </TableCell>
 
                 {/* Start Date */}
@@ -130,15 +119,7 @@ const CampaignOpsViewTable = () => {
 
                 {/* Status */}
                 <TableCell>
-                  <Badge
-                    className={`text-xs rounded-full px-3 py-1 font-medium
-                      ${campaign.status === 'Live'
-                        ? 'bg-lightsuccess text-successemphasis'
-                        : 'bg-lightinfo text-infoemphasis'
-                      }`}
-                  >
-                    {campaign.status}
-                  </Badge>
+                  <StatusBadge value={campaign.status} />
                 </TableCell>
 
                 {/* Actions */}

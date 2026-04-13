@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from 'src/components/ui/select';
 import { Trash2 } from 'lucide-react';
+import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 
 type Status = 'Non Started' | 'Cancelled' | 'Completed' | 'Live' | 'Pause';
 
@@ -263,16 +264,12 @@ const ManageCampaignTable = () => {
                     onValueChange={(val) => handleChange(row.id, 'status', val as Status)}
                   >
                     <SelectTrigger className="border-none shadow-none bg-transparent focus:ring-0 h-auto p-0 gap-1 text-sm">
-                      <Badge className={`text-xs rounded-full px-3 py-1 font-medium ${statusBadgeClass(row.status)}`}>
-                        {row.status}
-                      </Badge>
+                      <StatusBadge value={row.status} />
                     </SelectTrigger>
                     <SelectContent>
                       {statusOptions.map((opt) => (
                         <SelectItem key={opt} value={opt}>
-                          <Badge className={`text-xs rounded-full px-3 py-1 font-medium ${statusBadgeClass(opt)}`}>
-                            {opt}
-                          </Badge>
+                           <StatusBadge value={opt} />
                         </SelectItem>
                       ))}
                     </SelectContent>

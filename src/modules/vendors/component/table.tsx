@@ -11,6 +11,7 @@ import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Vendor } from '../types/vendor.type';
+import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 
 interface VendorTableProps {
   vendor: Vendor[];
@@ -85,15 +86,7 @@ const VendorTable = ({ vendor, onDelete }: VendorTableProps) => {
 
                 {/* Status */}
                 <TableCell>
-                  <Badge
-                    className={`text-xs rounded-full px-3 py-1 font-medium
-                      ${vendor.status === 'Active'
-                        ? 'bg-lightsuccess text-successemphasis'
-                        : 'bg-lighterror text-erroremphasis'
-                      }`}
-                  >
-                    {vendor.status}
-                  </Badge>
+                  <StatusBadge value={vendor.status} />
                 </TableCell>
 
                 {/* Actions */}

@@ -6,11 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from 'src/components/ui/table';
-import { Badge } from 'src/components/ui/badge';
 import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Client } from '../types/client.types';
+import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 
 interface ClientsTableProps {
   clients: Client[];
@@ -85,15 +85,7 @@ const ClientsTable = ({ clients, onDelete }: ClientsTableProps) => {
 
                 {/* Status */}
                 <TableCell>
-                  <Badge
-                    className={`text-xs rounded-full px-3 py-1 font-medium
-                      ${client.status === 'Active'
-                        ? 'bg-lightsuccess text-successemphasis'
-                        : 'bg-lighterror text-erroremphasis'
-                      }`}
-                  >
-                    {client.status}
-                  </Badge>
+                  <StatusBadge value={client.status} />
                 </TableCell>
 
                 {/* Actions */}

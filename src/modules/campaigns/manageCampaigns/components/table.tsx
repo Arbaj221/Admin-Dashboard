@@ -6,11 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from 'src/components/ui/table';
-import { Badge } from 'src/components/ui/badge';
 import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Campaign } from '../types/campaign.types';
+import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 
 interface CampaignsTableProps {
   campaigns: Campaign[];
@@ -22,14 +22,7 @@ const tableHeadings = [
   'Method', 'Allocation', 'Delivered', 'Accepted', 'Deficit', 'Status', 'Actions',
 ];
 
-const typeBadgeClass = (type: Campaign['type']) => {
-  switch (type) {
-    case 'Email': return 'bg-lightinfo text-infoemphasis';
-    case 'BANT': return 'bg-lightwarning text-warningemphasis';
-    case 'Telemarketing': return 'bg-lightsecondary text-secondaryemphasis';
-    default: return 'bg-muted text-muted-foreground';
-  }
-};
+
 
 const CampaignsTable = ({ campaigns, onDelete }: CampaignsTableProps) => {
   const navigate = useNavigate();
@@ -76,9 +69,7 @@ const CampaignsTable = ({ campaigns, onDelete }: CampaignsTableProps) => {
 
                 {/* Type */}
                 <TableCell>
-                  <Badge className={`text-xs rounded-full px-3 py-1 font-medium ${typeBadgeClass(campaign.type)}`}>
-                    {campaign.type}
-                  </Badge>
+                  <StatusBadge value={campaign.type} />
                 </TableCell>
 
                 {/* Start Date */}
@@ -132,15 +123,7 @@ const CampaignsTable = ({ campaigns, onDelete }: CampaignsTableProps) => {
 
                 {/* Status */}
                 <TableCell>
-                  <Badge
-                    className={`text-xs rounded-full px-3 py-1 font-medium
-                      ${campaign.status === 'Live'
-                        ? 'bg-lightsuccess text-successemphasis'
-                        : 'bg-lightinfo text-infoemphasis'
-                      }`}
-                  >
-                    {campaign.status}
-                  </Badge>
+                   <StatusBadge value={campaign.status} />
                 </TableCell>
 
                 {/* Actions */}
