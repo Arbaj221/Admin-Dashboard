@@ -6,22 +6,24 @@ import { Link, useLocation } from 'react-router';
 import { useTheme } from 'src/theme/theme-provider';
 import { AMLogo, AMMenu, AMMenuItem, AMSidebar, AMSubmenu } from 'tailwind-sidebar';
 import 'tailwind-sidebar/styles.css';
+import { useSidebarCollapse } from 'src/context/useSidebarCollapse';
 
 interface SidebarItemType {
-  heading?: string
-  id?: number | string
-  name?: string
-  title?: string
-  icon?: string
-  url?: string
-  children?: SidebarItemType[]
-  disabled?: boolean
-  isPro?: boolean
+  heading?: string;
+  id?: number | string;
+  name?: string;
+  title?: string;
+  icon?: string;
+  url?: string;
+  children?: SidebarItemType[];
+  disabled?: boolean;
+  isPro?: boolean;
 }
 
 const renderSidebarItems = (
   items: SidebarItemType[],
   currentPath: string,
+  collapsed: boolean,
   onClose?: () => void,
   isSubItem: boolean = false,
 ) => {
@@ -35,8 +37,15 @@ const renderSidebarItems = (
       <Icon icon={'ri:checkbox-blank-circle-line'} height={9} width={9} />
     );
 
-    // Heading
+    // Heading — hide when collapsed
     if (item.heading) {
+      if (collapsed) {
+        return (
+          <div key={item.heading} className="my-2 flex justify-center">
+            <span className="block w-5 border-t border-border opacity-40" />
+          </div>
+        );
+      }
       return (
         <div className="mb-1" key={item.heading}>
           <AMMenu
@@ -47,8 +56,20 @@ const renderSidebarItems = (
       );
     }
 
-    // Submenu
+    // Submenu — hide children labels when collapsed, show only icon
     if (item.children?.length) {
+      if (collapsed) {
+        return (
+          <div key={item.id} className="flex justify-center my-0.5">
+            <span
+              className="flex items-center justify-center w-10 h-10 rounded-md text-sidebar-foreground hover:bg-lightprimary hover:text-primary transition-colors duration-200 cursor-pointer"
+              title={item.name}
+            >
+              {iconElement}
+            </span>
+          </div>
+        );
+      }
       return (
         <AMSubmenu
           key={item.id}
@@ -56,7 +77,7 @@ const renderSidebarItems = (
           title={item.name}
           ClassName="mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground"
         >
-          {renderSidebarItems(item.children, currentPath, onClose, true)}
+          {renderSidebarItems(item.children, currentPath, collapsed, onClose, true)}
         </AMSubmenu>
       );
     }
@@ -64,14 +85,34 @@ const renderSidebarItems = (
     // Regular menu item
     const linkTarget = item.url?.startsWith('https') ? '_blank' : '_self';
 
+    if (collapsed) {
+      return (
+        <div key={item.id} className="flex justify-center my-0.5" onClick={onClose}>
+          <Link
+            to={item.url || '/'}
+            target={linkTarget}
+            title={item.title || item.name}
+            className={`flex items-center justify-center w-10 h-10 rounded-md transition-colors duration-200
+              ${isSelected
+                ? 'bg-lightprimary text-primary'
+                : 'text-sidebar-foreground hover:bg-lightprimary hover:text-primary'
+              }`}
+          >
+            {iconElement}
+          </Link>
+        </div>
+      );
+    }
+
     const itemClassNames = isSubItem
-      ? `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground !hover:bg-transparent ${isSelected ? '!bg-transparent !text-primary' : ''
-      }`
+      ? `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground !hover:bg-transparent ${
+          isSelected ? '!bg-transparent !text-primary' : ''
+        }`
       : `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground`;
+
     return (
-      <div onClick={onClose}>
+      <div onClick={onClose} key={item.id}>
         <AMMenuItem
-          key={item.id}
           icon={iconElement}
           isSelected={isSelected}
           link={item.url || undefined}
@@ -95,8 +136,8 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   const location = useLocation();
   const pathname = location.pathname;
   const { theme } = useTheme();
+  const { collapsed } = useSidebarCollapse();
 
-  // Only allow "light" or "dark" for AMSidebar
   const sidebarMode = theme === 'light' || theme === 'dark' ? theme : undefined;
 
   return (
@@ -104,22 +145,21 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
       collapsible="none"
       animation={true}
       showProfile={false}
-      width={'270px'}
+      width={collapsed ? '72px' : '270px'}
       showTrigger={false}
       mode={sidebarMode}
-      className="fixed left-0 top-0 border border-border dark:border-border bg-sidebar dark:bg-sidebar z-10 h-screen"
+      className="fixed left-0 top-0 border border-border dark:border-border bg-sidebar dark:bg-sidebar z-10 h-screen overflow-hidden transition-[width] duration-300 ease-in-out"
     >
       {/* Logo */}
-      <div className="px-6 flex items-center brand-logo overflow-hidden">
+      <div className={`px-4 flex items-center brand-logo overflow-hidden ${collapsed ? 'justify-center' : ''}`}>
         <AMLogo component={Link} href="/" img="">
-          <FullLogo />
+          <FullLogo collapsed={collapsed} />
         </AMLogo>
       </div>
 
       {/* Sidebar items */}
-
       <SimpleBar className="h-[calc(100vh-100px)]">
-        <div className="px-6">
+        <div className={`${collapsed ? 'px-2' : 'px-6'} transition-all duration-300`}>
           {SidebarContent.map((section, index) => (
             <div key={index}>
               {renderSidebarItems(
@@ -128,6 +168,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
                   ...(section.children || []),
                 ],
                 pathname,
+                collapsed,
                 onClose,
               )}
             </div>

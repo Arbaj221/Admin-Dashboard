@@ -5,17 +5,18 @@ import { useTheme } from 'src/theme/theme-provider';
 import Search from './navbar-items/Search';
 import FullLogo from '../../assets/images/logos/FullLogo';
 import Messages from './navbar-items/Messages';
-
+import { useSidebarCollapse } from 'src/context/useSidebarCollapse';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
+  const { collapsed, toggleCollapsed } = useSidebarCollapse();
   const [isSticky, setIsSticky] = useState(false);
 
   const handleScroll = useEffectEvent(() => {
     setIsSticky(window.scrollY > 50);
   });
 
-  const handleResize = useEffectEvent(() => { });
+  const handleResize = useEffectEvent(() => {});
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -32,17 +33,29 @@ const Navbar = () => {
 
   return (
     <header
-      className={`sticky top-0 z-2 ${isSticky ? 'bg-white dark:bg-dark shadow-md fixed w-full' : 'bg-transparent'
-        }`}
+      className={`sticky top-0 z-2 ${
+        isSticky ? 'bg-white dark:bg-dark shadow-md fixed w-full' : 'bg-transparent'
+      }`}
     >
       <nav className="rounded-none bg-transparent dark:bg-transparent py-4 px-6 max-w-full! flex justify-between items-center">
-        {/* Mobile Toggle Icon */}
-
+        {/* Left side: Toggle + Search */}
         <div className="hidden xl:flex items-center gap-2">
+          {/* Sidebar Toggle Button */}
+          <button
+            onClick={toggleCollapsed}
+            className="flex items-center justify-center w-9 h-9 rounded-md text-foreground dark:text-muted-foreground hover:text-primary hover:bg-lightprimary transition-colors duration-200 focus:outline-none"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <Icon
+              icon={collapsed ? 'tabler:layout-sidebar-right' : 'tabler:layout-sidebar'}
+              width="20"
+            />
+          </button>
+
           <Search />
         </div>
 
-        {/* mobile-logo */}
+        {/* Mobile logo */}
         <div className="block xl:hidden">
           <FullLogo />
         </div>
@@ -60,7 +73,6 @@ const Navbar = () => {
                 </span>
               </div>
             ) : (
-              // Dark Mode Button
               <div
                 className="hover:text-primary px-15 dark:hover:text-primary focus:ring-0 rounded-full flex justify-center items-center cursor-pointer text-foreground dark:text-muted-foreground group relative"
                 onClick={toggleMode}
@@ -85,7 +97,6 @@ const Navbar = () => {
       </nav>
     </header>
   );
-
 };
 
 export default Navbar;
