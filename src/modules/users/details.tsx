@@ -1,4 +1,4 @@
-import BreadcrumbComp from "src/components/shared/breadcrumb/BreadcrumbComp";
+import SlimBreadcrumb from "src/components/shared/breadcrumb/SlimBreadcrumb";
 
 const UserDetails = () => {
     const BCrumb = [
@@ -17,7 +17,7 @@ const UserDetails = () => {
 
     return (
         <>
-            <BreadcrumbComp title="User-Details" items={BCrumb} />
+            <SlimBreadcrumb title="User-Details" items={BCrumb} />
             <div>Hello World!</div>
         </>
     );

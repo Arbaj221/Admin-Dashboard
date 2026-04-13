@@ -6,7 +6,7 @@ import Loadable from '../components/shared/loadable/Loadable';
 import ProtectedRoute from './ProtectedRoute';
 import userRoutes from 'src/modules/users/routes';
 import clientRoutes from 'src/modules/clients/routes';
-import UserProfile from 'src/modules/userProfile/UserProfile';
+import UserProfile from 'src/modules/users/userProfile/UserProfile';
 import VendorRoutes from 'src/modules/vendors/routes';
 import SentinelBatchesRoute from 'src/modules/sentinel/batches/routes';
 import SentinelJobsRoute from 'src/modules/sentinel/jobs/routes';
