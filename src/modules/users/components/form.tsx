@@ -26,6 +26,7 @@ interface UserFormData {
 interface UserFormProps {
   mode: 'create' | 'edit';
   initialData?: Partial<UserFormData>;
+  onSuccess?: () => void;
 }
 
 const defaultFormData: UserFormData = {
@@ -46,7 +47,7 @@ const departments: Department[] = [
 
 const roles: Role[] = ['Manager', 'Executive'];
 
-const UserForm = ({ mode, initialData }: UserFormProps) => {
+const UserForm = ({ mode, initialData, onSuccess }: UserFormProps) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<UserFormData>({
     ...defaultFormData,
@@ -74,7 +75,19 @@ const UserForm = ({ mode, initialData }: UserFormProps) => {
 
   const handleSubmit = () => {
     if (!validate()) return;
-    navigate('/users');
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      navigate('/users');
+    }
+  };
+
+  const handleCancel = () => {
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      navigate('/users');
+    }
   };
 
   const inputClass = (field: keyof UserFormData) =>
@@ -83,8 +96,8 @@ const UserForm = ({ mode, initialData }: UserFormProps) => {
   const selectClass = (field: keyof UserFormData) =>
     `mt-2 w-full ${errors[field] ? 'border-error' : ''}`;
 
-  return (
-    <CardBox>
+  const formContent = (
+    <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* 1. First Name */}
@@ -215,7 +228,7 @@ const UserForm = ({ mode, initialData }: UserFormProps) => {
       <div className="flex items-center justify-end gap-3 mt-6">
         <Button
           variant="outline"
-          onClick={() => navigate('/users')}
+          onClick={handleCancel}
           className="px-6"
         >
           Cancel
@@ -227,8 +240,13 @@ const UserForm = ({ mode, initialData }: UserFormProps) => {
           {mode === 'create' ? 'Save User' : 'Update User'}
         </Button>
       </div>
-    </CardBox>
+    </>
   );
+
+  // When used inside dialog, no CardBox wrapper needed
+  if (onSuccess) return formContent;
+
+  return <CardBox>{formContent}</CardBox>;
 };
 
 export default UserForm;

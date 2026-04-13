@@ -24,12 +24,13 @@ import { User } from '../types-data/users';
 interface UsersTableProps {
   users: User[];
   onDelete: (id: number) => void;
+  onEdit: (user: User) => void;
 }
 
 const pageSizeOptions = [10, 20, 50, 100];
 
-const UsersTable = ({ users, onDelete }: UsersTableProps) => {
-  const navigate  = useNavigate();
+const UsersTable = ({ users, onDelete, onEdit }: UsersTableProps) => {
+  const navigate = useNavigate();
   const [search, setSearch]     = useState('');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage]         = useState(1);
@@ -157,7 +158,7 @@ const UsersTable = ({ users, onDelete }: UsersTableProps) => {
                         variant="lightprimary"
                         className="size-8! rounded-full"
                         title="Edit"
-                        onClick={() => navigate(`/users/edit/${item.id}`)}
+                        onClick={() => onEdit(item)}
                       >
                         <Pencil className="size-4" />
                       </Button>
