@@ -39,6 +39,11 @@ export default defineConfig({
     },
     plugins: [svgr(), react()],
     server: {
-        host: true
+        allowedHosts: ['.ngrok-free.app', '.ngrok.io', 'winnings-wizard-civil.ngrok-free.dev'],
+        hmr: {
+            // Required: Forces HMR to use standard HTTPS port for the tunnel
+            clientPort: 443,
+        },
+
     }
 });

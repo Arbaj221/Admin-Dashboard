@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import { Link } from 'react-router';
 import SimpleBar from 'simplebar-react';
 import { Input } from 'src/components/ui/input';
-import NavbarContent, { ChildItem, MenuItem } from '../../../config/navLinks';
+import SidebarContent, { ChildItem, MenuItem } from '../../../config/sidebaritems';
 
 interface SearchResult {
   name: string
@@ -44,7 +44,7 @@ function Search() {
   // Memoize filtered results
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    return searchItems(NavbarContent, query);
+    return searchItems(SidebarContent, query);
   }, [query]);
 
   return (

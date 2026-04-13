@@ -12,7 +12,7 @@ const FullLogo = () => {
         className='w-10 h-10 hidden dark:block rtl:scale-x-[-1]'
       />
       <span className='text-foreground font-bold text-lg'>
-        ProspectVine CRM
+        ProspectVine
       </span>
     </div>
   );

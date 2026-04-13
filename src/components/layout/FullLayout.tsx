@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { Outlet } from 'react-router';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import Sidebar from './Sidebar';
 
 const FullLayout: FC = () => {
   return (
@@ -10,6 +11,9 @@ const FullLayout: FC = () => {
       <div className="page-wrapper flex w-full">
 
         {/* Add flex flex-col here */}
+          <div className="xl:block hidden">
+            <Sidebar />
+          </div>
         <div className="body-wrapper w-full bg-white dark:bg-dark flex flex-col min-h-screen">
           
           <Navbar />
