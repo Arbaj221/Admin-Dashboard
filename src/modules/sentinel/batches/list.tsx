@@ -1,4 +1,5 @@
 import BreadcrumbComp from "src/components/shared/breadcrumb/BreadcrumbComp";
+import SentinelBatchesTable from "./components/table";
 
 const SentinelBatches = () => {
     const BCrumb = [
@@ -11,6 +12,7 @@ const SentinelBatches = () => {
     return (
         <>
             <BreadcrumbComp title="Sentinel Batches" items={BCrumb} />
+            <SentinelBatchesTable />
         </>
     )
 }

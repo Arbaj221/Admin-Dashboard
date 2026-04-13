@@ -1,4 +1,5 @@
 import BreadcrumbComp from "src/components/shared/breadcrumb/BreadcrumbComp";
+import SentinelJobsTable from "./components/SentinelJobsTable";
 
 const SentinelJobs = () => {
     const BCrumb = [
@@ -11,6 +12,7 @@ const SentinelJobs = () => {
     return (
         <>
             <BreadcrumbComp title="Sentinel Jobs" items={BCrumb} />
+            <SentinelJobsTable/>
         </>
     )
 }

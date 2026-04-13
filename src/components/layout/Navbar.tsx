@@ -57,7 +57,7 @@ const NavDropdown = ({ item, currentPath }: { item: MenuItem; currentPath: strin
 
       {/* Dropdown panel */}
       <div
-        className={`absolute top-full left-0 mt-0 min-w-48 bg-popover border border-border rounded-md shadow-md z-50 overflow-hidden
+        className={`absolute top-full left-0 mt-0 min-w-48 bg-popover border border-border rounded-md shadow-md z-70 overflow-hidden
           transition-all duration-200 origin-top
           ${isOpen ? 'opacity-100 scale-y-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'}`}
       >
@@ -66,14 +66,14 @@ const NavDropdown = ({ item, currentPath }: { item: MenuItem; currentPath: strin
           if (child.children?.length) {
             return (
               <div key={child.id}>
-                <div className="px-3 pt-2 pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                <div className="px-3 pt-2 pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide ">
                   {child.name}
                 </div>
                 {child.children.map((sub) => (
                   <Link
                     key={sub.id}
                     to={sub.url || '/'}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors duration-150
+                    className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors duration-150 
                       ${currentPath === sub.url
                         ? 'text-primary bg-lightprimary'
                         : 'text-foreground hover:text-primary hover:bg-lightprimary'
@@ -154,7 +154,7 @@ const Navbar = () => {
 
   return (
     <header
-      className={`sticky top-0 z-10 transition-shadow duration-300 bg-sidebar dark:bg-sidebar border-b border-border
+      className={`sticky top-0 z-50 transition-shadow duration-300 bg-sidebar dark:bg-sidebar border-b border-border
         ${isSticky ? 'shadow-md' : ''}`}
     >
       <nav className="px-6 max-w-full flex items-center justify-between gap-4">
