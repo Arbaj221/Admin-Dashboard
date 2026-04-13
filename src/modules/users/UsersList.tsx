@@ -1,5 +1,5 @@
 import { Link } from "react-router"
-import BreadcrumbComp from "src/components/shared/breadcrumb/BreadcrumbComp";
+import SlimBreadcrumb from "src/components/shared/breadcrumb/SlimBreadcrumb";
 
 const UsersList = () => {
     const BCrumb = [
@@ -13,7 +13,7 @@ const UsersList = () => {
     ];
     return (
         <>
-            <BreadcrumbComp title="Users" items={BCrumb} />
+            <SlimBreadcrumb title="Users" items={BCrumb} />
             <div>
                 <Link to="/users/details" >Go to Details</Link>
             </div>

@@ -1,4 +1,4 @@
-import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
+import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import VendorForm from './component/form';
 
 const CreateVendor = () => {
@@ -10,7 +10,7 @@ const CreateVendor = () => {
 
   return (
     <>
-      <BreadcrumbComp title="Create Vendor" items={BCrumb} />
+      <SlimBreadcrumb title="Create Vendor" items={BCrumb} />
       <VendorForm mode="create" />
     </>
   );

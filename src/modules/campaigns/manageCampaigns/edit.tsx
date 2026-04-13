@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
+import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CampaignForm from './components/form';
 import { campaignsData } from './data/campaigns.data';
 
@@ -22,7 +22,7 @@ const EditCampaign = () => {
 
   return (
     <>
-      <BreadcrumbComp title="Edit Campaign" items={BCrumb} />
+      <SlimBreadcrumb title="Edit Campaign" items={BCrumb} />
       <CampaignForm
         mode="edit"
         initialData={{

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Icon } from '@iconify/react';
-import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
+import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CardBox from 'src/components/shared/CardBox';
 import { vendorsData as initialData } from './data/vendors.data';
 import { Vendor } from './types/vendor.type';
@@ -22,7 +22,7 @@ const VendorList = () => {
 
   return (
     <>
-      <BreadcrumbComp title="Vendors" items={BCrumb} />
+      <SlimBreadcrumb title="Vendors" items={BCrumb} />
 
       <CardBox>
         <div className="flex items-center justify-between mb-4">

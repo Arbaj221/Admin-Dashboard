@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
+import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import ClientForm from './components/ClientForm';
 import { clientsData } from './data/client.data';
 
@@ -23,7 +23,7 @@ const EditClient = () => {
 
   return (
     <>
-      <BreadcrumbComp title="Edit Client" items={BCrumb} />
+      <SlimBreadcrumb title="Edit Client" items={BCrumb} />
       <ClientForm mode="edit" initialData={client} />
     </>
   );

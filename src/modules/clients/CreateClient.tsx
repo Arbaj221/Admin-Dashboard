@@ -1,4 +1,4 @@
-import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
+import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import ClientForm from './components/ClientForm';
 
 const CreateClient = () => {
@@ -10,7 +10,7 @@ const CreateClient = () => {
 
   return (
     <>
-      <BreadcrumbComp title="Create Client" items={BCrumb} />
+      <SlimBreadcrumb title="Create Client" items={BCrumb} />
       <ClientForm mode="create" />
     </>
   );

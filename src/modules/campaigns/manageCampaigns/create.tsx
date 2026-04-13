@@ -1,4 +1,4 @@
-import BreadcrumbComp from 'src/components/shared/breadcrumb/BreadcrumbComp';
+import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CampaignForm from './components/form';
 
 const CreateCampaign = () => {
@@ -10,7 +10,7 @@ const CreateCampaign = () => {
 
   return (
     <>
-      <BreadcrumbComp title="Create Campaign" items={BCrumb} />
+      <SlimBreadcrumb title="Create Campaign" items={BCrumb} />
       <CampaignForm mode="create" />
     </>
   );

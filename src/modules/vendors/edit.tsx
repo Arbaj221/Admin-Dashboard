@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router";
-import BreadcrumbComp from "src/components/shared/breadcrumb/BreadcrumbComp";
+import SlimBreadcrumb from "src/components/shared/breadcrumb/SlimBreadcrumb";
 import VendorForm from "./component/form";
 import { vendorsData } from "./data/vendors.data";
 
@@ -23,7 +23,7 @@ const EditVendor = () => {
 
     return (
         <>
-            <BreadcrumbComp title="Edit Vendor" items={BCrumb} />
+            <SlimBreadcrumb title="Edit Vendor" items={BCrumb} />
             <VendorForm mode="edit" initialData={vendor} />
         </>
     );

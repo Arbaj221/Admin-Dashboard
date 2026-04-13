@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js"
-import BreadcrumbComp from "src/components/shared/breadcrumb/BreadcrumbComp";
+import SlimBreadcrumb from "src/components/shared/breadcrumb/SlimBreadcrumb";
 import CardBox from "src/components/shared/CardBox";
 import profileImg from "src/assets/images/profile/user-1.jpg"
 
@@ -24,7 +24,7 @@ const UserProfile = () => {
 
     return (
         <>
-            <BreadcrumbComp title="User Profile" items={BCrumb} />
+            <SlimBreadcrumb title="User Profile" items={BCrumb} />
             <div className="flex flex-col gap-6">
                 <CardBox className="p-6 overflow-hidden">
                     <div className="flex flex-col sm:flex-row items-center gap-6 rounded-xl relative w-full break-words">
