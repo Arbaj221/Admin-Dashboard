@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router';
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CampaignForm from './components/form';
 import { campaignsData } from './data/campaigns.data';
+import ManageCampaignTable from './components/ManageCampaignTable';
 
 const EditCampaign = () => {
   const { id } = useParams();
@@ -37,6 +38,7 @@ const EditCampaign = () => {
           totalAccepted: String(campaign.accepted),
         }}
       />
+      <ManageCampaignTable/>
     </>
   );
 };

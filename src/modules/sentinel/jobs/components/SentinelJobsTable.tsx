@@ -16,10 +16,9 @@ import {
 } from 'src/components/ui/select';
 import { Input } from 'src/components/ui/input';
 import { Button } from 'src/components/ui/button';
-import { Badge } from 'src/components/ui/badge';
 import { Icon } from '@iconify/react';
 import CardBox from 'src/components/shared/CardBox';
-import { sentinelJobsData, SentinelJob } from '../types-data/sentinelJobs';
+import { sentinelJobsData } from '../types-data/sentinelJobs';
 
 const pageSizeOptions = [10, 20, 50, 100];
 
@@ -36,31 +35,6 @@ const tableHeadings = [
   'Priority',
   'Action',
 ];
-
-const departmentBadgeClass = (dept: SentinelJob['department']) => {
-  switch (dept) {
-    case 'DataOps': return 'bg-lightinfo text-infoemphasis';
-    case 'Email':   return 'bg-lightsecondary text-secondaryemphasis';
-    default:        return 'bg-muted text-muted-foreground';
-  }
-};
-
-const statusBadgeClass = (status: SentinelJob['status']) => {
-  switch (status) {
-    case 'Completed': return 'bg-lightsuccess text-successemphasis';
-    case 'Pending':   return 'bg-lightwarning text-warningemphasis';
-    default:          return 'bg-muted text-muted-foreground';
-  }
-};
-
-const priorityBadgeClass = (priority: SentinelJob['priority']) => {
-  switch (priority) {
-    case 'High':   return 'bg-lighterror text-erroremphasis';
-    case 'Normal': return 'bg-lightinfo text-infoemphasis';
-    case 'Low':    return 'bg-muted text-muted-foreground';
-    default:       return 'bg-muted text-muted-foreground';
-  }
-};
 
 const SentinelJobsTable = () => {
   const [search, setSearch]     = useState('');
@@ -168,7 +142,7 @@ const SentinelJobsTable = () => {
                   </TableCell>
 
                   {/* Batch IDs — word break, fixed width, grows in height */}
-                  <TableCell className="border-r border-border min-w-[160px] max-w-[200px]">
+                  <TableCell className="border-r border-border min-w-40 max-w-200">
                     <div className="flex flex-wrap gap-1">
                       {item.batchIds.map((batchId) => (
                         <span
