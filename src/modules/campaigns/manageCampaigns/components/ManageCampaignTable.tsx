@@ -222,7 +222,7 @@ const ManageCampaignTable = () => {
                 </TableCell>
 
                 {/* Allocation — editable */}
-                <TableCell className="border-r border-border min-w-[100px]">
+                <TableCell className="border-r border-border min-w-100">
                   <InlineInput
                     type="number"
                     value={row.allocation}
@@ -231,7 +231,7 @@ const ManageCampaignTable = () => {
                 </TableCell>
 
                 {/* Delivered — editable */}
-                <TableCell className="border-r border-border min-w-[100px]">
+                <TableCell className="border-r border-border min-w-100">
                   <InlineInput
                     type="number"
                     value={row.delivered}
@@ -240,7 +240,7 @@ const ManageCampaignTable = () => {
                 </TableCell>
 
                 {/* Accepted — editable */}
-                <TableCell className="border-r border-border min-w-[100px]">
+                <TableCell className="border-r border-border min-w-100">
                   <InlineInput
                     type="number"
                     value={row.accepted}
@@ -249,7 +249,7 @@ const ManageCampaignTable = () => {
                 </TableCell>
 
                 {/* Rejected — editable */}
-                <TableCell className="border-r border-border min-w-[100px]">
+                <TableCell className="border-r border-border min-w-100">
                   <InlineInput
                     type="number"
                     value={row.rejected}
@@ -258,7 +258,7 @@ const ManageCampaignTable = () => {
                 </TableCell>
 
                 {/* Status — always select */}
-                <TableCell className="border-r border-border min-w-[140px]">
+                <TableCell className="border-r border-border min-w-140">
                   <Select
                     value={row.status}
                     onValueChange={(val) => handleChange(row.id, 'status', val as Status)}

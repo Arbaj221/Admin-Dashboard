@@ -13,10 +13,9 @@ interface SlimBreadcrumbProps {
 
 const SlimBreadcrumb = ({ title, items = [] }: SlimBreadcrumbProps) => {
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-center justify-between mb-2">
 
       {/* Title */}
-      <h4 className="text-lg font-semibold text-foreground">{title}</h4>
 
       {/* Breadcrumb trail */}
       <ol className="flex items-center gap-1.5">

@@ -33,7 +33,7 @@ const CampaignsTable = ({ campaigns, onDelete }: CampaignsTableProps) => {
         <TableHeader>
           <TableRow>
             {tableHeadings.map((heading) => (
-              <TableHead key={heading} className="text-sm font-semibold whitespace-nowrap">
+              <TableHead key={heading} className="text-xs font-semibold whitespace-nowrap">
                 {heading}
               </TableHead>
             ))}
@@ -55,7 +55,7 @@ const CampaignsTable = ({ campaigns, onDelete }: CampaignsTableProps) => {
               >
                 {/* CRM Code */}
                 <TableCell>
-                  <span className="text-sm font-semibold text-primary whitespace-nowrap">
+                  <span className="text-xs font-semibold text-primary whitespace-nowrap">
                     {campaign.crmCode}
                   </span>
                 </TableCell>

@@ -22,7 +22,7 @@ const CampaignsList = () => {
 
   return (
     <>
-      <SlimBreadcrumb title="Campaigns" items={BCrumb} />
+      <SlimBreadcrumb title="" items={BCrumb} />
 
       <CardBox>
         <div className="flex items-center justify-between mb-4">

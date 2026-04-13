@@ -33,7 +33,7 @@ const Navbar = () => {
 
   return (
     <header
-      className={`sticky top-0 z-2 ${
+      className={`sticky top-0 z-50 ${
         isSticky ? 'bg-white dark:bg-dark shadow-md fixed w-full' : 'bg-transparent'
       }`}
     >
