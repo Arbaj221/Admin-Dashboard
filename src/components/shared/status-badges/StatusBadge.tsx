@@ -24,20 +24,20 @@ type BadgeValue =
 
 const badgeConfig: Record<BadgeValue, string> = {
     // ── Status ──────────────────────────────────────────
-    'Live': 'bg-lightsuccess dark:bg-success/20 text-successemphasis dark:text-success',
-    'Completed': 'bg-lightinfo    dark:bg-info/20    text-infoemphasis    dark:text-info',
-    'Pending': 'bg-lightwarning dark:bg-warning/20 text-warningemphasis dark:text-warning',
-    'Cancelled': 'bg-lighterror   dark:bg-error/20   text-erroremphasis   dark:text-error',
-    'Pause': 'bg-lightwarning dark:bg-warning/20 text-warningemphasis dark:text-warning',
-    'Non Started': 'bg-muted        dark:bg-muted/40   text-muted-foreground',
+    'Live': 'bg-green-100 text-green-700',
+    'Completed': 'bg-blue-100 text-blue-700',
+    'Pending': 'bg-green-100 text-green-700',
+    'Cancelled': 'bg-pink-100 text-pink-700',
+    'Pause': 'bg-yellow-100 text-yellow-700',
+    'Non Started': 'bg-orange-100 text-orange-700',
 
     // ── Campaign Type ────────────────────────────────────
-    'Email': 'bg-lightinfo      dark:bg-info/20      text-infoemphasis      dark:text-info',
-    'BANT': 'bg-lightwarning   dark:bg-warning/20   text-warningemphasis   dark:text-warning',
-    'Telemarketing': 'bg-lightsecondary dark:bg-secondary/20 text-secondaryemphasis dark:text-secondary',
+    'Email': 'bg-purple-100 text-purple-700',
+    'BANT': 'bg-yellow-100 text-yellow-700',
+    'Telemarketing': 'bg-indigo-100 text-indigo-700',
 
     // ── Department ───────────────────────────────────────
-    'DataOps': 'bg-lightinfo      dark:bg-info/20      text-infoemphasis      dark:text-info',
+    'DataOps': 'bg-teal-100 text-teal-700',
 
     // ── Priority ─────────────────────────────────────────
     'High': 'bg-lighterror     dark:bg-error/20     text-erroremphasis     dark:text-error',

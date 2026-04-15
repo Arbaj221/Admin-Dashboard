@@ -37,8 +37,8 @@ const SidebarContent: MenuItem[] = [
     heading: 'Home',
     children: [
       {
-        name: 'Modern',
-        icon: 'solar:widget-2-linear',
+        name: 'Dashboard',
+        icon: 'mdi:view-dashboard-outline', // better dashboard icon
         id: uniqueId(),
         url: '/',
       },
@@ -49,7 +49,7 @@ const SidebarContent: MenuItem[] = [
     children: [
       {
         name: 'Users',
-        icon: 'solar:widget-2-linear',
+        icon: 'mdi:account-group-outline', // group of users
         id: uniqueId(),
         url: '/users',
       },
@@ -61,28 +61,30 @@ const SidebarContent: MenuItem[] = [
       {
         name: 'Clients',
         id: uniqueId(),
-        icon: 'solar:login-2-linear',
+        icon: 'mdi:account-tie-outline', // business client
         url: '/clients',
       },
       {
         name: 'Vendors',
         id: uniqueId(),
-        icon: 'solar:user-plus-rounded-linear',
+        icon: 'mdi:store-outline', // vendor/shop
         url: '/vendors',
       },
       {
         name: 'Campaign',
         id: uniqueId(),
-        icon: 'solar:user-plus-rounded-linear',
+        icon: 'mdi:bullhorn-outline', // marketing campaign
         children: [
           {
             id: uniqueId(),
             name: 'Manage Campaign',
+            icon: 'mdi:cog-outline',
             url: '/campaigns',
           },
           {
             id: uniqueId(),
             name: 'Campaign Ops View',
+            icon: 'mdi:eye-outline',
             url: '/campaigns-ops-view',
           },
         ],
@@ -95,21 +97,24 @@ const SidebarContent: MenuItem[] = [
       {
         name: 'Sentinel',
         id: uniqueId(),
-        icon: 'solar:login-2-linear',
+        icon: 'mdi:shield-check-outline', // monitoring / protection
         children: [
           {
             id: uniqueId(),
-            name: 'batches',
+            name: 'Batches',
+            icon: 'mdi:layers-outline',
             url: '/sentinel-batches',
           },
           {
             id: uniqueId(),
             name: 'Jobs',
+            icon: 'mdi:briefcase-outline',
             url: '/sentinel-jobs',
           },
           {
             id: uniqueId(),
             name: 'Campaigns',
+            icon: 'mdi:bullhorn-outline',
             url: '/sentinel-campaigns',
           },
         ],
