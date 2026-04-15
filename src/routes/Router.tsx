@@ -16,7 +16,7 @@ import CampaignRoutes from 'src/modules/campaigns/manageCampaigns/routes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
-const Login2 = Loadable(lazy(() => import('../modules/auth/auth2/Login')));
+const Login2 = Loadable(lazy(() => import('../modules/auth/Login')));
 const Register2 = Loadable(lazy(() => import('../modules/auth/auth2/Register')));
 const Maintainance = Loadable(lazy(() => import('../modules/shared/pages/Maintainance')));
 const Modern = Loadable(lazy(() => import('../modules/dashboards/Modern')));
