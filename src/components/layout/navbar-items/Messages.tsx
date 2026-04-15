@@ -1,5 +1,3 @@
-'use client';
-
 import { Icon } from '@iconify/react';
 import * as MessagesData from '../../../config/data';
 import SimpleBar from 'simplebar-react';
