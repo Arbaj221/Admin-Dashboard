@@ -17,6 +17,8 @@ import rolesRoutes from 'src/modules/admin/roles/routes';
 import departmentsRoutes from 'src/modules/admin/departments/routes';
 import permissionsRoutes from 'src/modules/admin/permissions/routes';
 import rdpRoutes from 'src/modules/admin/rdp/routes';
+import userDepartmentRoutes from 'src/modules/admin/user-department/routes';
+import userPermissionRoutes from 'src/modules/admin/user-permission/routes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
@@ -45,6 +47,8 @@ const Router = [
       ...departmentsRoutes,
       ...permissionsRoutes,
       ...rdpRoutes,
+      ...userDepartmentRoutes,
+      ...userPermissionRoutes,
       { path: '/user-profile', exact: true, element: <UserProfile /> },
       { path: '/sample-page', exact: true, element: <SamplePage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },

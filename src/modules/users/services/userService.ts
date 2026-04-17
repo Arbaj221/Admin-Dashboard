@@ -1,5 +1,30 @@
 import apiClient from 'src/services/apiClient';
-import { User } from '../types-data/users';
+export type Department =
+  | 'Management'
+  | 'Technology'
+  | 'HR'
+  | 'Finance'
+  | 'Sales'
+  | 'Customer Success'
+  | 'DataOps'
+  | 'Email'
+  | 'Quality'
+  | 'DB Refresh'
+  | 'Voice Verification'
+  | 'MIS';
+
+export type Role = 'Manager' | 'Executive';
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  jobTitle: string;
+  department: Department;
+  role: Role;
+  addedDate: string;
+}
 
 export const userService = {
   // 👉 GET users

@@ -4,59 +4,74 @@ import { toast } from 'sonner';
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CardBox from 'src/components/shared/CardBox';
 
-import { rolesService, Role } from 'src/modules/admin/roles/services/rolesService';
+import { usersService, User } from 'src/modules/admin/user-department/services/userServiceDp';
 import { departmentService, Department } from 'src/modules/admin/departments/services/departmentService';
 import { permissionService, Permission } from 'src/modules/admin/permissions/services/permissionService';
 
-import { rdpService } from './services/rdpService';
-import MatrixTable from './components/MatrixTable';
+import { userDepartmentService } from 'src/modules/admin/user-department/services/userDepartmentService';
+import { userPermissionService } from './services/userPermissionService';
 
-const RDPList = () => {
-    const [roles, setRoles] = useState<Role[]>([]);
+import PermissionOverride from './components/PermissionOverride';
+
+const UserPermissionList = () => {
+    const [users, setUsers] = useState<User[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
     const [permissions, setPermissions] = useState<Permission[]>([]);
-    const [selectedRole, setSelectedRole] = useState<number | null>(null);
+    const [selectedUser, setSelectedUser] = useState<number | null>(null);
+
+    const [userDepartments, setUserDepartments] = useState<number[]>([]);
 
     const [matrix, setMatrix] = useState<
         Record<number, Record<number, boolean>>
     >({});
-    const [existingMappings, setExistingMappings] = useState<Set<string>>(new Set());
+    const [existing, setExisting] = useState<Set<string>>(new Set());
 
     const [loading, setLoading] = useState(false);
 
     const BCrumb = [
         { to: '/', title: 'Home' },
-        { title: 'Role Permissions' },
+        { title: 'User Permissions' },
     ];
 
-    // 👉 load initial data
+    // 👉 initial load
     const loadInitialData = async () => {
-        const [rolesData, deptData, permData] = await Promise.all([
-            rolesService.getRoles(),
+        const [usersData, deptData, permData] = await Promise.all([
+            usersService.getUsers(),
             departmentService.getDepartments(),
             permissionService.getPermissions(),
         ]);
 
-        setRoles(rolesData);
+        setUsers(usersData);
         setDepartments(deptData);
         setPermissions(permData);
 
-        if (rolesData.length) {
-            setSelectedRole(rolesData[0].id);
+        if (usersData.length) {
+            setSelectedUser(usersData[0].id);
         }
     };
 
     // 👉 load mappings
-    const loadMappings = async (roleId: number) => {
+    const loadMappings = async (userId: number) => {
         setLoading(true);
 
-        const data = await rdpService.getMappings();
+        const [userDeptData, userPermData] = await Promise.all([
+            userDepartmentService.getMappings(),
+            userPermissionService.getMappings(),
+        ]);
 
+        // 👉 filter departments user belongs to
+        const deptIds = userDeptData
+            .filter((item) => item.user_id === userId)
+            .map((item) => item.department_id);
+
+        setUserDepartments(deptIds);
+
+        // 👉 build matrix
         const { matrix, existing } =
-            rdpService.buildMatrixAndExisting(data, roleId);
+            userPermissionService.buildState(userPermData, userId);
 
         setMatrix(matrix);
-        setExistingMappings(existing);
+        setExisting(existing);
 
         setLoading(false);
     };
@@ -66,10 +81,10 @@ const RDPList = () => {
     }, []);
 
     useEffect(() => {
-        if (selectedRole !== null) {
-            loadMappings(selectedRole);
+        if (selectedUser !== null) {
+            loadMappings(selectedUser);
         }
-    }, [selectedRole]);
+    }, [selectedUser]);
 
     // 👉 toggle
     const handleToggle = (deptId: number, permId: number) => {
@@ -84,18 +99,19 @@ const RDPList = () => {
 
     // 👉 save
     const handleSave = async () => {
-        if (!selectedRole) return;
+        if (!selectedUser) return;
 
         try {
             const { updatedExisting, hasChanges } =
-                await rdpService.saveMappings(
-                    selectedRole,
+                await userPermissionService.saveMappings(
+                    selectedUser,
                     matrix,
-                    existingMappings
+                    existing
                 );
 
-            setExistingMappings(updatedExisting);
+            setExisting(updatedExisting);
 
+            // ✅ toast only when needed
             if (hasChanges) {
                 toast.success('Permissions updated successfully 🎉');
             } else {
@@ -106,33 +122,38 @@ const RDPList = () => {
         }
     };
 
+    // 👉 filter departments to show
+    const visibleDepartments = departments.filter((dept) =>
+        userDepartments.includes(dept.id)
+    );
+
     return (
         <>
-            <SlimBreadcrumb title="Role Permissions" items={BCrumb} />
+            <SlimBreadcrumb title="User Permissions" items={BCrumb} />
 
             <CardBox>
-                {/* Role Select */}
+                {/* User Select */}
                 <div className="mb-4">
-                    <label className="text-sm font-medium">Select Role</label>
+                    <label className="text-sm font-medium">Select User</label>
                     <select
                         className="mt-2 border border-border rounded-md p-2"
-                        value={selectedRole || ''}
-                        onChange={(e) => setSelectedRole(Number(e.target.value))}
+                        value={selectedUser || ''}
+                        onChange={(e) => setSelectedUser(Number(e.target.value))}
                     >
-                        {roles.map((role) => (
-                            <option key={role.id} value={role.id}>
-                                {role.name}
+                        {users.map((user) => (
+                            <option key={user.id} value={user.id}>
+                                {user.email}
                             </option>
                         ))}
                     </select>
                 </div>
 
-                {/* Matrix */}
+                {/* Permissions */}
                 {loading ? (
                     <p className="text-muted-foreground">Loading...</p>
                 ) : (
-                    <MatrixTable
-                        departments={departments}
+                    <PermissionOverride
+                        departments={visibleDepartments}
                         permissions={permissions}
                         matrix={matrix}
                         onToggle={handleToggle}
@@ -153,4 +174,4 @@ const RDPList = () => {
     );
 };
 
-export default RDPList;
+export default UserPermissionList;

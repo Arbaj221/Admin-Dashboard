@@ -33,45 +33,49 @@ export const rdpService = {
     },
 
     // 🔥 FINAL FIXED SAVE LOGIC
-    async saveMappings(
-        roleId: number,
-        matrix: Record<number, Record<number, boolean>>,
-        existing: Set<string>
-    ) {
-        const updatedExisting = new Set(existing); // ✅ copy
+    // modules/rdp/services/rdpService.ts
 
-        for (const deptId in matrix) {
-            for (const permId in matrix[deptId]) {
-                if (!matrix[deptId][permId]) continue;
+async saveMappings(
+  roleId: number,
+  matrix: Record<number, Record<number, boolean>>,
+  existing: Set<string>
+) {
+  const updatedExisting = new Set(existing);
+  let hasChanges = false;
 
-                const key = `${deptId}-${permId}`;
+  for (const deptId in matrix) {
+    for (const permId in matrix[deptId]) {
+      if (!matrix[deptId][permId]) continue;
 
-                // ❌ skip old ones
-                if (existing.has(key)) continue;
+      const key = `${deptId}-${permId}`;
 
-                try {
-                    await apiClient.post('/role-department-permissions/', {
-                        role_id: roleId,
-                        department_id: Number(deptId),
-                        permission_id: Number(permId),
-                    });
+      if (existing.has(key)) continue;
 
-                    // ✅ ADD to updated state
-                    updatedExisting.add(key);
+      try {
+        await apiClient.post('/role-department-permissions/', {
+          role_id: roleId,
+          department_id: Number(deptId),
+          permission_id: Number(permId),
+        });
 
-                } catch (err: any) {
-                    // ignore duplicate
-                    if (
-                        err?.response?.data?.detail?.includes('already assigned')
-                    ) {
-                        updatedExisting.add(key);
-                        continue;
-                    }
-                    throw err;
-                }
-            }
+        updatedExisting.add(key);
+        hasChanges = true;
+
+      } catch (err: any) {
+        if (
+          err?.response?.data?.detail?.includes('already assigned')
+        ) {
+          updatedExisting.add(key);
+          continue;
         }
+        throw err;
+      }
+    }
+  }
 
-        return updatedExisting; // ✅ return updated state
-    },
+  return {
+    updatedExisting,
+    hasChanges,
+  };
+}
 };
