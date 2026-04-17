@@ -76,6 +76,12 @@ const SidebarContent: MenuItem[] = [
             icon: 'mdi:cog-outline',
             url: '/admin/permissions',
           },
+          {
+            id: uniqueId(),
+            name: 'RDP',
+            icon: 'mdi:cog-outline',
+            url: '/admin/rdp',
+          },
         ]
       },
     ],
