@@ -5,34 +5,33 @@ import UsersTable from './components/table';
 import CardBox from 'src/components/shared/CardBox';
 import { usersData as initialData, User } from './types-data/users';
 import UserFormDialog from './components/UserFormDialog';
-import ConfirmDialog from 'src/components/shared/confirmdialog/ConfirmDialog';
+import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
 
 const UsersList = () => {
   const [users, setUsers] = useState<User[]>(initialData);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<User | undefined>();
-  const [open, setOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<number | null>(null);
+  const confirm = useConfirm();
 
   const BCrumb = [
     { to: '/', title: 'Home' },
     { title: 'Users' },
   ];
 
-  // Called from UsersTable — stores the ID and opens the confirm dialog
-  const openDeleteDialog = (id: number) => {
-    setUserToDelete(id);
-    setOpen(true);
+  const handleDelete = async (id: number) => {
+    const ok = await confirm({
+      title: 'Delete user?',
+      description: 'This action cannot be undone.',
+      confirmText: 'Delete',
+      variant: 'destructive',
+    });
+
+    if (!ok) return;
+
+    setUsers(prev => prev.filter(u => u.id !== id));
   };
 
-  // Called by ConfirmDialog onConfirm — no arguments, uses stored ID
-  const handleDelete = () => {
-    if (userToDelete === null) return;
-    setUsers((prev) => prev.filter((u) => u.id !== userToDelete));
-    setUserToDelete(null);
-    setOpen(false);
-  };
 
   const openCreate = () => {
     setDialogMode('create');
@@ -48,16 +47,6 @@ const UsersList = () => {
 
   return (
     <>
-      <ConfirmDialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Delete user?"
-        description="This action cannot be undone."
-        confirmText="Delete"
-        variant="destructive"
-        onConfirm={handleDelete}
-      />
-
       <SlimBreadcrumb title="Users" items={BCrumb} />
 
       <CardBox>
@@ -72,7 +61,7 @@ const UsersList = () => {
           </button>
         </div>
 
-        <UsersTable users={users} onDelete={openDeleteDialog} onEdit={openEdit} />
+        <UsersTable users={users} onDelete={handleDelete} onEdit={openEdit} />
       </CardBox>
 
       <UserFormDialog

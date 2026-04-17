@@ -1,3 +1,4 @@
+// ConfirmDialog.tsx (replace your current)
 import { Icon } from '@iconify/react';
 import {
   Dialog,
@@ -9,18 +10,6 @@ import {
 } from 'src/components/ui/dialog';
 import { cn } from 'src/lib/utils';
 
-interface ConfirmDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  description?: string;
-  confirmText?: string;
-  cancelText?: string;
-  variant?: 'default' | 'destructive';
-  loading?: boolean;
-  onConfirm: () => void | Promise<void>;
-}
-
 const ConfirmDialog = ({
   open,
   onOpenChange,
@@ -29,20 +18,27 @@ const ConfirmDialog = ({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   variant = 'default',
-  loading = false,
   onConfirm,
-}: ConfirmDialogProps) => {
+}: any) => {
   const isDestructive = variant === 'destructive';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-6">
-        {/* Header */}
-        <DialogHeader className="flex flex-col items-center text-center gap-3">
+      <DialogContent className="max-w-md p-0 overflow-hidden">
+        
+        {/* Top Accent */}
+        <div
+          className={cn(
+            'h-1 w-full',
+            isDestructive ? 'bg-error' : 'bg-primary'
+          )}
+        />
+
+        <div className="p-6 text-center">
           {/* Icon */}
           <div
             className={cn(
-              'flex items-center justify-center w-12 h-12 rounded-full',
+              'mx-auto mb-4 flex items-center justify-center w-14 h-14 rounded-full shadow-sm',
               isDestructive
                 ? 'bg-lighterror text-error'
                 : 'bg-lightprimary text-primary'
@@ -54,54 +50,45 @@ const ConfirmDialog = ({
                   ? 'heroicons:exclamation-triangle'
                   : 'heroicons:information-circle'
               }
-              width={24}
-              height={24}
+              width={26}
+              height={26}
             />
           </div>
 
-          {/* Title */}
-          <DialogTitle className="text-lg">
-            {title}
-          </DialogTitle>
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="text-xl font-semibold">
+              {title}
+            </DialogTitle>
 
-          {/* Description */}
-          {description && (
-            <DialogDescription className="text-muted-foreground">
-              {description}
-            </DialogDescription>
-          )}
-        </DialogHeader>
-
-        {/* Footer */}
-        <DialogFooter className="mt-6 flex justify-center sm:justify-end gap-2">
-          {/* Cancel */}
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            disabled={loading}
-            className="px-4 py-2 rounded-md border border-border text-foreground hover:bg-lightprimary transition"
-          >
-            {cancelText}
-          </button>
-
-          {/* Confirm */}
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={loading}
-            className={cn(
-              'px-4 py-2 rounded-md text-white transition flex items-center gap-2',
-              isDestructive
-                ? 'bg-error hover:bg-erroremphasis'
-                : 'bg-primary hover:bg-primaryemphasis'
+            {description && (
+              <DialogDescription className="text-sm text-muted-foreground max-w-sm mx-auto">
+                {description}
+              </DialogDescription>
             )}
-          >
-            {loading && (
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            )}
-            {confirmText}
-          </button>
-        </DialogFooter>
+          </DialogHeader>
+
+          {/* Actions */}
+          <DialogFooter className="mt-6 flex justify-center gap-3">
+            <button
+              onClick={() => onOpenChange(false)}
+              className="px-4 py-2 rounded-md border border-border text-foreground hover:bg-lightprimary transition"
+            >
+              {cancelText}
+            </button>
+
+            <button
+              onClick={onConfirm}
+              className={cn(
+                'px-5 py-2 rounded-md text-white font-medium shadow-sm transition',
+                isDestructive
+                  ? 'bg-error hover:bg-erroremphasis'
+                  : 'bg-primary hover:bg-primaryemphasis'
+              )}
+            >
+              {confirmText}
+            </button>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

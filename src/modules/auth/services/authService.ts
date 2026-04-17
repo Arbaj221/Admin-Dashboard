@@ -6,6 +6,6 @@ interface LoginPayload {
 }
 
 export const loginUser = async (payload: LoginPayload) => {
-  const res = await apiClient.post("/api/v1/auth/login", payload);
+  const res = await apiClient.post("/auth/login", payload);
   return res.data;
 };

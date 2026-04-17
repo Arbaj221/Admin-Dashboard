@@ -1,5 +1,6 @@
 import userImg from '../../assets/images/profile/user-1.jpg';
 import supportImg from '../../assets/images/dashboard/customer-support-img.png';
+import { toast } from 'sonner';
 
 const Moderndash = () => {
     return (
@@ -23,6 +24,9 @@ const Moderndash = () => {
                     </div>
                 </div>
 
+                <button onClick={() => toast.success('Saved successfully!')}>
+                    Toast
+                </button>
 
             </div>
 

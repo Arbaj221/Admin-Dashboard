@@ -6,17 +6,37 @@ import { Checkbox } from "src/components/ui/checkbox";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
 
+import { loginUser } from "./services/authService";
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/"
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    localStorage.setItem("isAuth", "true");
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.currentTarget);
+
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  try {
+    const data = await loginUser({
+      username: email, // 🔥 mapping email → username
+      password,
+    });
+
+    // 👉 store token (adjust based on backend response)
+    localStorage.setItem("access_token", data.access_token);
+
     navigate(from, { replace: true });
-  };
+
+  } catch (err: any) {
+    console.error(err.message);
+  }
+};
 
   return (
     <div className="min-h-screen flex">
@@ -58,12 +78,12 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" required className="mt-2" />
+              <Input id="email" name="email" type="email" required className="mt-2" />
             </div>
 
             <div className="mb-4">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required className="mt-2" />
+              <Input id="password" name="password" type="password" required className="mt-2" />
             </div>
 
             <div className="flex justify-between items-center my-5">
