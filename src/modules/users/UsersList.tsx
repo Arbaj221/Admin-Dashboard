@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import UsersTable from './components/table';
@@ -6,6 +6,7 @@ import CardBox from 'src/components/shared/CardBox';
 import { usersData as initialData, User } from './types-data/users';
 import UserFormDialog from './components/UserFormDialog';
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
+import { userService } from './services/userService';
 
 const UsersList = () => {
   const [users, setUsers] = useState<User[]>(initialData);
@@ -14,6 +15,13 @@ const UsersList = () => {
   const [selectedUser, setSelectedUser] = useState<User | undefined>();
   const confirm = useConfirm();
 
+  const loadUsers = async () => {
+    const data = await userService.getUsers();
+    console.log('Loaded users:', data);
+  };
+  useEffect(() => {
+    loadUsers();
+  }, []);
   const BCrumb = [
     { to: '/', title: 'Home' },
     { title: 'Users' },

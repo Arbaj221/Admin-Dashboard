@@ -1,80 +1,86 @@
 import { Link, useLocation, useNavigate } from "react-router";
-import FullLogo from "src/assets/images/logos/FullLogo";
+import { toast } from "sonner";
+import { useState } from "react";
 
+import FullLogo from "src/assets/images/logos/FullLogo";
 import { Button } from "src/components/ui/button";
 import { Checkbox } from "src/components/ui/checkbox";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
 
-import { loginUser } from "./services/authService";
+import { authService } from "./services/authService";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/"
+  const [loading, setLoading] = useState(false);
 
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+  const from = location.state?.from?.pathname || "/";
 
-  const formData = new FormData(e.currentTarget);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-  try {
-    const data = await loginUser({
-      username: email, // 🔥 mapping email → username
-      password,
-    });
+    try {
+      setLoading(true);
 
-    // 👉 store token (adjust based on backend response)
-    localStorage.setItem("access_token", data.access_token);
+      const data = await authService.login({
+        username: email,
+        password,
+      });
 
-    navigate(from, { replace: true });
+      // ✅ store token
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("is_auth", "true");
 
-  } catch (err: any) {
-    console.error(err.message);
-  }
-};
+      // ✅ success toast
+      toast.success("Welcome back! 🎉");
+
+      navigate(from, { replace: true });
+
+    } catch (err) {
+      // ❌ no toast here (handled in apiClient)
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex">
-      {/* LEFT SIDE - FORM */}
+      {/* LEFT SIDE */}
       <div className="hidden md:flex w-3/5 bg-lightprimary items-center justify-center p-10">
         <div className="max-w-md text-center">
           <h2 className="text-3xl font-bold mb-4">
             Manage your business smarter 🚀
           </h2>
           <p className="text-bodytext mb-6">
-            Access powerful tools, analytics, and insights to grow your
-            business faster and more efficiently.
+            Access powerful tools, analytics, and insights to grow your business.
           </p>
 
           <div className="bg-white/40 backdrop-blur-md rounded-xl p-6 shadow-md">
             <p className="text-sm text-dark">
-              “This dashboard completely changed how we manage our workflow.
-              Everything is faster and more organized.”
+              “This dashboard changed how we work.”
             </p>
           </div>
         </div>
       </div>
 
-      {/* RIGHT SIDE - INFO PANEL */}
+      {/* RIGHT SIDE */}
       <div className="w-full md:w-2/5 flex items-center justify-center px-6 bg-background">
         <div className="w-full max-w-md">
-          {/* Logo */}
           <div className="mb-8">
             <FullLogo />
           </div>
 
-          {/* Heading */}
           <h2 className="text-2xl font-semibold mb-2">Welcome Back 👋</h2>
           <p className="text-muted-foreground mb-6">
-            Sign in to continue to your dashboard
+            Sign in to continue
           </p>
 
-          {/* Form */}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <Label htmlFor="email">Email</Label>
@@ -99,12 +105,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full">
-              Sign in
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
 
-          {/* Footer */}
           <div className="flex gap-2 text-sm mt-6 justify-center">
             <p className="text-muted-foreground">New here?</p>
             <Link to="/register" className="text-primary font-medium">

@@ -13,6 +13,9 @@ import SentinelJobsRoute from 'src/modules/sentinel/jobs/routes';
 import SentinelCampaignsRoute from 'src/modules/sentinel/campaigns/routes';
 import CampaignOpcRoutes from 'src/modules/campaigns/campaignOpsView/routes';
 import CampaignRoutes from 'src/modules/campaigns/manageCampaigns/routes';
+import rolesRoutes from 'src/modules/admin/roles/routes';
+import departmentsRoutes from 'src/modules/admin/departments/routes';
+import permissionsRoutes from 'src/modules/admin/permissions/routes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
@@ -37,6 +40,9 @@ const Router = [
       ...SentinelCampaignsRoute,
       ...SentinelJobsRoute,
       ...CampaignOpcRoutes,
+      ...rolesRoutes,
+      ...departmentsRoutes,
+      ...permissionsRoutes,
       { path: '/user-profile', exact: true, element: <UserProfile /> },
       { path: '/sample-page', exact: true, element: <SamplePage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },

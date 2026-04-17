@@ -51,7 +51,32 @@ const SidebarContent: MenuItem[] = [
         name: 'Users',
         icon: 'mdi:account-group-outline', // group of users
         id: uniqueId(),
-        url: '/users',
+        children:[
+            {
+            id: uniqueId(),
+            name: 'Manage Users',
+            icon: 'mdi:cog-outline',
+            url: '/users',
+          },
+          {
+            id: uniqueId(),
+            name: 'Roles',
+            icon: 'mdi:cog-outline',
+            url: '/admin/roles',
+          },
+          {
+            id: uniqueId(),
+            name: 'Departments',
+            icon: 'mdi:cog-outline',
+            url: '/admin/departments',
+          },
+          {
+            id: uniqueId(),
+            name: 'Permissions',
+            icon: 'mdi:cog-outline',
+            url: '/admin/permissions',
+          },
+        ]
       },
     ],
   },

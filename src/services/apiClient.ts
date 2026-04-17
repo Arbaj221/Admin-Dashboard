@@ -1,87 +1,50 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import axios from 'axios';
+import { toast } from 'sonner';
 
-/**
- * Create Axios Instance
- */
-const apiClient: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
-    timeout: 15000,
-    headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json",
-    },
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-/**
- * Request Interceptor
- * - Attach token
- * - Attach custom headers (future: tenant, locale, etc.)
- */
-apiClient.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("access_token");
+// 👉 REQUEST INTERCEPTOR (attach token)
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
 
-        if (token && config.headers) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+  return config;
+});
 
-/**
- * Response Interceptor
- * - Handle global errors
- * - Normalize error response
- */
+// 👉 RESPONSE INTERCEPTOR
 apiClient.interceptors.response.use(
-    (response: AxiosResponse) => {
-        return response;
-    },
-    async (error: AxiosError<any>) => {
-        const status = error.response?.status;
+  (response) => response,
 
-        // 🔹 Normalize error object
-        const normalizedError = {
-            message:
-                error.response?.data?.message ||
-                error.message ||
-                "Something went wrong",
-            status: status || 0,
-            data: error.response?.data || null,
-        };
+  (error) => {
+    const status = error?.response?.status;
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      'Something went wrong';
 
-        // 🔥 Global Error Handling Strategy
-        switch (status) {
-            case 401:
-                // TODO: Add refresh token logic later
-                // For now: clear session
-                localStorage.removeItem("access_token");
-                // Optional: redirect (handled outside ideally)
-                break;
+    const method = error?.config?.method?.toLowerCase();
 
-            case 403:
-                console.warn("Forbidden: You don’t have permission.");
-                break;
-
-            case 404:
-                console.warn("Resource not found.");
-                break;
-
-            case 500:
-                console.error("Server error. Please try again later.");
-                break;
-
-            default:
-                if (!status) {
-                    console.error("Network error / Server unreachable");
-                }
-                break;
-        }
-
-        return Promise.reject(normalizedError);
+    // 🚨 401 → logout + redirect
+    if (status === 401) {
+      localStorage.removeItem('access_token');
+      window.location.href = '/login';
     }
+
+    // 🔔 Show toast ONLY for non-GET
+    if (method !== 'get') {
+      toast.error(message);
+    }
+
+    return Promise.reject(error);
+  }
 );
 
 export default apiClient;
