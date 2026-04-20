@@ -38,7 +38,7 @@ const SidebarContent: MenuItem[] = [
     children: [
       {
         name: 'Dashboard',
-        icon: 'mdi:view-dashboard-outline', // better dashboard icon
+        icon: 'lucide:layout-dashboard',
         id: uniqueId(),
         url: '/',
       },
@@ -48,53 +48,53 @@ const SidebarContent: MenuItem[] = [
     heading: 'Admin',
     children: [
       {
-        name: 'Users',
-        icon: 'mdi:account-group-outline', // group of users
+        name: 'User Management',
+        icon: 'lucide:users',
         id: uniqueId(),
-        children:[
-            {
+        children: [
+          {
             id: uniqueId(),
-            name: 'Manage Users',
-            icon: 'mdi:cog-outline',
+            name: 'All Users',
+            icon: 'lucide:user',
             url: '/users',
           },
           {
             id: uniqueId(),
-            name: 'Roles',
-            icon: 'mdi:cog-outline',
+            name: 'Roles & Access',
+            icon: 'lucide:shield-check',
             url: '/admin/roles',
           },
           {
             id: uniqueId(),
             name: 'Departments',
-            icon: 'mdi:cog-outline',
+            icon: 'lucide:building-2',
             url: '/admin/departments',
           },
-          {
-            id: uniqueId(),
-            name: 'Permissions',
-            icon: 'mdi:cog-outline',
-            url: '/admin/permissions',
-          },
-          {
-            id: uniqueId(),
-            name: 'RDP',
-            icon: 'mdi:cog-outline',
-            url: '/admin/rdp',
-          },
-          {
-            id: uniqueId(),
-            name: 'User Department',
-            icon: 'mdi:cog-outline',
-            url: '/admin/userdepartment',
-          },
-          {
-            id: uniqueId(),
-            name: 'User Permission',
-            icon: 'mdi:cog-outline',
-            url: '/admin/userpermission',
-          },
-        ]
+          // {
+          //   id: uniqueId(),
+          //   name: 'Permissions',
+          //   icon: 'lucide:lock-keyhole',
+          //   url: '/admin/permissions',
+          // },
+          // {
+          //   id: uniqueId(),
+          //   name: 'RDP',
+          //   icon: 'lucide:monitor',
+          //   url: '/admin/rdp',
+          // },
+          // {
+          //   id: uniqueId(),
+          //   name: 'User Department',
+          //   icon: 'lucide:user-plus',
+          //   url: '/admin/userdepartment',
+          // },
+          // {
+          //   id: uniqueId(),
+          //   name: 'User Permission',
+          //   icon: 'lucide:user-lock',
+          //   url: '/admin/userpermission',
+          // },
+        ],
       },
     ],
   },
@@ -104,30 +104,30 @@ const SidebarContent: MenuItem[] = [
       {
         name: 'Clients',
         id: uniqueId(),
-        icon: 'mdi:account-tie-outline', // business client
+        icon: 'lucide:briefcase',
         url: '/clients',
       },
       {
         name: 'Vendors',
         id: uniqueId(),
-        icon: 'mdi:store-outline', // vendor/shop
+        icon: 'lucide:store',
         url: '/vendors',
       },
       {
-        name: 'Campaign',
+        name: 'Campaigns',
         id: uniqueId(),
-        icon: 'mdi:bullhorn-outline', // marketing campaign
+        icon: 'lucide:megaphone',
         children: [
           {
             id: uniqueId(),
-            name: 'Manage Campaign',
-            icon: 'mdi:cog-outline',
+            name: 'All Campaigns',
+            icon: 'lucide:list',
             url: '/campaigns',
           },
           {
             id: uniqueId(),
-            name: 'Campaign Ops View',
-            icon: 'mdi:eye-outline',
+            name: 'Ops View',
+            icon: 'lucide:eye',
             url: '/campaigns-ops-view',
           },
         ],
@@ -140,30 +140,30 @@ const SidebarContent: MenuItem[] = [
       {
         name: 'Sentinel',
         id: uniqueId(),
-        icon: 'mdi:shield-check-outline', // monitoring / protection
+        icon: 'lucide:shield',
         children: [
           {
             id: uniqueId(),
             name: 'Batches',
-            icon: 'mdi:layers-outline',
+            icon: 'lucide:layers',
             url: '/sentinel-batches',
           },
           {
             id: uniqueId(),
             name: 'Jobs',
-            icon: 'mdi:briefcase-outline',
+            icon: 'lucide:play-circle',
             url: '/sentinel-jobs',
           },
           {
             id: uniqueId(),
             name: 'Campaigns',
-            icon: 'mdi:bullhorn-outline',
+            icon: 'lucide:bar-chart-2',
             url: '/sentinel-campaigns',
           },
         ],
       },
     ],
-  }
+  },
 ];
 
 export default SidebarContent;

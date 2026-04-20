@@ -7,21 +7,56 @@ import { userService, User } from './services/userService';
 import UserFormDialog from './components/UserFormDialog';
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
 import { toast } from 'sonner';
+import { rolesService, Role } from 'src/modules/admin/roles/services/rolesService';
+import { departmentService, Department } from 'src/modules/admin/departments/services/departmentService';
+import ChangePasswordDialog from './components/passwordDialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from 'src/components/ui/dialog';
+
 
 const UsersList = () => {
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [permissionOpen, setPermissionOpen] = useState(false);
+  const [activeUser, setActiveUser] = useState<User | null>(null);
   const confirm = useConfirm();
+  const handleChangePassword = (user: User) => {
+    setActiveUser(user);
+    setPasswordOpen(true);
+  };
 
+  const handlePermission = (user: User) => {
+    setActiveUser(user);
+    setPermissionOpen(true);
+  };
   const loadUsers = async () => {
     const data = await userService.getUsers();
     setUsers(data);
   };
 
   useEffect(() => {
-    loadUsers();
+    const loadAll = async () => {
+      const [usersData, rolesData, deptData] = await Promise.all([
+        userService.getUsers(),
+        rolesService.getRoles(),
+        departmentService.getDepartments(),
+      ]);
+
+      setUsers(usersData);
+      setRoles(rolesData);
+      setDepartments(deptData);
+    };
+
+    loadAll();
   }, []);
 
   const BCrumb = [
@@ -34,9 +69,11 @@ const UsersList = () => {
     setDialogOpen(true);
   };
 
-  const openEdit = (user: User) => {
+  const openEdit = async (user: User) => {
+    const fullUser = await userService.getUserById(user.id);
+
     setDialogMode('edit');
-    setSelectedUser(user);
+    setSelectedUser(fullUser); // ✅ full data
     setDialogOpen(true);
   };
 
@@ -74,8 +111,12 @@ const UsersList = () => {
 
         <UsersTable
           users={users}
+          roles={roles}
+          departments={departments}
           onEdit={openEdit}
           onDelete={handleDelete}
+          onChangePassword={handleChangePassword}
+          onPermission={handlePermission}
         />
       </CardBox>
 
@@ -88,6 +129,22 @@ const UsersList = () => {
         mode={dialogMode}
         user={selectedUser || undefined}
       />
+      <ChangePasswordDialog
+        open={passwordOpen}
+        onClose={() => setPasswordOpen(false)}
+        userId={activeUser?.id}
+      />
+      <Dialog open={permissionOpen} onOpenChange={(v) => !v && setPermissionOpen(false)}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Permissions</DialogTitle>
+    </DialogHeader>
+
+    <p className="text-sm text-muted-foreground">
+      Coming soon 🚧
+    </p>
+  </DialogContent>
+</Dialog>
     </>
   );
 };

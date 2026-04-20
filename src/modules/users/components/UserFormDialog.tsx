@@ -30,14 +30,16 @@ const UserFormDialog = ({ open, onClose, mode, user }: UserFormDialogProps) => {
           initialData={
             user
               ? {
-                  id: user.id,
-                  username: user.username,
-                  email: user.email,
-                  mobileNumber: user.mobileNumber,
-                  jobTitle: user.jobTitle,
-                  workLocation: user.workLocation,
-                  roleId: user.roleId,
-                }
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                mobileNumber: user.mobileNumber,
+                jobTitle: user.jobTitle,
+                workLocation: user.workLocation,
+                roleId: user.roleId,
+                departmentIds: user.departmentIds, // ✅ ADD THIS
+                isActive: user.isActive,
+              }
               : undefined
           }
         />
