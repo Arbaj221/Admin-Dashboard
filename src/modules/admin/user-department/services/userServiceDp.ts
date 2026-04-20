@@ -9,7 +9,7 @@ export interface User {
 export const usersService = {
     // 👉 GET users
     async getUsers(): Promise<User[]> {
-        const res = await apiClient.get('/auth/users');
+        const res = await apiClient.get('/users');
         return res.data;
     },
 };

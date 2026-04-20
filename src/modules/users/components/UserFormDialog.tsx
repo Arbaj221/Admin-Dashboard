@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from 'src/components/ui/dialog';
 import UserForm from './form';
-import { User } from '../types-data/users';
+import { User } from '../services/userService';
 
 interface UserFormDialogProps {
   open: boolean;
@@ -19,20 +19,27 @@ const UserFormDialog = ({ open, onClose, mode, user }: UserFormDialogProps) => {
     <Dialog open={open} onOpenChange={(val) => { if (!val) onClose(); }}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Create User' : 'Edit User'}</DialogTitle>
+          <DialogTitle>
+            {mode === 'create' ? 'Create User' : 'Edit User'}
+          </DialogTitle>
         </DialogHeader>
+
         <UserForm
           mode={mode}
           onSuccess={onClose}
-          initialData={user ? {
-            firstName:  user.firstName,
-            lastName:   user.lastName,
-            username:   user.username,
-            email:      user.email,
-            jobTitle:   user.jobTitle,
-            department: user.department,
-            role:       user.role,
-          } : undefined}
+          initialData={
+            user
+              ? {
+                  id: user.id,
+                  username: user.username,
+                  email: user.email,
+                  mobileNumber: user.mobileNumber,
+                  jobTitle: user.jobTitle,
+                  workLocation: user.workLocation,
+                  roleId: user.roleId,
+                }
+              : undefined
+          }
         />
       </DialogContent>
     </Dialog>

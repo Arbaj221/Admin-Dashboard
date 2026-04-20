@@ -1,24 +1,14 @@
 import { RouteObject } from 'react-router-dom';
-import UsersList from './UsersList';
+import UsersList from './list';
 import UserDetails from './details';
-import CreateUser from './create';
-import EditUser from './edit';
 
 const userRoutes: RouteObject[] = [
   {
     path: '/users',
     element: <UsersList />,
   },
-   {
-    path: '/users/create',
-    element: <CreateUser />,
-  },
   {
-    path: '/users/edit/:id',
-    element: <EditUser />,
-  },
-  {
-    path: '/users/details',
+    path: '/users/details/:id',
     element: <UserDetails />,
   },
 ];

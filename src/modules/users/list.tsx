@@ -3,31 +3,44 @@ import { Icon } from '@iconify/react';
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import UsersTable from './components/table';
 import CardBox from 'src/components/shared/CardBox';
-import { usersData as initialData, User } from './types-data/users';
+import { userService, User } from './services/userService';
 import UserFormDialog from './components/UserFormDialog';
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
-import { userService } from './services/userService';
+import { toast } from 'sonner';
 
 const UsersList = () => {
-  const [users, setUsers] = useState<User[]>(initialData);
+  const [users, setUsers] = useState<User[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
-  const [selectedUser, setSelectedUser] = useState<User | undefined>();
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const confirm = useConfirm();
 
   const loadUsers = async () => {
     const data = await userService.getUsers();
-    console.log('Loaded users:', data);
+    setUsers(data);
   };
+
   useEffect(() => {
     loadUsers();
   }, []);
+
   const BCrumb = [
     { to: '/', title: 'Home' },
     { title: 'Users' },
   ];
 
-  const handleDelete = async (id: number) => {
+  const openCreate = () => {
+    setDialogMode('create');
+    setDialogOpen(true);
+  };
+
+  const openEdit = (user: User) => {
+    setDialogMode('edit');
+    setSelectedUser(user);
+    setDialogOpen(true);
+  };
+
+  const handleDelete = async (user: User) => {
     const ok = await confirm({
       title: 'Delete user?',
       description: 'This action cannot be undone.',
@@ -37,20 +50,10 @@ const UsersList = () => {
 
     if (!ok) return;
 
-    setUsers(prev => prev.filter(u => u.id !== id));
-  };
+    await userService.deleteUser(user.id);
+    toast.success('User deleted');
 
-
-  const openCreate = () => {
-    setDialogMode('create');
-    setSelectedUser(undefined);
-    setDialogOpen(true);
-  };
-
-  const openEdit = (user: User) => {
-    setDialogMode('edit');
-    setSelectedUser(user);
-    setDialogOpen(true);
+    loadUsers();
   };
 
   return (
@@ -69,14 +72,21 @@ const UsersList = () => {
           </button>
         </div>
 
-        <UsersTable users={users} onDelete={handleDelete} onEdit={openEdit} />
+        <UsersTable
+          users={users}
+          onEdit={openEdit}
+          onDelete={handleDelete}
+        />
       </CardBox>
 
       <UserFormDialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        onClose={() => {
+          setDialogOpen(false);
+          loadUsers();
+        }}
         mode={dialogMode}
-        user={selectedUser}
+        user={selectedUser || undefined}
       />
     </>
   );
