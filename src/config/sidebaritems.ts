@@ -70,12 +70,12 @@ const SidebarContent: MenuItem[] = [
             icon: 'lucide:building-2',
             url: '/admin/departments',
           },
-          // {
-          //   id: uniqueId(),
-          //   name: 'Permissions',
-          //   icon: 'lucide:lock-keyhole',
-          //   url: '/admin/permissions',
-          // },
+          {
+            id: uniqueId(),
+            name: 'Module Permissions',
+            icon: 'lucide:lock-keyhole',
+            url: '/admin/module-permissions',
+          },
           // {
           //   id: uniqueId(),
           //   name: 'RDP',

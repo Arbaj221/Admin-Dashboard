@@ -9,6 +9,7 @@ import {
 import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
+import { capitalizeFirst } from 'src/utils/format';
 
 interface RoleUI {
   id: number;
@@ -57,7 +58,7 @@ const RolesTable = ({ roles, onEdit, onDelete }: Props) => {
                 <TableCell className="text-center">{role.id}</TableCell>
 
                 <TableCell className="text-center font-medium">
-                  {role.name}
+                  {capitalizeFirst(role.name)}
                 </TableCell>
 
                 <TableCell className="text-center">
@@ -65,11 +66,11 @@ const RolesTable = ({ roles, onEdit, onDelete }: Props) => {
                 </TableCell>
 
                 <TableCell className="text-center">
-                  {role.createdByEmail}
+                  {capitalizeFirst(role.createdByEmail)}
                 </TableCell>
 
                 <TableCell className="text-center">
-                  {role.updatedByEmail}
+                  {capitalizeFirst(role.updatedByEmail)}
                 </TableCell>
 
                 <TableCell className="text-center">

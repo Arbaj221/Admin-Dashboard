@@ -20,8 +20,8 @@ export const departmentService = {
       isActive: item.is_active,
       createdBy: item.created_by,
       updatedBy: item.updated_by,
-      createdAt: new Date(item.created_at).toLocaleString(),
-      updatedAt: new Date(item.updated_at).toLocaleString(),
+      createdAt: new Date(item.created_at).toLocaleDateString(),
+      updatedAt: new Date(item.updated_at).toLocaleDateString(),
     }));
   },
 

@@ -23,6 +23,7 @@ import { User } from '../services/userService';
 import { Role } from 'src/modules/admin/roles/services/rolesService';
 import { Department } from 'src/modules/admin/departments/services/departmentService';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
+import { capitalizeFirst } from 'src/utils/format';
 
 interface Props {
   users: User[];
@@ -45,13 +46,14 @@ const UsersTable = ({
 }: Props) => {
   const navigate = useNavigate();
 
-  const getRoleName = (roleId: number) =>
-    roles.find((r) => r.id === roleId)?.name || 'N/A';
-
+const getRoleName = (roleId: number) => {
+  const role = roles.find((r) => r.id === roleId);
+  return role ? capitalizeFirst(role.name) : 'N/A';
+};
   const getDepartmentNames = (ids: number[]) =>
     departments
       .filter((d) => ids.includes(d.id))
-      .map((d) => d.name);
+      .map((d) => capitalizeFirst(d.name));
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -98,7 +100,7 @@ const UsersTable = ({
 
                     {/* Email */}
                     <TableCell className="text-center">
-                      {user.email}
+                      {capitalizeFirst(user.email)}
                     </TableCell>
 
                     {/* Mobile */}
@@ -108,7 +110,7 @@ const UsersTable = ({
 
                     {/* Job */}
                     <TableCell className="text-center">
-                      {user.jobTitle}
+                      {capitalizeFirst(user.jobTitle)}
                     </TableCell>
 
                     {/* Role */}

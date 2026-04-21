@@ -4,6 +4,7 @@ import {
 import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
+import { capitalizeFirst } from 'src/utils/format';
 
 interface DepartmentUI {
   id: number;
@@ -50,14 +51,14 @@ const DepartmentsTable = ({ departments, onEdit, onDelete }: Props) => {
               <TableRow key={d.id} className="even:bg-lightprimary/80">
 
                 <TableCell className="text-center">{d.id}</TableCell>
-                <TableCell className="text-center font-medium">{d.name}</TableCell>
+                <TableCell className="text-center font-medium">{capitalizeFirst(d.name)}</TableCell>
 
                 <TableCell className="text-center">
                   <StatusBadge value={d.isActive ? 'Active' : 'Inactive'} />
                 </TableCell>
 
-                <TableCell className="text-center">{d.createdByEmail}</TableCell>
-                <TableCell className="text-center">{d.updatedByEmail}</TableCell>
+                <TableCell className="text-center">{capitalizeFirst(d.createdByEmail)}</TableCell>
+                <TableCell className="text-center">{capitalizeFirst(d.updatedByEmail)}</TableCell>
                 <TableCell className="text-center">{d.createdAt}</TableCell>
                 <TableCell className="text-center">{d.updatedAt}</TableCell>
 
