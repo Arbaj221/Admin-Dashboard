@@ -26,7 +26,6 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
   const [departments, setDepartments] = useState<Department[]>([]);
 
   const [form, setForm] = useState({
-    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -57,7 +56,6 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       setForm({
-        username: initialData.username,
         email: initialData.email,
         password: '',
         confirmPassword: '',
@@ -92,7 +90,7 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
 
   // 👉 submit
   const handleSubmit = async () => {
-    if (!form.username || !form.email || !form.role_id) {
+    if (!form.email || !form.role_id) {
       toast.error('Required fields missing');
       return;
     }
@@ -110,7 +108,6 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
     }
 
     const payload: any = {
-      username: form.username,
       email: form.email,
       mobile_number: form.mobile_number,
       job_title: form.job_title,
@@ -145,14 +142,6 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Username */}
-        <div>
-          <Label>Username *</Label>
-          <Input
-            value={form.username}
-            onChange={(e) => handleChange('username', e.target.value)}
-          />
-        </div>
 
         {/* Email */}
         <div>
@@ -234,6 +223,17 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
         </div>
 
         {/* Departments (Multi Select) */}
+        {/* Active */}
+        <div>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={form.is_active}
+              onChange={(e) => handleChange('is_active', e.target.checked)}
+            />
+            Active User
+          </label>
+        </div>
         <div>
           <Label>Departments</Label>
 
@@ -251,17 +251,6 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
           </div>
         </div>
 
-        {/* Active */}
-        <div>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={form.is_active}
-              onChange={(e) => handleChange('is_active', e.target.checked)}
-            />
-            Active User
-          </label>
-        </div>
       </div>
 
       {/* Actions */}
