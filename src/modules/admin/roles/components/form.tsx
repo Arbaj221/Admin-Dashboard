@@ -1,72 +1,85 @@
-// modules/roles/components/RoleForm.tsx
-
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
 import { Button } from 'src/components/ui/button';
+import { toast } from 'sonner';
+import { rolesService } from '../services/rolesService';
 
-interface RoleFormProps {
-    mode: 'create' | 'edit';
-    initialData?: { name: string };
-    onSuccess: (name: string) => void;
-    onCancel: () => void;
+interface Props {
+  mode: 'create' | 'edit';
+  initialData?: any;
+  onSuccess: () => void;
 }
 
-const RolesForm = ({ mode, initialData, onSuccess, onCancel }: RoleFormProps) => {
-    const [name, setName] = useState('');
-    const [error, setError] = useState('');
+const RoleForm = ({ mode, initialData, onSuccess }: Props) => {
+  const [name, setName] = useState('');
+  const [isActive, setIsActive] = useState(true);
 
-    useEffect(() => {
-        if (mode === 'edit' && initialData) {
-            setName(initialData.name);
-        }
-    }, [mode, initialData]);
+  useEffect(() => {
+    if (mode === 'edit' && initialData) {
+      setName(initialData.name);
+      setIsActive(initialData.isActive);
+    }
+  }, [mode, initialData]);
 
-    const handleSubmit = () => {
-        if (!name.trim()) {
-            setError('Role name is required');
-            return;
-        }
+  const handleSubmit = async () => {
+    if (!name.trim()) {
+      toast.error('Role name is required');
+      return;
+    }
 
-        onSuccess(name);
+    const payload = {
+      name,
+      is_active: isActive,
     };
 
-    return (
-        <>
-            <form onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-            }}>
-                <div>
-                    <Label>
-                        Role Name <span className="text-error">*</span>
-                    </Label>
-                    <Input
-                        placeholder="Enter role name"
-                        value={name}
-                        onChange={(e) => {
-                            setName(e.target.value);
-                            if (error) setError('');
-                        }}
-                        className={`mt-2 ${error ? 'border-error' : ''}`}
-                    />
-                    {error && <p className="text-xs text-error mt-1">{error}</p>}
-                </div>
+    try {
+      if (mode === 'create') {
+        await rolesService.createRole(payload);
+        toast.success('Role created 🎉');
+      } else {
+        await rolesService.patchRole(initialData.id, payload);
+        toast.success('Role updated ✏️');
+      }
 
-                <div className="flex justify-end gap-3 mt-6">
-                    <Button variant="outline" onClick={onCancel}>
-                        Cancel
-                    </Button>
-                    <Button
-                        type="submit"
-                        className="bg-primary hover:bg-primaryemphasis text-white"
-                    >
-                        {mode === 'create' ? 'Create Role' : 'Update Role'}
-                    </Button>
-                </div>
-            </form>
-        </>
-    );
+      onSuccess();
+    } catch {}
+  };
+
+  return (
+    <div className="space-y-4">
+
+      <div className="w-full">
+        <Label>Role Name *</Label>
+        <Input
+          className="w-full"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+
+      <div className="w-full">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+          />
+          Active Role
+        </label>
+      </div>
+
+      <div className="flex justify-end gap-3 pt-2">
+        <Button variant="outline" onClick={onSuccess}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit}>
+          {mode === 'create' ? 'Create' : 'Update'}
+        </Button>
+      </div>
+
+    </div>
+  );
 };
 
-export default RolesForm;
+export default RoleForm;

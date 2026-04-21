@@ -7,14 +7,9 @@ interface LoginPayload {
 
 export const authService = {
   async login(payload: LoginPayload) {
-    const params = new URLSearchParams();
-    params.append('username', payload.username);
-    params.append('password', payload.password);
-
-    const res = await apiClient.post('/auth/login', params, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+    const res = await apiClient.post('/auth/login', {
+      email: payload.username,
+      password: payload.password,
     });
 
     return res.data;

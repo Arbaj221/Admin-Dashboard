@@ -1,66 +1,84 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
 import { Button } from 'src/components/ui/button';
+import { toast } from 'sonner';
+import { departmentService } from '../services/departmentService';
 
-interface DepartmentFormProps {
+interface Props {
   mode: 'create' | 'edit';
-  initialData?: { name: string };
-  onSuccess: (name: string) => void;
-  onCancel: () => void;
+  initialData?: any;
+  onSuccess: () => void;
 }
 
-const DepartmentForm = ({ mode, initialData, onSuccess, onCancel }: DepartmentFormProps) => {
+const DepartmentForm = ({ mode, initialData, onSuccess }: Props) => {
   const [name, setName] = useState('');
-  const [error, setError] = useState('');
+  const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       setName(initialData.name);
+      setIsActive(initialData.isActive);
     }
   }, [mode, initialData]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) {
-      setError('Department name is required');
+      toast.error('Department name is required');
       return;
     }
 
-    onSuccess(name);
+    const payload = {
+      name,
+      is_active: isActive,
+    };
+
+    try {
+      if (mode === 'create') {
+        await departmentService.createDepartment(payload);
+        toast.success('Department created 🎉');
+      } else {
+        await departmentService.patchDepartment(initialData.id, payload);
+        toast.success('Department updated ✏️');
+      }
+
+      onSuccess();
+    } catch {}
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
-    >
-      <div>
-        <Label>
-          Department Name <span className="text-error">*</span>
-        </Label>
+    <div className="space-y-4">
+
+      <div className="w-full">
+        <Label>Department Name *</Label>
         <Input
-          placeholder="Enter department name"
+          className="w-full"
           value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-            if (error) setError('');
-          }}
-          className={`mt-2 ${error ? 'border-error' : ''}`}
+          onChange={(e) => setName(e.target.value)}
         />
-        {error && <p className="text-xs text-error mt-1">{error}</p>}
       </div>
 
-      <div className="flex justify-end gap-3 mt-6">
-        <Button type="button" variant="outline" onClick={onCancel}>
+      <div className="w-full">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+          />
+          Active Department
+        </label>
+      </div>
+
+      <div className="flex justify-end gap-3 pt-2">
+        <Button variant="outline" onClick={onSuccess}>
           Cancel
         </Button>
-        <Button type="submit" className="bg-primary hover:bg-primaryemphasis text-white">
-          {mode === 'create' ? 'Create Department' : 'Update Department'}
+        <Button onClick={handleSubmit}>
+          {mode === 'create' ? 'Create' : 'Update'}
         </Button>
       </div>
-    </form>
+
+    </div>
   );
 };
 

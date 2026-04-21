@@ -60,7 +60,7 @@ const SidebarContent: MenuItem[] = [
           },
           {
             id: uniqueId(),
-            name: 'Roles & Access',
+            name: 'Roles',
             icon: 'lucide:shield-check',
             url: '/admin/roles',
           },

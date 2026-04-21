@@ -1,10 +1,4 @@
-// modules/roles/RolesList.tsx
-
 import { useEffect, useState } from 'react';
-import { Icon } from '@iconify/react';
-import { toast } from 'sonner';
-import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
-
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CardBox from 'src/components/shared/CardBox';
 import {
@@ -17,68 +11,77 @@ import {
 import RolesTable from './components/table';
 import RoleForm from './components/form';
 import { rolesService, Role } from './services/rolesService';
+import { userService } from 'src/modules/users/services/userService';
+
+import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
+import { toast } from 'sonner';
+import { Icon } from '@iconify/react';
 
 const RolesList = () => {
   const [roles, setRoles] = useState<Role[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
-  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+  const [selected, setSelected] = useState<Role | null>(null);
 
   const confirm = useConfirm();
+
+  const loadAll = async () => {
+    const [rolesData, usersData] = await Promise.all([
+      rolesService.getRoles(),
+      userService.getUsers(),
+    ]);
+
+    setRoles(rolesData);
+    setUsers(usersData);
+  };
+
+  useEffect(() => {
+    loadAll();
+  }, []);
 
   const BCrumb = [
     { to: '/', title: 'Home' },
     { title: 'Roles' },
   ];
 
-  const loadRoles = async () => {
-    const data = await rolesService.getRoles();
-    setRoles(data);
+  const getUserEmail = (id?: number) => {
+    if (!id) return '—';
+    return users.find((u) => u.id === id)?.email || '—';
   };
 
-  useEffect(() => {
-    loadRoles();
-  }, []);
+  const mappedRoles = roles.map((role) => ({
+    ...role,
+    createdByEmail: getUserEmail(role.createdBy),
+    updatedByEmail: getUserEmail(role.updatedBy),
+  }));
 
-  // 👉 Create / Edit handler (no edit API yet)
-  const handleSubmit = async (name: string) => {
-    if (mode === 'create') {
-      await rolesService.createRole({ name });
-      await loadRoles();
-      toast.success('Role created successfully 🎉');
-    } else {
-      toast.info('Edit coming soon ✏️');
-    }
-
-    setOpen(false);
-  };
-
-  // 👉 Edit click
-  const handleEdit = (role: Role) => {
-    setMode('edit');
-    setSelectedRole(role);
+  const openCreate = () => {
+    setMode('create');
+    setSelected(null);
     setOpen(true);
   };
 
-  // 👉 Delete click
+  const openEdit = (role: Role) => {
+    setMode('edit');
+    setSelected(role);
+    setOpen(true);
+  };
+
   const handleDelete = async (role: Role) => {
     const ok = await confirm({
       title: 'Delete role?',
-      description: 'This action will be available soon.',
-      variant: 'destructive',
+      description: 'This action cannot be undone.',
       confirmText: 'Delete',
+      variant: 'destructive',
     });
 
     if (!ok) return;
 
-    toast.info('Delete coming soon 🚧');
-  };
-
-  // 👉 Create click
-  const handleCreate = () => {
-    setMode('create');
-    setSelectedRole(null);
-    setOpen(true);
+    await rolesService.deleteRole(role.id);
+    toast.success('Role deleted');
+    loadAll();
   };
 
   return (
@@ -90,8 +93,8 @@ const RolesList = () => {
           <h5 className="card-title">Roles List</h5>
 
           <button
-            onClick={handleCreate}
-            className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm px-4 py-2.5 rounded-md"
+            onClick={openCreate}
+            className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md"
           >
             <Icon icon="solar:add-circle-linear" width={18} />
             Create Role
@@ -99,15 +102,14 @@ const RolesList = () => {
         </div>
 
         <RolesTable
-          roles={roles}
-          onEdit={handleEdit}
+          roles={mappedRoles}
+          onEdit={openEdit}
           onDelete={handleDelete}
         />
       </CardBox>
 
-      {/* Dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md p-6">
+      <Dialog open={open} onOpenChange={(v) => !v && setOpen(false)}>
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
               {mode === 'create' ? 'Create Role' : 'Edit Role'}
@@ -116,9 +118,11 @@ const RolesList = () => {
 
           <RoleForm
             mode={mode}
-            initialData={selectedRole || undefined}
-            onSuccess={handleSubmit}
-            onCancel={() => setOpen(false)}
+            initialData={selected || undefined}
+            onSuccess={() => {
+              setOpen(false);
+              loadAll();
+            }}
           />
         </DialogContent>
       </Dialog>

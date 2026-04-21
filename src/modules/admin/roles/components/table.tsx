@@ -1,5 +1,3 @@
-// modules/roles/components/RolesTable.tsx
-
 import {
   Table,
   TableBody,
@@ -10,22 +8,37 @@ import {
 } from 'src/components/ui/table';
 import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
-import { Role } from '../services/rolesService';
+import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 
-interface RolesTableProps {
-  roles: Role[];
-  onEdit: (role: Role) => void;
-  onDelete: (role: Role) => void;
+interface RoleUI {
+  id: number;
+  name: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdByEmail: string;
+  updatedByEmail: string;
 }
 
-const RolesTable = ({ roles, onEdit, onDelete }: RolesTableProps) => {
+interface Props {
+  roles: RoleUI[];
+  onEdit: (role: any) => void;
+  onDelete: (role: any) => void;
+}
+
+const RolesTable = ({ roles, onEdit, onDelete }: Props) => {
   return (
     <div className="overflow-x-auto border border-border rounded-md">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="border-r border-border text-center">ID</TableHead>
-            <TableHead className="border-r border-border text-center">Name</TableHead>
+            <TableHead className="text-center">ID</TableHead>
+            <TableHead className="text-center">Name</TableHead>
+            <TableHead className="text-center">Status</TableHead>
+            <TableHead className="text-center">Created By</TableHead>
+            <TableHead className="text-center">Updated By</TableHead>
+            <TableHead className="text-center">Created At</TableHead>
+            <TableHead className="text-center">Updated At</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -33,30 +46,46 @@ const RolesTable = ({ roles, onEdit, onDelete }: RolesTableProps) => {
         <TableBody>
           {roles.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
+              <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                 No roles found.
               </TableCell>
             </TableRow>
           ) : (
             roles.map((role) => (
-              <TableRow
-                key={role.id}
-                className="hover:bg-lightprimary even:bg-lightprimary/80 text-center"
-              >
-                <TableCell className="border-r border-border text-sm">
-                  {role.id}
-                </TableCell>
+              <TableRow key={role.id} className="even:bg-lightprimary/80">
 
-                <TableCell className="border-r border-border text-sm font-medium">
+                <TableCell className="text-center">{role.id}</TableCell>
+
+                <TableCell className="text-center font-medium">
                   {role.name}
                 </TableCell>
 
-                <TableCell className='text-center'>
-                  <div className="flex items-center gap-2 text-center justify-center">
+                <TableCell className="text-center">
+                  <StatusBadge value={role.isActive ? 'Active' : 'Inactive'} />
+                </TableCell>
+
+                <TableCell className="text-center">
+                  {role.createdByEmail}
+                </TableCell>
+
+                <TableCell className="text-center">
+                  {role.updatedByEmail}
+                </TableCell>
+
+                <TableCell className="text-center">
+                  {role.createdAt}
+                </TableCell>
+
+                <TableCell className="text-center">
+                  {role.updatedAt}
+                </TableCell>
+
+                <TableCell className="text-center">
+                  <div className="flex justify-center gap-2">
+
                     <Button
                       size="sm"
                       variant="lightprimary"
-                      className="size-8! rounded-full"
                       onClick={() => onEdit(role)}
                     >
                       <Pencil className="size-4" />
@@ -65,13 +94,14 @@ const RolesTable = ({ roles, onEdit, onDelete }: RolesTableProps) => {
                     <Button
                       size="sm"
                       variant="lighterror"
-                      className="size-8! rounded-full"
                       onClick={() => onDelete(role)}
                     >
                       <Trash2 className="size-4" />
                     </Button>
+
                   </div>
                 </TableCell>
+
               </TableRow>
             ))
           )}

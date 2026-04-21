@@ -15,7 +15,7 @@ export interface User {
 
 export const userService = {
   async getUsers(): Promise<User[]> {
-    const res = await apiClient.get('/userauth');
+    const res = await apiClient.get('/users');
 
     return res.data.map((item: any) => ({
       id: item.id,
@@ -32,7 +32,7 @@ export const userService = {
   },
 
   async getUserById(id: number) {
-    const res = await apiClient.get(`/userauth/${id}`);
+    const res = await apiClient.get(`/users/${id}`);
     const item = res.data;
     return {
       id: item.id,
@@ -50,23 +50,22 @@ export const userService = {
   },
 
   async createUser(payload: any) {
-    const res = await apiClient.post('/userauth/', payload); // ✅ JSON
+    const res = await apiClient.post('/users/', payload); // ✅ JSON
     return res.data;
   },
 
   async updateUser(id: number, payload: any) {
-    const res = await apiClient.put(`/userauth/${id}`, payload); // ✅ JSON
+    const res = await apiClient.patch(`/users/${id}`, payload); // ✅ JSON
     return res.data;
   },
 
   async patchUser(id: number, payload: Record<string, any>) {
-    const res = await apiClient.patch(`/userauth/${id}`, payload);
+    const res = await apiClient.patch(`/users/${id}`, payload);
     return res.data;
   },
 
   async deleteUser(id: number) {
-    const res = await apiClient.delete(`/userauth/${id}`);
+    const res = await apiClient.delete(`/users/${id}`);
     return res.data;
   },
-
 };

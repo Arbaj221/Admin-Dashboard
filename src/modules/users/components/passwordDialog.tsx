@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,8 @@ import { Label } from 'src/components/ui/label';
 import { Button } from 'src/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
-import apiClient from 'src/services/apiClient';
+import { userService } from 'src/modules/users/services/userService';
+
 
 interface Props {
   open: boolean;
@@ -36,13 +37,21 @@ const ChangePasswordDialog = ({ open, onClose, userId }: Props) => {
       return;
     }
 
-    await apiClient.patch(`/userauth/${userId}`, {
+    await userService.patchUser(userId!, {
       password,
     });
 
     toast.success('Password updated');
     onClose();
   };
+
+  useEffect(() => {
+  if (!open) {
+    setPassword('');
+    setConfirm('');
+    setShow(false);
+  }
+}, [open]);
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
