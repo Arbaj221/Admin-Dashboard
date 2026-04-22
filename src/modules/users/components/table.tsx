@@ -1,5 +1,3 @@
-// modules/user/components/UsersTable.tsx
-
 import {
   Table,
   TableBody,
@@ -8,8 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from 'src/components/ui/table';
+
 import { Button } from 'src/components/ui/button';
-import { Pencil, Trash2, KeyRound, Lock } from 'lucide-react';
+import { Pencil, Trash2, Key, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 import {
@@ -46,14 +45,17 @@ const UsersTable = ({
 }: Props) => {
   const navigate = useNavigate();
 
-const getRoleName = (roleId: number) => {
-  const role = roles.find((r) => r.id === roleId);
-  return role ? capitalizeFirst(role.name) : 'N/A';
-};
-  const getDepartmentNames = (ids: number[]) =>
-    departments
-      .filter((d) => ids.includes(d.id))
-      .map((d) => capitalizeFirst(d.name));
+  // ✅ Role name
+  const getRoleName = (roleId: number) => {
+    const role = roles.find((r) => r.id === roleId);
+    return role ? capitalizeFirst(role.name) : 'N/A';
+  };
+
+  // ✅ Department name (single)
+  const getDepartmentName = (id: number) => {
+    const dept = departments.find((d) => d.id === id);
+    return dept ? capitalizeFirst(dept.name) : 'N/A';
+  };
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -66,7 +68,7 @@ const getRoleName = (roleId: number) => {
               <TableHead className="text-center">Mobile</TableHead>
               <TableHead className="text-center">Job Title</TableHead>
               <TableHead className="text-center">Role</TableHead>
-              <TableHead className="text-center">Departments</TableHead>
+              <TableHead className="text-center">Department</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Password</TableHead>
               <TableHead className="text-center">Permissions</TableHead>
@@ -77,119 +79,133 @@ const getRoleName = (roleId: number) => {
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                <TableCell
+                  colSpan={10}
+                  className="text-center py-8 text-muted-foreground"
+                >
                   No users found.
                 </TableCell>
               </TableRow>
             ) : (
-              users.map((user) => {
-                const deptNames = getDepartmentNames(user.departmentIds);
-                const shortText = deptNames.slice(0, 2).join(', ');
-                const fullText = deptNames.join(', ');
+              users.map((user) => (
+                <TableRow
+                  key={user.id}
+                  className="even:bg-lightprimary/80 cursor-pointer hover:bg-muted/50"
+                  onClick={() => navigate(`/users/details/${user.id}`)}
+                >
+                  {/* ID */}
+                  <TableCell className="text-center">
+                    {user.id}
+                  </TableCell>
 
-                return (
-                  <TableRow key={user.id} className="even:bg-lightprimary/80">
+                  {/* Email */}
+                  <TableCell className="text-center">
+                    {user.email}
+                  </TableCell>
 
-                    {/* ID */}
-                    <TableCell
-                      className="text-center cursor-pointer"
-                      onClick={() => navigate(`/users/details/${user.id}`)}
-                    >
-                      {user.id}
-                    </TableCell>
+                  {/* Mobile */}
+                  <TableCell className="text-center">
+                    {user.mobileNumber}
+                  </TableCell>
 
-                    {/* Email */}
-                    <TableCell className="text-center">
-                      {capitalizeFirst(user.email)}
-                    </TableCell>
+                  {/* Job */}
+                  <TableCell className="text-center">
+                    {capitalizeFirst(user.jobTitle)}
+                  </TableCell>
 
-                    {/* Mobile */}
-                    <TableCell className="text-center">
-                      {user.mobileNumber}
-                    </TableCell>
+                  {/* Role */}
+                  <TableCell className="text-center">
+                    {getRoleName(user.roleId)}
+                  </TableCell>
 
-                    {/* Job */}
-                    <TableCell className="text-center">
-                      {capitalizeFirst(user.jobTitle)}
-                    </TableCell>
+                  {/* Department */}
+                  <TableCell className="text-center">
+                    {getDepartmentName(user.departmentId)}
+                  </TableCell>
 
-                    {/* Role */}
-                    <TableCell className="text-center">
-                      {getRoleName(user.roleId)}
-                    </TableCell>
+                  {/* Status */}
+                  <TableCell className="text-center">
+                    <StatusBadge
+                      value={user.isActive ? 'Active' : 'Inactive'}
+                    />
+                  </TableCell>
 
-                    {/* Departments with Radix Tooltip */}
-                    <TableCell className="text-center">
-                      {deptNames.length > 2 ? (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="cursor-default whitespace-nowrap">
-                              {shortText}...
-                            </span>
-                          </TooltipTrigger>
-
-                          <TooltipContent side="top" className="text-xs max-w-xs">
-                            {fullText}
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : (
-                        <span className="whitespace-nowrap">
-                          {fullText}
-                        </span>
-                      )}
-                    </TableCell>
-
-                    {/* Status */}
-                    <TableCell className="text-center">
-                      <StatusBadge value={user.isActive ? 'Active' : 'Inactive'} />
-                    </TableCell>
-
-                    {/* Password */}
-                    <TableCell className="text-center">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => onChangePassword(user)}
-                      >
-                        <KeyRound className="size-4" />
-                      </Button>
-                    </TableCell>
-
-                    {/* Permissions */}
-                    <TableCell className="text-center">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => onPermission(user)}
-                      >
-                        <Lock className="size-4" />
-                      </Button>
-                    </TableCell>
-
-                    {/* Actions */}
-                    <TableCell className="text-center">
-                      <div className="flex justify-center gap-2">
+                  {/* Password */}
+                  <TableCell
+                    className="text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <Button
                           size="sm"
-                          variant="lightprimary"
-                          onClick={() => onEdit(user)}
+                          variant="outline"
+                          onClick={() => onChangePassword(user)}
                         >
-                          <Pencil className="size-4" />
+                          <Key className="size-4" />
                         </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Change Password</TooltipContent>
+                    </Tooltip>
+                  </TableCell>
 
+                  {/* Permissions */}
+                  <TableCell
+                    className="text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Tooltip>
+                      <TooltipTrigger asChild>
                         <Button
                           size="sm"
-                          variant="lighterror"
-                          onClick={() => onDelete(user)}
+                          variant="outline"
+                          onClick={() => onPermission(user)}
                         >
-                          <Trash2 className="size-4" />
+                          <ShieldCheck className="size-4" />
                         </Button>
-                      </div>
-                    </TableCell>
+                      </TooltipTrigger>
+                      <TooltipContent>Manage Permissions</TooltipContent>
+                    </Tooltip>
+                  </TableCell>
 
-                  </TableRow>
-                );
-              })
+                  {/* Actions */}
+                  <TableCell
+                    className="text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex justify-center gap-2">
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="lightprimary"
+                            onClick={() => onEdit(user)}
+                          >
+                            <Pencil className="size-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit</TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="lighterror"
+                            onClick={() => onDelete(user)}
+                          >
+                            <Trash2 className="size-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete</TooltipContent>
+                      </Tooltip>
+
+                    </div>
+                  </TableCell>
+
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

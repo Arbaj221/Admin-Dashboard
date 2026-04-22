@@ -7,16 +7,16 @@ import {
 import UserForm from './form';
 import { User } from '../services/userService';
 
-interface UserFormDialogProps {
+interface Props {
   open: boolean;
   onClose: () => void;
   mode: 'create' | 'edit';
   user?: User;
 }
 
-const UserFormDialog = ({ open, onClose, mode, user }: UserFormDialogProps) => {
+const UserFormDialog = ({ open, onClose, mode, user }: Props) => {
   return (
-    <Dialog open={open} onOpenChange={(val) => { if (!val) onClose(); }}>
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
@@ -30,16 +30,15 @@ const UserFormDialog = ({ open, onClose, mode, user }: UserFormDialogProps) => {
           initialData={
             user
               ? {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                mobileNumber: user.mobileNumber,
-                jobTitle: user.jobTitle,
-                workLocation: user.workLocation,
-                roleId: user.roleId,
-                departmentIds: user.departmentIds, // ✅ ADD THIS
-                isActive: user.isActive,
-              }
+                  id: user.id,
+                  email: user.email,
+                  mobileNumber: user.mobileNumber,
+                  jobTitle: user.jobTitle,
+                  workLocation: user.workLocation,
+                  roleId: user.roleId,
+                  departmentId: user.departmentId,
+                  isActive: user.isActive,
+                }
               : undefined
           }
         />

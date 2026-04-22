@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
-import UsersTable from './components/table';
 import CardBox from 'src/components/shared/CardBox';
-import { userService, User } from './services/userService';
+
+import UsersTable from './components/table';
 import UserFormDialog from './components/UserFormDialog';
-import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
-import { toast } from 'sonner';
-import { rolesService, Role } from 'src/modules/admin/roles/services/rolesService';
-import { departmentService, Department } from 'src/modules/admin/departments/services/departmentService';
 import ChangePasswordDialog from './components/passwordDialog';
+
 import {
   Dialog,
   DialogContent,
@@ -17,70 +14,69 @@ import {
   DialogTitle,
 } from 'src/components/ui/dialog';
 
+import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
+import { toast } from 'sonner';
+
+import { userService, User } from './services/userService';
+import { rolesService, Role } from 'src/modules/admin/roles/services/rolesService';
+import {
+  departmentService,
+  Department,
+} from 'src/modules/admin/departments/services/departmentService';
 
 const UsersList = () => {
+  const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [permissionOpen, setPermissionOpen] = useState(false);
   const [activeUser, setActiveUser] = useState<User | null>(null);
-  const confirm = useConfirm();
-  const handleChangePassword = (user: User) => {
-    setActiveUser(user);
-    setPasswordOpen(true);
-  };
 
-  const handlePermission = (user: User) => {
-    setActiveUser(user);
-    setPermissionOpen(true);
-  };
-  const loadUsers = async () => {
-    const data = await userService.getUsers();
-    setUsers(data);
+  const confirm = useConfirm();
+
+  // ✅ Load all data
+  const loadAll = async () => {
+    const [usersData, rolesData, deptData] = await Promise.all([
+      userService.getUsers(),
+      rolesService.getRoles(),
+      departmentService.getDepartments(),
+    ]);
+
+    setUsers(usersData);
+    setRoles(rolesData);
+    setDepartments(deptData);
   };
 
   useEffect(() => {
-    const loadAll = async () => {
-      const [usersData, rolesData, deptData] = await Promise.all([
-        userService.getUsers(),
-        rolesService.getRoles(),
-        departmentService.getDepartments(),
-      ]);
-
-      setUsers(usersData);
-      setRoles(rolesData);
-      setDepartments(deptData);
-    };
-
     loadAll();
   }, []);
 
-  const BCrumb = [
-    { to: '/', title: 'Home' },
-    { title: 'Users' },
-  ];
-
+  // ✅ Create
   const openCreate = () => {
     setDialogMode('create');
+    setSelectedUser(null);
     setDialogOpen(true);
   };
 
+  // ✅ Edit (fetch full user)
   const openEdit = async (user: User) => {
     const fullUser = await userService.getUserById(user.id);
 
     setDialogMode('edit');
-    setSelectedUser(fullUser); // ✅ full data
+    setSelectedUser(fullUser);
     setDialogOpen(true);
   };
 
+  // ✅ Delete (soft delete backend)
   const handleDelete = async (user: User) => {
     const ok = await confirm({
       title: 'Delete user?',
-      description: 'This action cannot be undone.',
+      description: 'User will be deactivated (soft delete).',
       confirmText: 'Delete',
       variant: 'destructive',
     });
@@ -90,16 +86,36 @@ const UsersList = () => {
     await userService.deleteUser(user.id);
     toast.success('User deleted');
 
-    loadUsers();
+    loadAll();
   };
+
+  // ✅ Password
+  const handleChangePassword = (user: User) => {
+    setActiveUser(user);
+    setPasswordOpen(true);
+  };
+
+  // ✅ Permission
+  const handlePermission = (user: User) => {
+    setActiveUser(user);
+    setPermissionOpen(true);
+  };
+
+  const BCrumb = [
+    { to: '/', title: 'Home' },
+    { title: 'Users' },
+  ];
 
   return (
     <>
       <SlimBreadcrumb title="Users" items={BCrumb} />
 
       <CardBox>
+
+        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h5 className="card-title">Users List</h5>
+
           <button
             onClick={openCreate}
             className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md transition-colors duration-150 cursor-pointer"
@@ -109,6 +125,7 @@ const UsersList = () => {
           </button>
         </div>
 
+        {/* Table */}
         <UsersTable
           users={users}
           roles={roles}
@@ -118,33 +135,42 @@ const UsersList = () => {
           onChangePassword={handleChangePassword}
           onPermission={handlePermission}
         />
+
       </CardBox>
 
+      {/* Create/Edit Dialog */}
       <UserFormDialog
         open={dialogOpen}
         onClose={() => {
           setDialogOpen(false);
-          loadUsers();
+          loadAll();
         }}
         mode={dialogMode}
         user={selectedUser || undefined}
       />
+
+      {/* Password Dialog */}
       <ChangePasswordDialog
         open={passwordOpen}
         onClose={() => setPasswordOpen(false)}
         userId={activeUser?.id}
       />
-      <Dialog open={permissionOpen} onOpenChange={(v) => !v && setPermissionOpen(false)}>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Permissions</DialogTitle>
-    </DialogHeader>
 
-    <p className="text-sm text-muted-foreground">
-      Coming soon 🚧
-    </p>
-  </DialogContent>
-</Dialog>
+      {/* Permission Dialog (separate component later if needed) */}
+      <Dialog
+        open={permissionOpen}
+        onOpenChange={(v) => !v && setPermissionOpen(false)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Permissions</DialogTitle>
+          </DialogHeader>
+
+          <p className="text-sm text-muted-foreground">
+            Coming soon 🚧
+          </p>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

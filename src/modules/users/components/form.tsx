@@ -33,71 +33,80 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
     job_title: '',
     work_location: '',
     role_id: '',
-    department_ids: [] as number[],
+    department_id: '',
     is_active: true,
   });
 
-  // 👉 load roles + departments
+  // ✅ Load dropdown data
   useEffect(() => {
-    const loadData = async () => {
-      const [rolesData, deptData] = await Promise.all([
+    const load = async () => {
+      const [r, d] = await Promise.all([
         rolesService.getRoles(),
         departmentService.getDepartments(),
       ]);
-
-      setRoles(rolesData);
-      setDepartments(deptData);
+      setRoles(r);
+      setDepartments(d);
     };
-
-    loadData();
+    load();
   }, []);
 
-  // 👉 prefill for edit
+  // ✅ Prefill (FIXED PROPERLY)
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       setForm({
-        email: initialData.email,
+        email: initialData.email || '',
         password: '',
         confirmPassword: '',
-        mobile_number: initialData.mobileNumber,
-        job_title: initialData.jobTitle,
-        work_location: initialData.workLocation,
-        role_id: String(initialData.roleId),
-        department_ids: (initialData.departmentIds || []).map(Number),
+        mobile_number: initialData.mobileNumber || '',
+        job_title: initialData.jobTitle || '',
+        work_location: initialData.workLocation || '',
+        role_id: String(initialData.roleId || ''),            // ✅ important
+        department_id: String(initialData.departmentId || ''),// ✅ important
         is_active: initialData.isActive ?? true,
       });
     }
   }, [mode, initialData]);
 
-  // 👉 change handler
+  // ✅ Re-sync role_id and department_id AFTER dropdowns load
+useEffect(() => {
+  if (mode === 'edit' && initialData && roles.length > 0 && departments.length > 0) {
+    setForm((prev) => ({
+      ...prev,
+      role_id: String(initialData.roleId || ''),
+      department_id: String(initialData.departmentId || ''),
+    }));
+  }
+}, [roles, departments]); // 👈 fires again once dropdowns are populated
+
   const handleChange = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  // 👉 toggle department
-  const toggleDepartment = (id: number) => {
-    setForm((prev) => {
-      const exists = prev.department_ids.includes(Number(id));
+  // ✅ diff logic
+  const getChangedFields = (original: any, current: any) => {
+    const diff: any = {};
 
-      return {
-        ...prev,
-        department_ids: exists
-          ? prev.department_ids.filter((d) => d !== Number(id))
-          : [...prev.department_ids, Number(id)],
-      };
+    Object.keys(current).forEach((key) => {
+      if (current[key] !== original[key]) {
+        diff[key] = current[key];
+      }
     });
+
+    return diff;
   };
 
-  // 👉 submit
-  const handleSubmit = async () => {
-    if (!form.email || !form.role_id) {
-      toast.error('Required fields missing');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // ✅ basic validation
+    if (!form.role_id || !form.department_id) {
+      toast.error('Role & Department required');
       return;
     }
 
     if (mode === 'create') {
-      if (!form.password || !form.confirmPassword) {
-        toast.error('Password required');
+      if (!form.email || !form.password || !form.confirmPassword) {
+        toast.error('Required fields missing');
         return;
       }
 
@@ -107,52 +116,77 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
       }
     }
 
-    const payload: any = {
-      email: form.email,
+    let payload: any = {
       mobile_number: form.mobile_number,
       job_title: form.job_title,
       work_location: form.work_location,
       role_id: Number(form.role_id),
-      department_ids: form.department_ids,
+      department_id: Number(form.department_id),
       is_active: form.is_active,
     };
 
-    // 👉 password handling
-    if (mode === 'create') {
-      payload.password = form.password;
-    } else if (form.password) {
-      payload.password = form.password;
-    }
-
     try {
       if (mode === 'create') {
+        payload.email = form.email;
+        payload.password = form.password;
+
         await userService.createUser(payload);
-        toast.success('User created 🎉');
+        toast.success('User created');
       } else {
+        // ✅ build original object
+        const original = {
+          mobile_number: initialData.mobileNumber,
+          job_title: initialData.jobTitle,
+          work_location: initialData.workLocation,
+          role_id: initialData.roleId,
+          department_id: initialData.departmentId,
+          is_active: initialData.isActive,
+        };
+
+        payload = getChangedFields(original, payload);
+
+        if (form.password) {
+          payload.password = form.password;
+        }
+
+        if (Object.keys(payload).length === 0) {
+          toast.info('No changes detected');
+          return;
+        }
+
         await userService.updateUser(initialData.id, payload);
-        toast.success('User updated ✏️');
+        toast.success('User updated');
       }
 
       onSuccess();
-    } catch (e) {
-      // handled globally
+
+    } catch (e: any) {
+      const status = e?.response?.status;
+      const message = e?.response?.data?.detail;
+
+      if (status === 409) {
+        toast.error(message);
+        return;
+      }
     }
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {/* Email */}
         <div>
           <Label>Email *</Label>
           <Input
             value={form.email}
+            disabled={mode === 'edit'} // ✅ locked in edit
             onChange={(e) => handleChange('email', e.target.value)}
           />
         </div>
 
-        {/* Password (create only) */}
+        {/* Password */}
         {mode === 'create' && (
           <>
             <div>
@@ -209,7 +243,7 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
             value={form.role_id}
             onValueChange={(v) => handleChange('role_id', v)}
           >
-            <SelectTrigger className='w-full'>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select role" />
             </SelectTrigger>
             <SelectContent>
@@ -222,48 +256,49 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
           </Select>
         </div>
 
-        {/* Departments (Multi Select) */}
-        {/* Active */}
+        {/* Department */}
         <div>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={form.is_active}
-              onChange={(e) => handleChange('is_active', e.target.checked)}
-            />
-            Active User
-          </label>
+          <Label>Department *</Label>
+          <Select
+            value={form.department_id}
+            onValueChange={(v) => handleChange('department_id', v)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select department" />
+            </SelectTrigger>
+            <SelectContent>
+              {departments.map((d) => (
+                <SelectItem key={d.id} value={String(d.id)}>
+                  {d.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <div>
-          <Label>Departments</Label>
 
-          <div className="border border-border rounded-md p-3 space-y-2 max-h-40 overflow-y-auto">
-            {departments.map((dept) => (
-              <label key={dept.id} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={form.department_ids.includes(dept.id)}
-                  onChange={() => toggleDepartment(dept.id)}
-                />
-                <span className="text-sm">{dept.name}</span>
-              </label>
-            ))}
-          </div>
+        {/* Active */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={form.is_active}
+            onChange={(e) => handleChange('is_active', e.target.checked)}
+          />
+          <span className="text-sm">Active User</span>
         </div>
 
       </div>
 
       {/* Actions */}
       <div className="flex justify-end gap-3">
-        <Button variant="outline" onClick={onSuccess}>
+        <Button type="button" variant="outline" onClick={onSuccess}>
           Cancel
         </Button>
-        <Button onClick={handleSubmit}>
+        <Button type="submit">
           {mode === 'create' ? 'Create' : 'Update'}
         </Button>
       </div>
 
-    </div>
+    </form>
   );
 };
 
