@@ -15,9 +15,7 @@ import CampaignOpcRoutes from 'src/modules/campaigns/campaignOpsView/routes';
 import CampaignRoutes from 'src/modules/campaigns/manageCampaigns/routes';
 import rolesRoutes from 'src/modules/admin/roles/routes';
 import departmentsRoutes from 'src/modules/admin/departments/routes';
-import permissionsRoutes from 'src/modules/admin/permissions/routes';
 import rdpRoutes from 'src/modules/admin/rdp/routes';
-import userDepartmentRoutes from 'src/modules/admin/user-department/routes';
 import userPermissionRoutes from 'src/modules/admin/user-permission/routes';
 import modulePermissionsRoutes from 'src/modules/admin/module-permissions/routes';
 
@@ -46,9 +44,7 @@ const Router = [
       ...CampaignOpcRoutes,
       ...rolesRoutes,
       ...departmentsRoutes,
-      ...permissionsRoutes,
       ...rdpRoutes,
-      ...userDepartmentRoutes,
       ...userPermissionRoutes,
       ...modulePermissionsRoutes,
       { path: '/user-profile', exact: true, element: <UserProfile /> },
