@@ -4,6 +4,14 @@ import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 
 import { userService } from 'src/modules/users/services/userService';
 import UserPermissionForm from './components/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from 'src/components/ui/select';
+import { Label } from 'src/components/ui/label';
 
 const UserPermissionList = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -33,26 +41,25 @@ const UserPermissionList = () => {
       <CardBox>
 
         {/* Select */}
-        <div className="">
-          <label className="text-sm text-muted-foreground mb-1 block">
-            User
-          </label>
+        <div>
+          <Label>User</Label>
 
-          <select
-            className="w-full h-10 px-3 rounded-md border border-border bg-background text-sm"
-            value={userId || ''}
-            onChange={(e) => setUserId(Number(e.target.value))}
+          <Select
+            value={userId ? String(userId) : ''}
+            onValueChange={(v) => setUserId(Number(v))}
           >
-            <option value="" disabled>
-              Select User
-            </option>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select User" />
+            </SelectTrigger>
 
-            {users.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.email}
-              </option>
-            ))}
-          </select>
+            <SelectContent>
+              {users.map((u) => (
+                <SelectItem key={u.id} value={String(u.id)}>
+                  {u.email}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Context */}

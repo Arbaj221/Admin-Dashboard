@@ -4,6 +4,14 @@ import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 
 import { rolesService } from 'src/modules/admin/roles/services/rolesService';
 import { departmentService } from 'src/modules/admin/departments/services/departmentService';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from 'src/components/ui/select';
+import { Label } from 'src/components/ui/label';
 
 import RDPForm from './components/form';
 
@@ -48,47 +56,45 @@ const RDPList = () => {
                 <div className="grid grid-cols-2 gap-4 mb-1">
 
                     {/* Role */}
-                    <div className="w-full">
-                        <label className="text-sm text-muted-foreground mb-1 block">
-                            Role
-                        </label>
-                        <select
-                            className="w-full h-10 px-3 rounded-md border border-border bg-background text-sm"
-                            value={roleId || ''}
-                            onChange={(e) => setRoleId(Number(e.target.value))}
+                    <div>
+                        <Label className='py-1'>Role</Label>
+                        <Select
+                            value={roleId ? String(roleId) : ''}
+                            onValueChange={(v) => setRoleId(Number(v))}
                         >
-                            <option value="" disabled>
-                                Select Role
-                            </option>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select Role" />
+                            </SelectTrigger>
 
-                            {roles.map((r) => (
-                                <option key={r.id} value={r.id}>
-                                    {r.name}
-                                </option>
-                            ))}
-                        </select>
+                            <SelectContent>
+                                {roles.map((r) => (
+                                    <SelectItem key={r.id} value={String(r.id)}>
+                                        {r.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Department */}
-                    <div className="w-full">
-                        <label className="text-sm text-muted-foreground mb-1 block">
-                            Department
-                        </label>
-                        <select
-                            className="w-full h-10 px-3 rounded-md border border-border bg-background text-sm"
-                            value={deptId || ''}
-                            onChange={(e) => setDeptId(Number(e.target.value))}
+                    <div>
+                        <Label className='py-1'>Department</Label>
+                        <Select
+                            value={deptId ? String(deptId) : ''}
+                            onValueChange={(v) => setDeptId(Number(v))}
                         >
-                            <option value="" disabled>
-                                Select Department
-                            </option>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select Department" />
+                            </SelectTrigger>
 
-                            {departments.map((d) => (
-                                <option key={d.id} value={d.id}>
-                                    {d.name}
-                                </option>
-                            ))}
-                        </select>
+                            <SelectContent>
+                                {departments.map((d) => (
+                                    <SelectItem key={d.id} value={String(d.id)}>
+                                        {d.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
 
                 </div>
