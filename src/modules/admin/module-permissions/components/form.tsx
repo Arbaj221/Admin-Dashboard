@@ -23,11 +23,11 @@ const ModulePermissionForm = ({ mode, initialData, onSuccess }: Props) => {
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       setForm({
-        module_name: initialData.moduleName,
-        menu_name: initialData.menuName,
-        permission_name: initialData.permissionName,
-        description: initialData.description,
-        is_active: initialData.isActive,
+        module_name: initialData.moduleName || '',
+        menu_name: initialData.menuName || '',
+        permission_name: initialData.permissionName || '',
+        description: initialData.description || '',
+        is_active: initialData.isActive ?? true,
       });
     }
   }, [mode, initialData]);
@@ -36,33 +36,77 @@ const ModulePermissionForm = ({ mode, initialData, onSuccess }: Props) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  // ✅ DIFF LOGIC (PATCH optimization)
+  const getChangedFields = (original: any, current: any) => {
+    const diff: any = {};
+
+    Object.keys(current).forEach((key) => {
+      if (current[key] !== original[key]) {
+        diff[key] = current[key];
+      }
+    });
+
+    return diff;
+  };
+
   const handleSubmit = async () => {
     if (!form.module_name || !form.permission_name) {
       toast.error('Required fields missing');
       return;
     }
 
+    let payload: any = {
+      module_name: form.module_name,
+      menu_name: form.menu_name,
+      permission_name: form.permission_name,
+      description: form.description,
+      is_active: form.is_active,
+    };
+
     try {
       if (mode === 'create') {
-        await modulePermissionService.create(form);
+        await modulePermissionService.create(payload);
         toast.success('Permission created');
       } else {
-        await modulePermissionService.patch(initialData.id, form);
+        // ✅ build original (camel → snake alignment)
+        const original = {
+          module_name: initialData.moduleName,
+          menu_name: initialData.menuName,
+          permission_name: initialData.permissionName,
+          description: initialData.description,
+          is_active: initialData.isActive,
+        };
+
+        payload = getChangedFields(original, payload);
+
+        if (Object.keys(payload).length === 0) {
+          toast.info('No changes detected');
+          return;
+        }
+
+        await modulePermissionService.patch(initialData.id, payload);
         toast.success('Permission updated');
       }
 
       onSuccess();
+
     } catch (e: any) {
       const status = e?.response?.status;
       const message = e?.response?.data?.detail;
 
+      // ✅ FIX: use backend message directly
       if (status === 409) {
-        toast.error('Permission already exists');
-      } else if (status === 422) {
-        toast.error(message || 'Validation failed');
-      } else {
-        toast.error('Something went wrong');
+        toast.error(message);
+        return;
       }
+
+      if (status === 422) {
+        toast.error(message || 'Validation failed');
+        return;
+      }
+
+      // fallback
+      toast.error('Something went wrong');
     }
   };
 

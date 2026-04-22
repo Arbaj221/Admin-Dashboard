@@ -33,37 +33,58 @@ const ModulePermissionsTable = ({ data, onEdit, onDelete }: Props) => {
         </TableHeader>
 
         <TableBody>
-          {data.map((row) => (
-            <TableRow key={row.id} className="even:bg-lightprimary/80">
-
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{capitalizeFirst(row.menuName)}</TableCell>
-              <TableCell>{capitalizeFirst(row.moduleName)}</TableCell>
-              <TableCell> {capitalizeFirst(row.permissionName)}</TableCell>
-              <TableCell>{capitalizeFirst(row.description)}</TableCell>
-
-              <TableCell>
-                <StatusBadge value={row.isActive ? 'Active' : 'Inactive'} />
+          {data.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={11}
+                className="text-center text-muted-foreground py-6"
+              >
+                No module permissions found
               </TableCell>
-
-              <TableCell>{capitalizeFirst(row.createdByEmail)}</TableCell>
-              <TableCell>{capitalizeFirst(row.updatedByEmail)}</TableCell>
-              <TableCell>{capitalizeFirst(row.createdAt)}</TableCell>
-              <TableCell>{capitalizeFirst(row.updatedAt)}</TableCell>
-
-              <TableCell>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="lightprimary" onClick={() => onEdit(row)}>
-                    <Pencil size={16} />
-                  </Button>
-                  <Button size="sm" variant="lighterror" onClick={() => onDelete(row)}>
-                    <Trash2 size={16} />
-                  </Button>
-                </div>
-              </TableCell>
-
             </TableRow>
-          ))}
+          ) : (
+            data.map((row) => (
+              <TableRow key={row.id} className="even:bg-lightprimary/80">
+
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{capitalizeFirst(row.menuName)}</TableCell>
+                <TableCell>{capitalizeFirst(row.moduleName)}</TableCell>
+                <TableCell>{capitalizeFirst(row.permissionName)}</TableCell>
+                <TableCell>{capitalizeFirst(row.description)}</TableCell>
+
+                <TableCell>
+                  <StatusBadge value={row.isActive ? 'Active' : 'Inactive'} />
+                </TableCell>
+
+                <TableCell>
+                  {row.createdByEmail
+                    ? capitalizeFirst(row.createdByEmail)
+                    : '—'}
+                </TableCell>
+
+                <TableCell>
+                  {row.updatedByEmail
+                    ? capitalizeFirst(row.updatedByEmail)
+                    : '—'}
+                </TableCell>
+
+                <TableCell>{row.createdAt || '—'}</TableCell>
+                <TableCell>{row.updatedAt || '—'}</TableCell>
+
+                <TableCell>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="lightprimary" onClick={() => onEdit(row)}>
+                      <Pencil size={16} />
+                    </Button>
+                    <Button size="sm" variant="lighterror" onClick={() => onDelete(row)}>
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </TableCell>
+
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>
