@@ -1,153 +1,141 @@
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-
-import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CardBox from 'src/components/shared/CardBox';
+import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 
-import { rolesService, Role } from 'src/modules/admin/roles/services/rolesService';
-import { departmentService, Department } from 'src/modules/admin/departments/services/departmentService';
-import { permissionService, Permission } from 'src/modules/admin/permissions/services/permissionService';
+import { rolesService } from 'src/modules/admin/roles/services/rolesService';
+import { departmentService } from 'src/modules/admin/departments/services/departmentService';
 
-import { rdpService } from './services/rdpService';
-import MatrixTable from './components/MatrixTable';
+import RDPForm from './components/form';
 
 const RDPList = () => {
-    const [roles, setRoles] = useState<Role[]>([]);
-    const [departments, setDepartments] = useState<Department[]>([]);
-    const [permissions, setPermissions] = useState<Permission[]>([]);
-    const [selectedRole, setSelectedRole] = useState<number | null>(null);
+    const [roles, setRoles] = useState<any[]>([]);
+    const [departments, setDepartments] = useState<any[]>([]);
 
-    const [matrix, setMatrix] = useState<
-        Record<number, Record<number, boolean>>
-    >({});
-    const [existingMappings, setExistingMappings] = useState<Set<string>>(new Set());
+    const [roleId, setRoleId] = useState<number | null>(null);
+    const [deptId, setDeptId] = useState<number | null>(null);
 
-    const [loading, setLoading] = useState(false);
+    const [activeCount, setActiveCount] = useState(0);
+
+    useEffect(() => {
+        const load = async () => {
+            const [r, d] = await Promise.all([
+                rolesService.getRoles(),
+                departmentService.getDepartments(),
+            ]);
+
+            setRoles(r);
+            setDepartments(d);
+        };
+
+        load();
+    }, []);
+
+    const selectedRole = roles.find((r) => r.id === roleId);
+    const selectedDept = departments.find((d) => d.id === deptId);
 
     const BCrumb = [
         { to: '/', title: 'Home' },
-        { title: 'Role Permissions' },
+        { title: 'Role Department Permissions' },
     ];
-
-    // 👉 load initial data
-    const loadInitialData = async () => {
-        const [rolesData, deptData, permData] = await Promise.all([
-            rolesService.getRoles(),
-            departmentService.getDepartments(),
-            permissionService.getPermissions(),
-        ]);
-
-        setRoles(rolesData);
-        setDepartments(deptData);
-        setPermissions(permData);
-
-        if (rolesData.length) {
-            setSelectedRole(rolesData[0].id);
-        }
-    };
-
-    // 👉 load mappings
-    const loadMappings = async (roleId: number) => {
-        setLoading(true);
-
-        const data = await rdpService.getMappings();
-
-        const { matrix, existing } =
-            rdpService.buildMatrixAndExisting(data, roleId);
-
-        setMatrix(matrix);
-        setExistingMappings(existing);
-
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        loadInitialData();
-    }, []);
-
-    useEffect(() => {
-        if (selectedRole !== null) {
-            loadMappings(selectedRole);
-        }
-    }, [selectedRole]);
-
-    // 👉 toggle
-    const handleToggle = (deptId: number, permId: number) => {
-        setMatrix((prev) => ({
-            ...prev,
-            [deptId]: {
-                ...prev[deptId],
-                [permId]: !prev[deptId]?.[permId],
-            },
-        }));
-    };
-
-    // 👉 save
-    const handleSave = async () => {
-        if (!selectedRole) return;
-
-        try {
-            const { updatedExisting, hasChanges } =
-                await rdpService.saveMappings(
-                    selectedRole,
-                    matrix,
-                    existingMappings
-                );
-
-            setExistingMappings(updatedExisting);
-
-            if (hasChanges) {
-                toast.success('Permissions updated successfully 🎉');
-            } else {
-                toast.info('No changes made');
-            }
-        } catch (err) {
-            // handled globally
-        }
-    };
 
     return (
         <>
-            <SlimBreadcrumb title="Role Permissions" items={BCrumb} />
+            <SlimBreadcrumb title="RDP" items={BCrumb} />
 
             <CardBox>
-                {/* Role Select */}
-                <div className="mb-4">
-                    <label className="text-sm font-medium">Select Role</label>
-                    <select
-                        className="mt-2 border border-border rounded-md p-2"
-                        value={selectedRole || ''}
-                        onChange={(e) => setSelectedRole(Number(e.target.value))}
-                    >
-                        {roles.map((role) => (
-                            <option key={role.id} value={role.id}>
-                                {role.name}
+
+                {/* Selects */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+
+                    {/* Role */}
+                    <div className="w-full">
+                        <label className="text-sm text-muted-foreground mb-1 block">
+                            Role
+                        </label>
+                        <select
+                            className="w-full h-10 px-3 rounded-md border border-border bg-background text-sm"
+                            value={roleId || ''}
+                            onChange={(e) => setRoleId(Number(e.target.value))}
+                        >
+                            <option value="" disabled>
+                                Select Role
                             </option>
-                        ))}
-                    </select>
+
+                            {roles.map((r) => (
+                                <option key={r.id} value={r.id}>
+                                    {r.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Department */}
+                    <div className="w-full">
+                        <label className="text-sm text-muted-foreground mb-1 block">
+                            Department
+                        </label>
+                        <select
+                            className="w-full h-10 px-3 rounded-md border border-border bg-background text-sm"
+                            value={deptId || ''}
+                            onChange={(e) => setDeptId(Number(e.target.value))}
+                        >
+                            <option value="" disabled>
+                                Select Department
+                            </option>
+
+                            {departments.map((d) => (
+                                <option key={d.id} value={d.id}>
+                                    {d.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                 </div>
 
-                {/* Matrix */}
-                {loading ? (
-                    <p className="text-muted-foreground">Loading...</p>
-                ) : (
-                    <MatrixTable
-                        departments={departments}
-                        permissions={permissions}
-                        matrix={matrix}
-                        onToggle={handleToggle}
+                {/* Context Section */}
+                <div className="mb-2">
+
+                    {!roleId || !deptId ? (
+                        <p className="text-sm text-muted-foreground">
+                            Please select a role and department to manage permissions
+                        </p>
+                    ) : (
+                        <div className="flex items-center justify-between gap-3 flex-wrap">
+
+                            {/* Context text */}
+                            <div className="text-sm text-muted-foreground">
+                                Managing permissions for{' '}
+                                <span className="font-medium text-foreground">
+                                    {selectedRole?.name}
+                                </span>{' '}
+                                role in{' '}
+                                <span className="font-medium text-foreground">
+                                    {selectedDept?.name}
+                                </span>{' '}
+                                department
+                            </div>
+
+                            {/* Badge */}
+                            <div className="shrink-0 flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-lightprimary/20 text-primary font-medium whitespace-nowrap">
+                                <span className="w-2 h-2 rounded-full bg-primary" />
+                                {activeCount} active permissions
+                            </div>
+
+                        </div>
+                    )}
+
+                </div>
+
+                {/* Form */}
+                {roleId && deptId && (
+                    <RDPForm
+                        roleId={roleId}
+                        departmentId={deptId}
+                        setActiveCount={setActiveCount}
                     />
                 )}
 
-                {/* Save */}
-                <div className="flex justify-end mt-6">
-                    <button
-                        onClick={handleSave}
-                        className="bg-primary hover:bg-primaryemphasis text-white px-6 py-2 rounded-md"
-                    >
-                        Save Changes
-                    </button>
-                </div>
             </CardBox>
         </>
     );

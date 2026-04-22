@@ -76,12 +76,12 @@ const SidebarContent: MenuItem[] = [
             icon: 'lucide:lock-keyhole',
             url: '/admin/module-permissions',
           },
-          // {
-          //   id: uniqueId(),
-          //   name: 'RDP',
-          //   icon: 'lucide:monitor',
-          //   url: '/admin/rdp',
-          // },
+          {
+            id: uniqueId(),
+            name: 'Role Department Permissions',
+            icon: 'lucide:monitor',
+            url: '/admin/rdp',
+          },
           // {
           //   id: uniqueId(),
           //   name: 'User Department',
