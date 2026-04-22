@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react';
-import { rdpService } from '../services/rdpService';
 import { modulePermissionService } from 'src/modules/admin/module-permissions/services/modulePermissionService';
+import { userPermissionService } from '../services/userPermissionService';
 import { capitalizeFirst } from 'src/utils/format';
 
 interface Props {
-    roleId: number;
-    departmentId: number;
+    userId: number;
     setActiveCount: (count: number) => void;
 }
 
-const RDPForm = ({ roleId, departmentId, setActiveCount }: Props) => {
+const UserPermissionForm = ({ userId, setActiveCount }: Props) => {
     const [permissions, setPermissions] = useState<any[]>([]);
     const [selected, setSelected] = useState<Set<number>>(new Set());
 
-    // load data
     const load = async () => {
         const [all, assigned] = await Promise.all([
             modulePermissionService.getAll(),
-            rdpService.getRDP(roleId, departmentId),
+            userPermissionService.get(userId),
         ]);
 
         setPermissions(all);
@@ -35,16 +33,15 @@ const RDPForm = ({ roleId, departmentId, setActiveCount }: Props) => {
     };
 
     useEffect(() => {
-        if (roleId && departmentId) load();
-    }, [roleId, departmentId]);
+        if (userId) load();
+    }, [userId]);
 
     const toggle = async (permId: number) => {
         const isChecked = selected.has(permId);
 
         try {
-            await rdpService.upsert({
-                role_id: roleId,
-                department_id: departmentId,
+            await userPermissionService.upsert({
+                user_id: userId,
                 module_permission_id: permId,
                 is_active: !isChecked,
             });
@@ -58,31 +55,18 @@ const RDPForm = ({ roleId, departmentId, setActiveCount }: Props) => {
                     newSet.add(permId);
                 }
 
-                // update active count here
                 setActiveCount(newSet.size);
-
                 return newSet;
             });
 
-        } catch {
-            // handled globally
-        }
+        } catch { }
     };
 
-    // group by module
     const grouped = permissions.reduce((acc: any, item: any) => {
         if (!acc[item.moduleName]) acc[item.moduleName] = [];
         acc[item.moduleName].push(item);
         return acc;
     }, {});
-
-    if (!permissions.length) {
-        return (
-            <p className="text-sm text-muted-foreground">
-                Loading permissions...
-            </p>
-        );
-    }
 
     return (
         <div className="columns-1 md:columns-2 gap-6">
@@ -113,13 +97,13 @@ const RDPForm = ({ roleId, departmentId, setActiveCount }: Props) => {
                                 <label
                                     key={p.id}
                                     className={`
-                  flex items-center gap-3 px-2 py-1.5 rounded-md cursor-pointer text-sm
-                  transition-all
-                  ${isChecked
+    flex items-center gap-3 px-2 py-1.5 rounded-md cursor-pointer text-sm
+    transition-all
+    ${isChecked
                                             ? 'bg-lightprimary/10 text-primary'
                                             : 'hover:bg-lightprimary/10'
                                         }
-                `}
+  `}
                                 >
 
                                     <input
@@ -148,4 +132,4 @@ const RDPForm = ({ roleId, departmentId, setActiveCount }: Props) => {
     );
 };
 
-export default RDPForm;
+export default UserPermissionForm;

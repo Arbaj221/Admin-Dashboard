@@ -1,177 +1,98 @@
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-
-import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CardBox from 'src/components/shared/CardBox';
+import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 
-import { usersService, User } from 'src/modules/admin/user-department/services/userServiceDp';
-import { departmentService, Department } from 'src/modules/admin/departments/services/departmentService';
-import { permissionService, Permission } from 'src/modules/admin/permissions/services/permissionService';
-
-import { userDepartmentService } from 'src/modules/admin/user-department/services/userDepartmentService';
-import { userPermissionService } from './services/userPermissionService';
-
-import PermissionOverride from './components/PermissionOverride';
+import { userService } from 'src/modules/users/services/userService';
+import UserPermissionForm from './components/form';
 
 const UserPermissionList = () => {
-    const [users, setUsers] = useState<User[]>([]);
-    const [departments, setDepartments] = useState<Department[]>([]);
-    const [permissions, setPermissions] = useState<Permission[]>([]);
-    const [selectedUser, setSelectedUser] = useState<number | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [activeCount, setActiveCount] = useState(0);
 
-    const [userDepartments, setUserDepartments] = useState<number[]>([]);
-
-    const [matrix, setMatrix] = useState<
-        Record<number, Record<number, boolean>>
-    >({});
-    const [existing, setExisting] = useState<Set<string>>(new Set());
-
-    const [loading, setLoading] = useState(false);
-
-    const BCrumb = [
-        { to: '/', title: 'Home' },
-        { title: 'User Permissions' },
-    ];
-
-    // 👉 initial load
-    const loadInitialData = async () => {
-        const [usersData, deptData, permData] = await Promise.all([
-            usersService.getUsers(),
-            departmentService.getDepartments(),
-            permissionService.getPermissions(),
-        ]);
-
-        setUsers(usersData);
-        setDepartments(deptData);
-        setPermissions(permData);
-
-        if (usersData.length) {
-            setSelectedUser(usersData[0].id);
-        }
+  useEffect(() => {
+    const load = async () => {
+      const res = await userService.getUsers();
+      setUsers(res);
     };
 
-    // 👉 load mappings
-    const loadMappings = async (userId: number) => {
-        setLoading(true);
+    load();
+  }, []);
 
-        const [userDeptData, userPermData] = await Promise.all([
-            userDepartmentService.getMappings(),
-            userPermissionService.getMappings(),
-        ]);
+  const selectedUser = users.find((u) => u.id === userId);
 
-        // 👉 filter departments user belongs to
-        const deptIds = userDeptData
-            .filter((item) => item.user_id === userId)
-            .map((item) => item.department_id);
+  const BCrumb = [
+    { to: '/', title: 'Home' },
+    { title: 'User Permissions' },
+  ];
 
-        setUserDepartments(deptIds);
+  return (
+    <>
+      <SlimBreadcrumb title="User Permissions" items={BCrumb} />
 
-        // 👉 build matrix
-        const { matrix, existing } =
-            userPermissionService.buildState(userPermData, userId);
+      <CardBox>
 
-        setMatrix(matrix);
-        setExisting(existing);
+        {/* Select */}
+        <div className="">
+          <label className="text-sm text-muted-foreground mb-1 block">
+            User
+          </label>
 
-        setLoading(false);
-    };
+          <select
+            className="w-full h-10 px-3 rounded-md border border-border bg-background text-sm"
+            value={userId || ''}
+            onChange={(e) => setUserId(Number(e.target.value))}
+          >
+            <option value="" disabled>
+              Select User
+            </option>
 
-    useEffect(() => {
-        loadInitialData();
-    }, []);
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.email}
+              </option>
+            ))}
+          </select>
+        </div>
 
-    useEffect(() => {
-        if (selectedUser !== null) {
-            loadMappings(selectedUser);
-        }
-    }, [selectedUser]);
+        {/* Context */}
+        <div className="mt-1 mb-1">
 
-    // 👉 toggle
-    const handleToggle = (deptId: number, permId: number) => {
-        setMatrix((prev) => ({
-            ...prev,
-            [deptId]: {
-                ...prev[deptId],
-                [permId]: !prev[deptId]?.[permId],
-            },
-        }));
-    };
+          {!userId ? (
+            <p className="text-sm text-muted-foreground">
+              Please select a user to manage permissions
+            </p>
+          ) : (
+            <div className="flex items-center justify-between gap-3 flex-wrap">
 
-    // 👉 save
-    const handleSave = async () => {
-        if (!selectedUser) return;
+              <div className="text-sm text-muted-foreground">
+                Managing permissions for{' '}
+                <span className="font-medium text-foreground">
+                  {selectedUser?.email}
+                </span>
+              </div>
 
-        try {
-            const { updatedExisting, hasChanges } =
-                await userPermissionService.saveMappings(
-                    selectedUser,
-                    matrix,
-                    existing
-                );
+              <div className="shrink-0 flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-lightprimary/20 text-primary font-medium whitespace-nowrap">
+                <span className="w-2 h-2 rounded-full bg-primary" />
+                {activeCount} active permissions
+              </div>
 
-            setExisting(updatedExisting);
+            </div>
+          )}
 
-            // ✅ toast only when needed
-            if (hasChanges) {
-                toast.success('Permissions updated successfully 🎉');
-            } else {
-                toast.info('No changes made');
-            }
-        } catch (err) {
-            // handled globally
-        }
-    };
+        </div>
 
-    // 👉 filter departments to show
-    const visibleDepartments = departments.filter((dept) =>
-        userDepartments.includes(dept.id)
-    );
+        {/* Form */}
+        {userId && (
+          <UserPermissionForm
+            userId={userId}
+            setActiveCount={setActiveCount}
+          />
+        )}
 
-    return (
-        <>
-            <SlimBreadcrumb title="User Permissions" items={BCrumb} />
-
-            <CardBox>
-                {/* User Select */}
-                <div className="mb-4">
-                    <label className="text-sm font-medium">Select User</label>
-                    <select
-                        className="mt-2 border border-border rounded-md p-2"
-                        value={selectedUser || ''}
-                        onChange={(e) => setSelectedUser(Number(e.target.value))}
-                    >
-                        {users.map((user) => (
-                            <option key={user.id} value={user.id}>
-                                {user.email}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {/* Permissions */}
-                {loading ? (
-                    <p className="text-muted-foreground">Loading...</p>
-                ) : (
-                    <PermissionOverride
-                        departments={visibleDepartments}
-                        permissions={permissions}
-                        matrix={matrix}
-                        onToggle={handleToggle}
-                    />
-                )}
-
-                {/* Save */}
-                <div className="flex justify-end mt-6">
-                    <button
-                        onClick={handleSave}
-                        className="bg-primary hover:bg-primaryemphasis text-white px-6 py-2 rounded-md"
-                    >
-                        Save Changes
-                    </button>
-                </div>
-            </CardBox>
-        </>
-    );
+      </CardBox>
+    </>
+  );
 };
 
 export default UserPermissionList;

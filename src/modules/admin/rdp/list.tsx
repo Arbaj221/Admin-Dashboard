@@ -45,7 +45,7 @@ const RDPList = () => {
             <CardBox>
 
                 {/* Selects */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-2 gap-4 mb-1">
 
                     {/* Role */}
                     <div className="w-full">
@@ -94,7 +94,7 @@ const RDPList = () => {
                 </div>
 
                 {/* Context Section */}
-                <div className="mb-2">
+                <div className="">
 
                     {!roleId || !deptId ? (
                         <p className="text-sm text-muted-foreground">
