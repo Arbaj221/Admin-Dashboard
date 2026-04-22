@@ -3,6 +3,7 @@ import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
 import { Button } from 'src/components/ui/button';
 import { toast } from 'sonner';
+
 import { rolesService } from '../services/rolesService';
 
 interface Props {
@@ -12,49 +13,98 @@ interface Props {
 }
 
 const RoleForm = ({ mode, initialData, onSuccess }: Props) => {
-  const [name, setName] = useState('');
-  const [isActive, setIsActive] = useState(true);
+  const [form, setForm] = useState({
+    name: '',
+    is_active: true,
+  });
 
+  // ✅ Prefill
   useEffect(() => {
     if (mode === 'edit' && initialData) {
-      setName(initialData.name);
-      setIsActive(initialData.isActive);
+      setForm({
+        name: initialData.name || '',
+        is_active: initialData.isActive ?? true,
+      });
     }
   }, [mode, initialData]);
 
-  const handleSubmit = async () => {
-    if (!name.trim()) {
-      toast.error('Role name is required');
+  const handleChange = (key: string, value: any) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // ✅ diff logic (PATCH clean)
+  const getChangedFields = (original: any, current: any) => {
+    const diff: any = {};
+
+    Object.keys(current).forEach((key) => {
+      if (current[key] !== original[key]) {
+        diff[key] = current[key];
+      }
+    });
+
+    return diff;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // ✅ ENTER key works automatically
+
+    if (!form.name) {
+      toast.error('Role name required');
       return;
     }
 
-    const payload = {
-      name,
-      is_active: isActive,
+    let payload: any = {
+      name: form.name,
+      is_active: form.is_active,
     };
 
     try {
       if (mode === 'create') {
         await rolesService.createRole(payload);
-        toast.success('Role created 🎉');
+        toast.success('Role created');
       } else {
+        const original = {
+          name: initialData.name,
+          is_active: initialData.isActive,
+        };
+
+        payload = getChangedFields(original, payload);
+
+        if (Object.keys(payload).length === 0) {
+          toast.info('No changes detected');
+          return;
+        }
+
         await rolesService.patchRole(initialData.id, payload);
-        toast.success('Role updated ✏️');
+        toast.success('Role updated');
       }
 
       onSuccess();
-    } catch {}
+
+    } catch (e: any) {
+      const status = e?.response?.status;
+      const message = e?.response?.data?.detail;
+
+      // ✅ Handle BOTH 409 cases cleanly
+      if (status === 409) {
+        toast.error(message);
+        return;
+      }
+
+      // 👉 let interceptor handle others
+    }
   };
 
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
 
       <div className="w-full">
         <Label>Role Name *</Label>
         <Input
           className="w-full"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={form.name}
+          onChange={(e) => handleChange('name', e.target.value)}
+          placeholder="Enter role name"
         />
       </div>
 
@@ -62,23 +112,25 @@ const RoleForm = ({ mode, initialData, onSuccess }: Props) => {
         <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"
-            checked={isActive}
-            onChange={(e) => setIsActive(e.target.checked)}
+            checked={form.is_active}
+            onChange={(e) => handleChange('is_active', e.target.checked)}
           />
           Active Role
         </label>
       </div>
 
-      <div className="flex justify-end gap-3 pt-2">
-        <Button variant="outline" onClick={onSuccess}>
+
+      {/* Actions */}
+      <div className="flex justify-end gap-3">
+        <Button type="button" variant="outline" onClick={onSuccess}>
           Cancel
         </Button>
-        <Button onClick={handleSubmit}>
+        <Button type="submit">
           {mode === 'create' ? 'Create' : 'Update'}
         </Button>
       </div>
 
-    </div>
+    </form>
   );
 };
 
