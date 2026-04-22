@@ -6,13 +6,7 @@ import CardBox from 'src/components/shared/CardBox';
 import UsersTable from './components/table';
 import UserFormDialog from './components/UserFormDialog';
 import ChangePasswordDialog from './components/passwordDialog';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from 'src/components/ui/dialog';
+import UserPermissionDialog from './components/UserPermissionDialog';
 
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
 import { toast } from 'sonner';
@@ -156,21 +150,12 @@ const UsersList = () => {
         userId={activeUser?.id}
       />
 
-      {/* Permission Dialog (separate component later if needed) */}
-      <Dialog
+      {/* Permission Dialog (separate component ) */}
+      <UserPermissionDialog
         open={permissionOpen}
-        onOpenChange={(v) => !v && setPermissionOpen(false)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Permissions</DialogTitle>
-          </DialogHeader>
-
-          <p className="text-sm text-muted-foreground">
-            Coming soon 🚧
-          </p>
-        </DialogContent>
-      </Dialog>
+        onClose={() => setPermissionOpen(false)}
+        userId={activeUser?.id}
+      />
     </>
   );
 };
