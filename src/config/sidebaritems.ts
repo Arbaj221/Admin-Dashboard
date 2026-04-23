@@ -48,48 +48,54 @@ const SidebarContent: MenuItem[] = [
     heading: 'Admin',
     children: [
       {
-        name: 'User Management',
-        icon: 'lucide:users',
-        id: uniqueId(),
-        children: [
-          {
-            id: uniqueId(),
-            name: 'All Users',
-            icon: 'lucide:user',
-            url: '/users',
-          },
-          {
-            id: uniqueId(),
-            name: 'Roles',
-            icon: 'lucide:shield-check',
-            url: '/admin/roles',
-          },
-          {
-            id: uniqueId(),
-            name: 'Departments',
-            icon: 'lucide:building-2',
-            url: '/admin/departments',
-          },
-          {
-            id: uniqueId(),
-            name: 'Module Permissions',
-            icon: 'lucide:lock-keyhole',
-            url: '/admin/module-permissions',
-          },
-          {
-            id: uniqueId(),
-            name: 'Role Department Permissions',
-            icon: 'lucide:monitor',
-            url: '/admin/rdp',
-          },
-          {
-            id: uniqueId(),
-            name: 'User Permission',
-            icon: 'lucide:user-lock',
-            url: '/admin/userpermission',
-          },
-        ],
-      },
+  name: 'User Management',
+  icon: 'lucide:users',
+  id: uniqueId(),
+  children: [
+    {
+      id: uniqueId(),
+      name: 'All Users',
+      icon: 'lucide:user', // ✔ correct
+      url: '/users',
+    },
+    {
+      id: uniqueId(),
+      name: 'Roles',
+      icon: 'lucide:shield', // ✔ authority/security
+      url: '/admin/roles',
+    },
+    {
+      id: uniqueId(),
+      name: 'Departments',
+      icon: 'lucide:building', // ✔ organization
+      url: '/admin/departments',
+    },
+    {
+      id: uniqueId(),
+      name: 'Module Permissions',
+      icon: 'lucide:key-round', // ✔ action-level access
+      url: '/admin/module-permissions',
+    },
+    {
+      id: uniqueId(),
+      name: 'Role Department Permissions',
+      icon: 'lucide:network', // ✔ relationship mapping
+      url: '/admin/rdp',
+    },
+    {
+      id: uniqueId(),
+      name: 'User Permission',
+      icon: 'lucide:user-cog', // ✔ user-specific config
+      url: '/admin/userpermission',
+    },
+    {
+      id: uniqueId(),
+      name: 'App Settings',
+      icon: 'lucide:settings', // ✔ system config (IMPORTANT FIX)
+      url: '/admin/app-settings',
+    },
+  ],
+}
     ],
   },
   {
