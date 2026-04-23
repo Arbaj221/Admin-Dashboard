@@ -13,4 +13,10 @@ export const userPermissionService = {
   }) {
     return (await apiClient.post('/user-permissions/upsert', payload)).data;
   },
+  async remove(userId: number, modulePermissionId: number) {
+    const res = await apiClient.delete(
+      `/user-permissions/?user_id=${userId}&module_permission_id=${modulePermissionId}`
+    );
+    return res.data;
+  }
 };

@@ -59,6 +59,7 @@ const Profile = () => {
               asChild
               variant="outline"
               className="w-full rounded-md"
+              onClick={()=>localStorage.removeItem('permissions')}
             >
               <Link to="/login">Logout</Link>
             </Button>

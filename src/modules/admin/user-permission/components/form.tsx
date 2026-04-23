@@ -40,12 +40,19 @@ const UserPermissionForm = ({ userId, setActiveCount }: Props) => {
         const isChecked = selected.has(permId);
 
         try {
-            await userPermissionService.upsert({
-                user_id: userId,
-                module_permission_id: permId,
-                is_active: !isChecked,
-            });
+            if (isChecked) {
+                // ❌ UNCHECK → DELETE
+                await userPermissionService.remove(userId, permId);
+            } else {
+                // ✅ CHECK → UPSERT
+                await userPermissionService.upsert({
+                    user_id: userId,
+                    module_permission_id: permId,
+                    is_active: true,
+                });
+            }
 
+            // ✅ Update UI
             setSelected((prev) => {
                 const newSet = new Set(prev);
 

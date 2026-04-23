@@ -22,4 +22,9 @@ export const authService = {
   getToken() {
     return localStorage.getItem('access_token');
   },
+
+  async getUserAccess() {
+    const res = await apiClient.get('/user-access');
+    return res.data;
+  }
 };

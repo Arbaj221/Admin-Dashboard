@@ -7,12 +7,14 @@ import { Button } from "src/components/ui/button";
 import { Checkbox } from "src/components/ui/checkbox";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
+import { usePermissionContext } from 'src/permissions/PermissionContext';
 
 import { authService } from "./services/authService";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { loadPermissions } = usePermissionContext();
 
   const [loading, setLoading] = useState(false);
 
@@ -37,13 +39,18 @@ const Login = () => {
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("is_auth", "true");
 
+      // ✅ 🚀 LOAD USER ACCESS
+      const access = await authService.getUserAccess();
+
+      loadPermissions(access.permissions);
+
       // ✅ success toast
       toast.success("Welcome back! 🎉");
 
       navigate(from, { replace: true });
 
     } catch (err) {
-      // ❌ no toast here (handled in apiClient)
+      // handled globally
     } finally {
       setLoading(false);
     }

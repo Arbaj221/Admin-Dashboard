@@ -11,6 +11,7 @@ export interface ChildItem {
   badge?: boolean;
   badgeType?: string;
   isPro?: boolean;
+  module?: string; // for permission checks
 }
 
 export interface MenuItem {
@@ -27,6 +28,7 @@ export interface MenuItem {
   badgeType?: string;
   badge?: boolean;
   isPro?: boolean;
+  module?: string; // for permission checks
 }
 
 import { uniqueId } from 'lodash';
@@ -45,59 +47,66 @@ const SidebarContent: MenuItem[] = [
     ],
   },
   {
-    heading: 'Admin',
-    children: [
-      {
-  name: 'User Management',
-  icon: 'lucide:users',
-  id: uniqueId(),
+  heading: 'Admin',
   children: [
     {
+      name: 'User Management',
+      icon: 'lucide:users',
       id: uniqueId(),
-      name: 'All Users',
-      icon: 'lucide:user', // ✔ correct
-      url: '/users',
-    },
-    {
-      id: uniqueId(),
-      name: 'Roles',
-      icon: 'lucide:shield', // ✔ authority/security
-      url: '/admin/roles',
-    },
-    {
-      id: uniqueId(),
-      name: 'Departments',
-      icon: 'lucide:building', // ✔ organization
-      url: '/admin/departments',
-    },
-    {
-      id: uniqueId(),
-      name: 'Module Permissions',
-      icon: 'lucide:key-round', // ✔ action-level access
-      url: '/admin/module-permissions',
-    },
-    {
-      id: uniqueId(),
-      name: 'Role Department Permissions',
-      icon: 'lucide:network', // ✔ relationship mapping
-      url: '/admin/rdp',
-    },
-    {
-      id: uniqueId(),
-      name: 'User Permission',
-      icon: 'lucide:user-cog', // ✔ user-specific config
-      url: '/admin/userpermission',
-    },
-    {
-      id: uniqueId(),
-      name: 'App Settings',
-      icon: 'lucide:settings', // ✔ system config (IMPORTANT FIX)
-      url: '/admin/app-settings',
-    },
+      children: [
+        {
+          id: uniqueId(),
+          name: 'All Users',
+          icon: 'lucide:user',
+          url: '/users',
+          module: 'users'
+        },
+        {
+          id: uniqueId(),
+          name: 'Roles',
+          icon: 'lucide:shield',
+          url: '/admin/roles',
+          module: 'roles'
+        },
+        {
+          id: uniqueId(),
+          name: 'Departments',
+          icon: 'lucide:building',
+          url: '/admin/departments',
+          module: 'department'
+        },
+        {
+          id: uniqueId(),
+          name: 'Module Permissions',
+          icon: 'lucide:key-round',
+          url: '/admin/module-permissions',
+          module: 'module-permissions'
+        },
+        {
+          id: uniqueId(),
+          name: 'Role Department Permissions',
+          icon: 'lucide:network',
+          url: '/admin/rdp',
+          module: 'role-department-permissions'
+        },
+        {
+          id: uniqueId(),
+          name: 'User Permission',
+          icon: 'lucide:user-cog',
+          url: '/admin/userpermission',
+          module: 'users-permissions'
+        },
+        {
+          id: uniqueId(),
+          name: 'App Settings',
+          icon: 'lucide:settings',
+          url: '/admin/app-settings',
+          module: 'settings'
+        },
+      ],
+    }
   ],
-}
-    ],
-  },
+},
   {
     heading: 'Sales',
     children: [

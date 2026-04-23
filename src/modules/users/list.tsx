@@ -17,6 +17,7 @@ import {
   departmentService,
   Department,
 } from 'src/modules/admin/departments/services/departmentService';
+import Can from 'src/permissions/Can';
 
 const UsersList = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -109,14 +110,16 @@ const UsersList = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h5 className="card-title">Users List</h5>
+          <Can module="users" action="create">
+            <button
+              onClick={openCreate}
+              className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md transition-colors duration-150 cursor-pointer"
+            >
+              <Icon icon="solar:add-circle-linear" width={18} height={18} />
+              Create User
+            </button>
+          </Can>
 
-          <button
-            onClick={openCreate}
-            className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md transition-colors duration-150 cursor-pointer"
-          >
-            <Icon icon="solar:add-circle-linear" width={18} height={18} />
-            Create User
-          </button>
         </div>
 
         {/* Table */}

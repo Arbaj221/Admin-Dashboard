@@ -7,6 +7,7 @@ import { useTheme } from 'src/theme/theme-provider';
 import { AMLogo, AMMenu, AMMenuItem, AMSidebar, AMSubmenu } from 'tailwind-sidebar';
 import 'tailwind-sidebar/styles.css';
 import { useSidebarCollapse } from 'src/context/useSidebarCollapse';
+import { useSidebarMenu } from 'src/permissions/useSidebarMenu';
 
 interface SidebarItemType {
   heading?: string;
@@ -139,7 +140,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   const { collapsed } = useSidebarCollapse();
 
   const sidebarMode = theme === 'light' || theme === 'dark' ? theme : undefined;
-
+const filteredMenu = useSidebarMenu(SidebarContent);
   return (
     <AMSidebar
       collapsible="none"
@@ -160,7 +161,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
       {/* Sidebar items */}
       <SimpleBar className="h-[calc(100vh-100px)]">
         <div className={`${collapsed ? 'px-2' : 'px-6'} transition-all duration-300`}>
-          {SidebarContent.map((section, index) => (
+          {filteredMenu.map((section, index) => (
             <div key={index}>
               {renderSidebarItems(
                 [
