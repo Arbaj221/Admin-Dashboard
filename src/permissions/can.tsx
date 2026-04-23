@@ -3,25 +3,37 @@ import { usePermission } from './usePermission';
 
 interface Props {
   module: string;
-  action?: string;
+  action?: string;        // single action
+  actions?: string[];     // multiple actions (ANY match)
   fallback?: ReactNode;
   children: ReactNode;
 }
 
-const Can = ({ module, action = 'view', fallback = null, children }: Props) => {
+const Can = ({
+  module,
+  action,
+  actions,
+  fallback = null,
+  children,
+}: Props) => {
   const { can, canAccess, isLoaded } = usePermission();
 
   const allowed = useMemo(() => {
     if (!isLoaded) return false;
 
-    // If action provided → check action
+    // ✅ MULTIPLE ACTIONS (ANY)
+    if (actions && actions.length > 0) {
+      return actions.some((a) => can(module, a));
+    }
+
+    // ✅ SINGLE ACTION
     if (action) {
       return can(module, action);
     }
 
-    // Else → module-level access
+    // ✅ MODULE LEVEL (fallback to view)
     return canAccess(module);
-  }, [module, action, can, canAccess, isLoaded]);
+  }, [module, action, actions, can, canAccess, isLoaded]);
 
   if (!allowed) return <>{fallback}</>;
 

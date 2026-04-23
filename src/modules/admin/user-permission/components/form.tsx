@@ -14,7 +14,7 @@ const UserPermissionForm = ({ userId, setActiveCount }: Props) => {
 
     const load = async () => {
         const [all, assigned] = await Promise.all([
-            modulePermissionService.getAll(),
+            modulePermissionService.getActiveModulePermissions(),
             userPermissionService.get(userId),
         ]);
 

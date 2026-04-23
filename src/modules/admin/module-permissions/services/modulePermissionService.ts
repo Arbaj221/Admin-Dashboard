@@ -14,7 +14,7 @@ export interface ModulePermission {
 }
 
 export const modulePermissionService = {
-  async getAll(): Promise<ModulePermission[]> {
+  async getAllModulePermissions(): Promise<ModulePermission[]> {
     const res = await apiClient.get('/module-permissions');
 
     return res.data.map((item: any) => ({
@@ -26,8 +26,25 @@ export const modulePermissionService = {
       isActive: item.is_active,
       createdBy: item.created_by,
       updatedBy: item.updated_by,
-     createdAt: new Date(item.created_at).toLocaleDateString(),
-updatedAt: new Date(item.updated_at).toLocaleDateString(),
+      createdAt: new Date(item.created_at).toLocaleDateString(),
+      updatedAt: new Date(item.updated_at).toLocaleDateString(),
+    }));
+  },
+
+  async getActiveModulePermissions(): Promise<ModulePermission[]> {
+    const res = await apiClient.get('/module-permissions/?is_active=true');
+
+    return res.data.map((item: any) => ({
+      id: item.id,
+      moduleName: item.module_name,
+      menuName: item.menu_name,
+      permissionName: item.permission_name,
+      description: item.description,
+      isActive: item.is_active,
+      createdBy: item.created_by,
+      updatedBy: item.updated_by,
+      createdAt: new Date(item.created_at).toLocaleDateString(),
+      updatedAt: new Date(item.updated_at).toLocaleDateString(),
     }));
   },
 

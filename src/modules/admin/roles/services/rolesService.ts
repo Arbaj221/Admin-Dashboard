@@ -24,6 +24,19 @@ export const rolesService = {
       updatedAt: new Date(item.updated_at).toLocaleDateString(),
     }));
   },
+  async getActiveRoles(): Promise<Role[]> {
+    const res = await apiClient.get('/roles/?is_active=true');
+
+    return res.data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      isActive: item.is_active,
+      createdBy: item.created_by,
+      updatedBy: item.updated_by,
+      createdAt: new Date(item.created_at).toLocaleDateString(),
+      updatedAt: new Date(item.updated_at).toLocaleDateString(),
+    }));
+  },
 
   async getRoleById(id: number) {
     const res = await apiClient.get(`/roles/${id}`);

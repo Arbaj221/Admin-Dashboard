@@ -10,6 +10,7 @@ import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import { capitalizeFirst } from 'src/utils/format';
+import Can from 'src/permissions/Can';
 
 interface RoleUI {
   id: number;
@@ -40,9 +41,12 @@ const RolesTable = ({ roles, onEdit, onDelete }: Props) => {
             <TableHead className="text-center">Updated By</TableHead>
             <TableHead className="text-center">Created At</TableHead>
             <TableHead className="text-center">Updated At</TableHead>
-            <TableHead className="text-center">Actions</TableHead>
+            <Can module="roles" actions={['edit', 'delete']}>
+              <TableHead className="text-center">Actions</TableHead>
+            </Can>
           </TableRow>
         </TableHeader>
+
 
         <TableBody>
           {roles.length === 0 ? (
@@ -83,22 +87,25 @@ const RolesTable = ({ roles, onEdit, onDelete }: Props) => {
 
                 <TableCell className="text-center">
                   <div className="flex justify-center gap-2">
+                    <Can module="roles" actions={['edit']}>
+                      <Button
+                        size="sm"
+                        variant="lightprimary"
+                        onClick={() => onEdit(role)}
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                    </Can>
+                    <Can module="roles" actions={['delete']}>
+                      <Button
+                        size="sm"
+                        variant="lighterror"
+                        onClick={() => onDelete(role)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </Can>
 
-                    <Button
-                      size="sm"
-                      variant="lightprimary"
-                      onClick={() => onEdit(role)}
-                    >
-                      <Pencil className="size-4" />
-                    </Button>
-
-                    <Button
-                      size="sm"
-                      variant="lighterror"
-                      onClick={() => onDelete(role)}
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
 
                   </div>
                 </TableCell>

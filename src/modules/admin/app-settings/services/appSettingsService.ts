@@ -11,7 +11,7 @@ export interface AppSetting {
 }
 
 export const appSettingsService = {
-  async getAll(): Promise<AppSetting[]> {
+  async getAllAppSettings(): Promise<AppSetting[]> {
     const res = await apiClient.get('/app-settings/');
 
     return res.data.map((item: any) => ({

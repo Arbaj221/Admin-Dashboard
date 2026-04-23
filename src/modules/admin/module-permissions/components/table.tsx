@@ -5,6 +5,7 @@ import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import { capitalizeFirst } from 'src/utils/format';
+import Can from 'src/permissions/Can';
 
 interface Props {
   data: any[];
@@ -15,7 +16,7 @@ interface Props {
 const ModulePermissionsTable = ({ data, onEdit, onDelete }: Props) => {
   return (
     <div className="overflow-x-auto border border-border rounded-md">
-      <Table>
+      <Table className='overflow-x-auto'>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
@@ -28,7 +29,10 @@ const ModulePermissionsTable = ({ data, onEdit, onDelete }: Props) => {
             <TableHead>Updated By</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Updated At</TableHead>
-            <TableHead>Actions</TableHead>
+            <Can module="module-permissions" actions={['edit', 'delete']}>
+              <TableHead>Actions</TableHead>
+
+            </Can>
           </TableRow>
         </TableHeader>
 
@@ -73,12 +77,16 @@ const ModulePermissionsTable = ({ data, onEdit, onDelete }: Props) => {
 
                 <TableCell>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="lightprimary" onClick={() => onEdit(row)}>
-                      <Pencil size={16} />
-                    </Button>
-                    <Button size="sm" variant="lighterror" onClick={() => onDelete(row)}>
-                      <Trash2 size={16} />
-                    </Button>
+                    <Can module="module-permissions" actions={['edit']}>
+                      <Button size="sm" variant="lightprimary" onClick={() => onEdit(row)}>
+                        <Pencil size={16} />
+                      </Button>
+                    </Can>
+                    <Can module="module-permissions" actions={['delete']}>
+                      <Button size="sm" variant="lighterror" onClick={() => onDelete(row)}>
+                        <Trash2 size={16} />
+                      </Button>
+                    </Can>
                   </div>
                 </TableCell>
 

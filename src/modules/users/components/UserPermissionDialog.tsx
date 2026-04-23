@@ -27,7 +27,7 @@ const UserPermissionDialog = ({ open, onClose, userId }: Props) => {
     if (!userId) return;
 
     const [all, userPerms] = await Promise.all([
-      modulePermissionService.getAll(),
+      modulePermissionService.getActiveModulePermissions(),
       userPermissionService.get(userId),
     ]);
 

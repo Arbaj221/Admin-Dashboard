@@ -16,6 +16,7 @@ import { userService } from 'src/modules/users/services/userService';
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
 import { toast } from 'sonner';
 import { Icon } from '@iconify/react';
+import Can from 'src/permissions/Can';
 
 const RolesList = () => {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -30,7 +31,7 @@ const RolesList = () => {
   const loadAll = async () => {
     const [rolesData, usersData] = await Promise.all([
       rolesService.getRoles(),
-      userService.getUsers(),
+      userService.getActiveUsers(),
     ]);
 
     setRoles(rolesData);
@@ -91,14 +92,16 @@ const RolesList = () => {
       <CardBox>
         <div className="flex items-center justify-between mb-4">
           <h5 className="card-title">Roles List</h5>
+          <Can module="roles" actions={['create']}>
 
-          <button
-            onClick={openCreate}
-            className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md"
-          >
-            <Icon icon="solar:add-circle-linear" width={18} />
-            Create Role
-          </button>
+            <button
+              onClick={openCreate}
+              className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md"
+            >
+              <Icon icon="solar:add-circle-linear" width={18} />
+              Create Role
+            </button>
+          </Can>
         </div>
 
         <RolesTable

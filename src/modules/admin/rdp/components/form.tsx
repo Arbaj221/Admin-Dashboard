@@ -16,7 +16,7 @@ const RDPForm = ({ roleId, departmentId, setActiveCount }: Props) => {
     // load data
     const load = async () => {
         const [all, assigned] = await Promise.all([
-            modulePermissionService.getAll(),
+            modulePermissionService.getActiveModulePermissions(),
             rdpService.getRDP(roleId, departmentId),
         ]);
 

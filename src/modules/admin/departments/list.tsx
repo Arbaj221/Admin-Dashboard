@@ -13,6 +13,7 @@ import { userService } from 'src/modules/users/services/userService';
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
 import { toast } from 'sonner';
 import { Icon } from '@iconify/react';
+import Can from 'src/permissions/Can';
 
 const DepartmentsList = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
@@ -27,7 +28,7 @@ const DepartmentsList = () => {
   const loadAll = async () => {
     const [deptData, usersData] = await Promise.all([
       departmentService.getDepartments(),
-      userService.getUsers(),
+      userService.getActiveUsers(),
     ]);
 
     setDepartments(deptData);
@@ -84,13 +85,16 @@ const DepartmentsList = () => {
         <div className="flex items-center justify-between mb-4">
           <h5 className="card-title">Departments List</h5>
 
-          <button
-            onClick={openCreate}
-            className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md"
-          >
-            <Icon icon="solar:add-circle-linear" width={18} />
-            Create Department
-          </button>
+          <Can module="department" actions={['create']}>
+            <button
+              onClick={openCreate}
+              className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md"
+            >
+              <Icon icon="solar:add-circle-linear" width={18} />
+              Create Department
+            </button>
+
+          </Can>
         </div>
 
         <DepartmentsTable

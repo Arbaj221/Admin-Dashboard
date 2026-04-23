@@ -28,7 +28,7 @@ const AppSettingsList = () => {
   const confirm = useConfirm();
 
   const load = async () => {
-    const res = await appSettingsService.getAll();
+    const res = await appSettingsService.getAllAppSettings();
     setData(res);
   };
 

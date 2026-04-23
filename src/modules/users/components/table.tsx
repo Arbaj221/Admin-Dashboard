@@ -23,6 +23,7 @@ import { Role } from 'src/modules/admin/roles/services/rolesService';
 import { Department } from 'src/modules/admin/departments/services/departmentService';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import { capitalizeFirst } from 'src/utils/format';
+import Can from 'src/permissions/Can';
 
 interface Props {
   users: User[];
@@ -71,8 +72,12 @@ const UsersTable = ({
               <TableHead className="text-center">Department</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Password</TableHead>
-              <TableHead className="text-center">Permissions</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
+              <Can module="users" actions={['permissions']}>
+                <TableHead className="text-center">Permissions</TableHead>
+              </Can>
+              <Can module="users" actions={['edit', 'delete']}>
+                <TableHead className="text-center">Actions</TableHead>
+              </Can>
             </TableRow>
           </TableHeader>
 
@@ -150,23 +155,25 @@ const UsersTable = ({
                   </TableCell>
 
                   {/* Permissions */}
-                  <TableCell
-                    className="text-center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onPermission(user)}
-                        >
-                          <ShieldCheck className="size-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Manage Permissions</TooltipContent>
-                    </Tooltip>
-                  </TableCell>
+                  <Can module="users" actions={['permissions']}>
+                    <TableCell
+                      className="text-center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => onPermission(user)}
+                          >
+                            <ShieldCheck className="size-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Manage Permissions</TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                  </Can>
 
                   {/* Actions */}
                   <TableCell
@@ -174,32 +181,36 @@ const UsersTable = ({
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex justify-center gap-2">
+                      <Can module="users" action="edit">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="lightprimary"
+                              onClick={() => onEdit(user)}
+                            >
+                              <Pencil className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Edit</TooltipContent>
+                        </Tooltip>
+                      </Can>
 
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="lightprimary"
-                            onClick={() => onEdit(user)}
-                          >
-                            <Pencil className="size-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Edit</TooltipContent>
-                      </Tooltip>
+                      <Can module="users" action="delete">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="lighterror"
+                              onClick={() => onDelete(user)}
+                            >
+                              <Trash2 className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Delete</TooltipContent>
+                        </Tooltip>
+                      </Can>
 
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="lighterror"
-                            onClick={() => onDelete(user)}
-                          >
-                            <Trash2 className="size-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Delete</TooltipContent>
-                      </Tooltip>
 
                     </div>
                   </TableCell>

@@ -5,6 +5,7 @@ import { Button } from 'src/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import { capitalizeFirst } from 'src/utils/format';
+import Can from 'src/permissions/Can';
 
 interface DepartmentUI {
   id: number;
@@ -64,12 +65,16 @@ const DepartmentsTable = ({ departments, onEdit, onDelete }: Props) => {
 
                 <TableCell className="text-center">
                   <div className="flex justify-center gap-2">
-                    <Button size="sm" variant="lightprimary" onClick={() => onEdit(d)}>
-                      <Pencil className="size-4" />
-                    </Button>
-                    <Button size="sm" variant="lighterror" onClick={() => onDelete(d)}>
-                      <Trash2 className="size-4" />
-                    </Button>
+                    <Can module="department" actions={['edit', 'delete']}>
+                      <Button size="sm" variant="lightprimary" onClick={() => onEdit(d)}>
+                        <Pencil className="size-4" />
+                      </Button>
+                    </Can>
+                    <Can module="department" actions={['edit', 'delete']}>
+                      <Button size="sm" variant="lighterror" onClick={() => onDelete(d)}>
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </Can>
                   </div>
                 </TableCell>
 

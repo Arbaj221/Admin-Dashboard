@@ -13,6 +13,7 @@ import { userService } from 'src/modules/users/services/userService';
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
 import { toast } from 'sonner';
 import { Icon } from '@iconify/react';
+import Can from 'src/permissions/Can';
 
 const ModulePermissionsList = () => {
   const [data, setData] = useState<any[]>([]);
@@ -26,8 +27,8 @@ const ModulePermissionsList = () => {
 
   const loadAll = async () => {
     const [mp, users] = await Promise.all([
-      modulePermissionService.getAll(),
-      userService.getUsers(),
+      modulePermissionService.getAllModulePermissions(),
+      userService.getActiveUsers(),
     ]);
 
     setData(mp);
@@ -71,14 +72,15 @@ const ModulePermissionsList = () => {
       <CardBox>
         <div className="flex justify-between mb-4">
           <h5 className="card-title">Module Permissions</h5>
-
-          <button
-            onClick={() => { setMode('create'); setOpen(true); }}
-            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md"
-          >
-            <Icon icon="solar:add-circle-linear" width={18} />
-            Create Permission
-          </button>
+          <Can module="module-permissions" actions={['create']}>
+            <button
+              onClick={() => { setMode('create'); setOpen(true); }}
+              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md"
+            >
+              <Icon icon="solar:add-circle-linear" width={18} />
+              Create Permission
+            </button>
+          </Can>
         </div>
 
         <ModulePermissionsTable

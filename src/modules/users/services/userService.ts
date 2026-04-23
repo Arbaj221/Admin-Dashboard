@@ -32,6 +32,23 @@ export const userService = {
       createdAt: new Date(item.created_at).toLocaleDateString(),
     }));
   },
+  async getActiveUsers(): Promise<User[]> {
+    const res = await apiClient.get('/users?is_active=true');
+
+    return res.data.map((item: any) => ({
+      id: item.id,
+      email: item.email,
+      mobileNumber: item.mobile_number,
+      jobTitle: item.job_title,
+      workLocation: item.work_location,
+      roleId: item.role_id,
+      departmentId: item.department_id,
+      isActive: item.is_active,
+      createdBy: item.created_by,
+      updatedBy: item.updated_by,
+      createdAt: new Date(item.created_at).toLocaleDateString(),
+    }));
+  },
 
   async getUserById(id: number): Promise<User> {
     const res = await apiClient.get(`/users/${id}`);
