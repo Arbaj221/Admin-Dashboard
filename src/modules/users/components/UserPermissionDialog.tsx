@@ -73,7 +73,7 @@ const UserPermissionDialog = ({ open, onClose, userId }: Props) => {
         return newSet;
       });
 
-    } catch {}
+    } catch { }
   };
 
   // ✅ Group by module
@@ -85,74 +85,73 @@ const UserPermissionDialog = ({ open, onClose, userId }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-4/5 flex flex-col">
 
         <DialogHeader>
           <DialogTitle>User Permissions</DialogTitle>
         </DialogHeader>
+        <div className="flex-1 overflow-y-auto pr-2">
+          <div className="columns-1 md:columns-2 gap-6">
 
-        <div className="columns-1 md:columns-2 gap-6">
+            {Object.entries(grouped).map(([module, perms]: any, index: number) => (
+              <div key={module} className="break-inside-avoid mb-4">
 
-          {Object.entries(grouped).map(([module, perms]: any, index: number) => (
-            <div key={module} className="break-inside-avoid mb-4">
+                {/* Header */}
+                <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-md bg-lightprimary/60">
 
-              {/* Header */}
-              <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-md bg-lightprimary/60">
+                  <span className="text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary font-medium">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
 
-                <span className="text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary font-medium">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
+                  <h6 className="text-[13px] font-semibold text-primary">
+                    {capitalizeFirst(module)}
+                  </h6>
 
-                <h6 className="text-[13px] font-semibold text-primary">
-                  {capitalizeFirst(module)}
-                </h6>
+                </div>
 
-              </div>
+                {/* Permissions */}
+                <div className="space-y-1">
 
-              {/* Permissions */}
-              <div className="space-y-1">
+                  {perms.map((p: any) => {
+                    const isChecked = selected.has(p.id);
 
-                {perms.map((p: any) => {
-                  const isChecked = selected.has(p.id);
-
-                  return (
-                    <label
-                      key={p.id}
-                      className={`
+                    return (
+                      <label
+                        key={p.id}
+                        className={`
                         flex items-center gap-3 px-2 py-1.5 rounded-md cursor-pointer text-sm
                         transition-all
-                        ${
-                          isChecked
+                        ${isChecked
                             ? 'bg-lightprimary/10 text-primary'
                             : 'hover:bg-lightprimary/10'
-                        }
+                          }
                       `}
-                    >
+                      >
 
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => toggle(p.id)}
-                        className="accent-primary"
-                      />
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggle(p.id)}
+                          className="accent-primary"
+                        />
 
-                      <span>
-                        {capitalizeFirst(
-                          p.permissionName.replace(/_/g, ' ')
-                        )}
-                      </span>
+                        <span>
+                          {capitalizeFirst(
+                            p.permissionName.replace(/_/g, ' ')
+                          )}
+                        </span>
 
-                    </label>
-                  );
-                })}
+                      </label>
+                    );
+                  })}
+
+                </div>
 
               </div>
+            ))}
 
-            </div>
-          ))}
-
+          </div>
         </div>
-
       </DialogContent>
     </Dialog>
   );
