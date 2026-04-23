@@ -74,7 +74,7 @@ const RolesList = () => {
   const handleDelete = async (role: Role) => {
     const ok = await confirm({
       title: 'Delete role?',
-      description: 'This action cannot be undone.',
+      description: 'Are you sure you want to delete this role? This action cannot be undone.',
       confirmText: 'Delete',
       variant: 'destructive',
     });

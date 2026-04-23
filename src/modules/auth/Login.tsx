@@ -46,7 +46,7 @@ const Login = () => {
       loadPermissions(access.permissions);
 
       // ✅ success toast
-      toast.success("Welcome back! 🎉");
+      toast.info(`Welcome back, ${data.user.first_name}. You're all set.`);
 
       navigate(from, { replace: true });
 

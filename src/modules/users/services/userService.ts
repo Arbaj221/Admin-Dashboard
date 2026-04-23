@@ -92,4 +92,10 @@ export const userService = {
   async deleteUser(id: number) {
     return (await apiClient.delete(`/users/${id}`)).data;
   },
+
+  async getProfile() {
+    const res = await apiClient.get('/users/profile');
+    return res.data;
+  }
+
 };

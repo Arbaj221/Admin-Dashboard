@@ -72,7 +72,7 @@ const UsersList = () => {
   const handleDelete = async (user: User) => {
     const ok = await confirm({
       title: 'Delete user?',
-      description: 'User will be deactivated (soft delete).',
+      description: 'Are you sure you want to remove this user? This action cannot be undone..',
       confirmText: 'Delete',
       variant: 'destructive',
     });

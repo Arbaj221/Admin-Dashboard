@@ -42,11 +42,11 @@ const AppSettingsTable = ({ data, onEdit, onDelete }: Props) => {
 
                                 <TableCell>{row.key}</TableCell>
 
-                                <TableCell className="max-w-[200px] whitespace-normal break-words">
+                                <TableCell className="max-w-200 whitespace-normal wrap-break-word">
                                     {row.value}
                                 </TableCell>
 
-                                <TableCell className="max-w-[250px] whitespace-normal break-words">
+                                <TableCell className="max-w-[250px] whitespace-normal wrap-break-word">
                                     {row.description || '—'}
                                 </TableCell>
 

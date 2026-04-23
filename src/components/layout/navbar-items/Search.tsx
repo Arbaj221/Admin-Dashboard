@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import { Link } from 'react-router';
 import SimpleBar from 'simplebar-react';
 import { Input } from 'src/components/ui/input';
+import { useSidebarMenu } from 'src/permissions/useSidebarMenu';
 import SidebarContent, { ChildItem, MenuItem } from '../../../config/sidebaritems';
 
 interface SearchResult {
@@ -14,7 +15,7 @@ interface SearchResult {
 
 function Search() {
   const [query, setQuery] = useState('');
-
+  const filteredMenu = useSidebarMenu(SidebarContent);
   // 🔍 Recursive search through menu
   const searchItems = (items: (MenuItem | ChildItem)[], q: string, parentPath = ''): SearchResult[] => {
     let results: SearchResult[] = [];
@@ -44,7 +45,7 @@ function Search() {
   // Memoize filtered results
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    return searchItems(SidebarContent, query);
+    return searchItems(filteredMenu, query);
   }, [query]);
 
   return (
@@ -66,9 +67,8 @@ function Search() {
         />
       </div>
       <div
-        className={`absolute w-full bg-background rounded-md top-11 z-10 start-0 shadow-md border border-border ${
-          Boolean(query) ? 'block' : 'hidden'
-        }`}
+        className={`absolute w-full bg-background rounded-md top-11 z-10 start-0 shadow-md border border-border ${Boolean(query) ? 'block' : 'hidden'
+          }`}
       >
         <SimpleBar className="h-72 p-4 custom-scroll">
           {Boolean(results.length) ? (

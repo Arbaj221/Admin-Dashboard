@@ -54,7 +54,7 @@ const ModulePermissionsList = () => {
   const handleDelete = async (row: any) => {
     const ok = await confirm({
       title: 'Delete permission?',
-      description: 'This action cannot be undone.',
+      description: 'Deleting this module permission may affect user access across the system. This action cannot be undone.',
       confirmText: 'Delete',
       variant: 'destructive',
     });
@@ -102,6 +102,7 @@ const ModulePermissionsList = () => {
             mode={mode}
             initialData={selected}
             onSuccess={() => { setOpen(false); loadAll(); }}
+
           />
         </DialogContent>
       </Dialog>

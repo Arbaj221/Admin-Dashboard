@@ -1,77 +1,153 @@
-import { Icon } from "@iconify/react/dist/iconify.js"
+import { useEffect, useState } from "react";
 import SlimBreadcrumb from "src/components/shared/breadcrumb/SlimBreadcrumb";
 import CardBox from "src/components/shared/CardBox";
-import profileImg from "src/assets/images/profile/user-1.jpg"
+import profileImg from "src/assets/images/profile/user-1.jpg";
+
+import { userService } from "../services/userService";
+import { rolesService } from "src/modules/admin/roles/services/rolesService";
+import { departmentService } from "src/modules/admin/departments/services/departmentService";
 
 const UserProfile = () => {
+    const [profile, setProfile] = useState<any>(null);
+    const [roles, setRoles] = useState<any[]>([]);
+    const [departments, setDepartments] = useState<any[]>([]);
 
     const BCrumb = [
-        {
-            to: "/",
-            title: "Home",
-        },
-        {
-            title: "Userprofile",
-        },
+        { to: "/", title: "Home" },
+        { title: "User Profile" },
     ];
 
-    const socialLinks = [
-        { href: "https://www.facebook.com/wrappixel", icon: "streamline-logos:facebook-logo-2-solid" },
-        { href: "https://twitter.com/wrappixel", icon: "streamline-logos:x-twitter-logo-solid" },
-        { href: "https://github.com/wrappixel", icon: "ion:logo-github" },
-        { href: "https://dribbble.com/wrappixel", icon: "streamline-flex:dribble-logo-remix" },
-    ];
+    useEffect(() => {
+        const loadAll = async () => {
+            try {
+                const [profileData, rolesData, deptData] = await Promise.all([
+                    userService.getProfile(),
+                    rolesService.getRoles(),
+                    departmentService.getDepartments(),
+                ]);
+
+                setProfile(profileData);
+                setRoles(rolesData);
+                setDepartments(deptData);
+            } catch {
+                // handled globally
+            }
+        };
+
+        loadAll();
+    }, []);
+
+    // ✅ helpers
+    const getRoleName = (id: number) =>
+        roles.find((r) => r.id === id)?.name || "N/A";
+
+    const getDeptName = (id: number) =>
+        departments.find((d) => d.id === id)?.name || "N/A";
+
+    if (!profile) return null;
 
     return (
         <>
             <SlimBreadcrumb title="User Profile" items={BCrumb} />
+
             <div className="flex flex-col gap-6">
                 <CardBox className="p-6 overflow-hidden">
-                    <div className="flex flex-col sm:flex-row items-center gap-6 rounded-xl relative w-full break-words">
+                    <div className="flex flex-col sm:flex-row items-center gap-6 rounded-xl w-full">
+
+                        {/* Image */}
                         <div>
-                            <img src={profileImg} alt="image" width={80} height={80} className="rounded-full" />
+                            <img
+                                src={profileImg}
+                                alt="image"
+                                width={80}
+                                height={80}
+                                className="rounded-full"
+                            />
                         </div>
-                        <div className="flex flex-wrap gap-4 justify-center sm:justify-between items-center w-full">
-                            <div className="flex flex-col sm:text-left text-center gap-1.5">
-                                <h5 className="card-title">Mathew Anderson</h5>
-                                <div className="flex flex-wrap items-center gap-1 md:gap-3">
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">Team Leader</p>
-                                    <div className="hidden h-4 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">United States</p>
+
+                        <div className="flex flex-wrap gap-4 justify-between items-center w-full">
+                            <div className="flex flex-col gap-1.5 text-center sm:text-left">
+                                <h5 className="card-title">
+                                    {profile.first_name} {profile.last_name}
+                                </h5>
+
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <p className="text-sm text-muted-foreground">
+                                        {profile.job_title}
+                                    </p>
+
+                                    <div className="hidden h-4 w-px bg-border xl:block"></div>
+
+                                    <p className="text-sm text-muted-foreground">
+                                        {profile.work_location}
+                                    </p>
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {socialLinks.map((item, index) => (
-                                    <a key={index} href={item.href} target="_blank" className="flex h-11 w-11 items-center justify-center gap-2 rounded-full shadow-md border border-ld hover:bg-gray-50 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-                                        <Icon icon={item.icon} width="20" height="20" />
-                                    </a>
-                                ))}
                             </div>
                         </div>
                     </div>
                 </CardBox>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    <CardBox className="p-6 overflow-hidden">
+
+                    {/* Personal Info */}
+                    <CardBox className="p-6">
                         <h5 className="card-title mb-6">Personal Information</h5>
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-7 2xl:gap-x-32 mb-6">
-                            <div><p className="text-xs text-gray-500">First Name</p><p>Mathew</p></div>
-                            <div><p className="text-xs text-gray-500">Last Name</p><p>Anderson</p></div>
-                            <div><p className="text-xs text-gray-500">Email</p><p>mathew.anderson@gmail.com</p></div>
-                            <div><p className="text-xs text-gray-500">Position</p><p>Team Leader</p></div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-xs text-muted-foreground">First Name</p>
+                                <p>{profile.first_name}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-muted-foreground">Last Name</p>
+                                <p>{profile.last_name}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-muted-foreground">Email</p>
+                                <p>{profile.email}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-muted-foreground">Position</p>
+                                <p>{profile.job_title}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-muted-foreground">Mobile</p>
+                                <p>{profile.mobile_number}</p>
+                            </div>
                         </div>
                     </CardBox>
 
-                    <CardBox className="p-6 overflow-hidden">
-                        <h5 className="card-title mb-6">Address Details</h5>
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-7 2xl:gap-x-32 mb-6">
-                            <div><p className="text-xs text-gray-500">Location</p><p>United States</p></div>
-                            <div><p className="text-xs text-gray-500">Province / State</p><p>San Diego, California, United States</p></div>
-                            <div><p className="text-xs text-gray-500">PIN Code</p><p>92101</p></div>
-                            <div><p className="text-xs text-gray-500">ZIP</p><p>030302</p></div>
-                            <div><p className="text-xs text-gray-500">Federal Tax No.</p><p>GA45273910</p></div>
+                    {/* Address / Org Info */}
+                    <CardBox className="p-6">
+                        <h5 className="card-title mb-6">Organization Details</h5>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-xs text-muted-foreground">Location</p>
+                                <p>{profile.work_location}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-muted-foreground">Department</p>
+                                <p>{getDeptName(profile.department_id)}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-muted-foreground">Role</p>
+                                <p>{getRoleName(profile.role_id)}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-muted-foreground">Status</p>
+                                <p>{profile.is_active ? "Active" : "Inactive"}</p>
+                            </div>
                         </div>
                     </CardBox>
+
                 </div>
             </div>
         </>

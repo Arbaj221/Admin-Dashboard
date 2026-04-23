@@ -66,7 +66,7 @@ const DepartmentsList = () => {
   const handleDelete = async (d: Department) => {
     const ok = await confirm({
       title: 'Delete department?',
-      description: 'This action cannot be undone.',
+      description: 'Are you sure you want to delete this department? This action cannot be undone.',
       confirmText: 'Delete',
       variant: 'destructive',
     });
