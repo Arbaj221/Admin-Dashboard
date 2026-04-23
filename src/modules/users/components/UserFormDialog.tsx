@@ -31,6 +31,8 @@ const UserFormDialog = ({ open, onClose, mode, user }: Props) => {
             user
               ? {
                   id: user.id,
+                  firstName: user.firstName,
+                  lastName: user.lastName,
                   email: user.email,
                   mobileNumber: user.mobileNumber,
                   jobTitle: user.jobTitle,

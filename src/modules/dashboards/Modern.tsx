@@ -3,6 +3,7 @@ import supportImg from '../../assets/images/dashboard/customer-support-img.png';
 import { toast } from 'sonner';
 
 const Moderndash = () => {
+    const name = localStorage.getItem('name') || 'User';
     return (
         <>
             <div className="grid grid-cols-12 gap-6">
@@ -13,7 +14,7 @@ const Moderndash = () => {
                                 <img src={userImg} alt="user-img" width={50} height={50} className="rounded-full" />
                             </div>
                             <div className="flex flex-col gap-0.5">
-                                <h5 className="card-title">Welcome back! John 👋</h5>
+                                <h5 className="card-title">Welcome back! {name} 👋</h5>
                             </div>
                         </div>
 

@@ -122,10 +122,10 @@ const RoleForm = ({ mode, initialData, onSuccess }: Props) => {
 
       {/* Actions */}
       <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={onSuccess}>
+        <Button type="button" variant="lighterror" onClick={onSuccess}>
           Cancel
         </Button>
-        <Button type="submit">
+        <Button variant="lightprimary" type="submit">
           {mode === 'create' ? 'Create' : 'Update'}
         </Button>
       </div>

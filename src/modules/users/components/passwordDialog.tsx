@@ -85,7 +85,7 @@ const ChangePasswordDialog = ({ open, onClose, userId }: Props) => {
           </div>
 
           <div className="flex justify-end">
-            <Button onClick={handleSubmit}>Update</Button>
+            <Button variant="lightprimary" onClick={handleSubmit}>Update</Button>
           </div>
         </div>
       </DialogContent>

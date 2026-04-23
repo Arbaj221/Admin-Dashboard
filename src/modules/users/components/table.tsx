@@ -65,6 +65,7 @@ const UsersTable = ({
           <TableHeader>
             <TableRow>
               <TableHead className="text-center">User ID</TableHead>
+              <TableHead className="text-center">First Name</TableHead>
               <TableHead className="text-center">Email</TableHead>
               <TableHead className="text-center">Mobile</TableHead>
               <TableHead className="text-center">Job Title</TableHead>
@@ -101,6 +102,11 @@ const UsersTable = ({
                   {/* ID */}
                   <TableCell className="text-center">
                     {user.id}
+                  </TableCell>
+
+                  {/* First Name */}
+                  <TableCell className="text-center">
+                    {capitalizeFirst(user.firstName)}
                   </TableCell>
 
                   {/* Email */}

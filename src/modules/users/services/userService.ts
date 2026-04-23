@@ -2,6 +2,8 @@ import apiClient from 'src/services/apiClient';
 
 export interface User {
   id: number;
+  firstName: string;
+  lastName: string;
   email: string;
   mobileNumber: string;
   jobTitle: string;
@@ -20,6 +22,8 @@ export const userService = {
 
     return res.data.map((item: any) => ({
       id: item.id,
+      firstName: item.first_name,
+      lastName: item.last_name,
       email: item.email,
       mobileNumber: item.mobile_number,
       jobTitle: item.job_title,
@@ -37,6 +41,8 @@ export const userService = {
 
     return res.data.map((item: any) => ({
       id: item.id,
+      firstName: item.first_name,
+      lastName: item.last_name,
       email: item.email,
       mobileNumber: item.mobile_number,
       jobTitle: item.job_title,
@@ -56,6 +62,8 @@ export const userService = {
 
     return {
       id: item.id,
+      firstName: item.first_name,
+      lastName: item.last_name,
       email: item.email,
       mobileNumber: item.mobile_number,
       jobTitle: item.job_title,

@@ -37,6 +37,7 @@ const Login = () => {
 
       // ✅ store token
       localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("name", data.user.first_name);
       localStorage.setItem("is_auth", "true");
 
       // ✅ 🚀 LOAD USER ACCESS

@@ -26,6 +26,8 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
   const [departments, setDepartments] = useState<Department[]>([]);
 
   const [form, setForm] = useState({
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -54,6 +56,8 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
   useEffect(() => {
     if (mode === 'edit' && initialData) {
       setForm({
+        first_name: initialData.firstName || '',
+        last_name: initialData.lastName || '',
         email: initialData.email || '',
         password: '',
         confirmPassword: '',
@@ -68,15 +72,15 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
   }, [mode, initialData]);
 
   // ✅ Re-sync role_id and department_id AFTER dropdowns load
-useEffect(() => {
-  if (mode === 'edit' && initialData && roles.length > 0 && departments.length > 0) {
-    setForm((prev) => ({
-      ...prev,
-      role_id: String(initialData.roleId || ''),
-      department_id: String(initialData.departmentId || ''),
-    }));
-  }
-}, [roles, departments]); // 👈 fires again once dropdowns are populated
+  useEffect(() => {
+    if (mode === 'edit' && initialData && roles.length > 0 && departments.length > 0) {
+      setForm((prev) => ({
+        ...prev,
+        role_id: String(initialData.roleId || ''),
+        department_id: String(initialData.departmentId || ''),
+      }));
+    }
+  }, [roles, departments]); // 👈 fires again once dropdowns are populated
 
   const handleChange = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -117,6 +121,8 @@ useEffect(() => {
     }
 
     let payload: any = {
+      first_name: form.first_name,
+      last_name: form.last_name,
       mobile_number: form.mobile_number,
       job_title: form.job_title,
       work_location: form.work_location,
@@ -135,6 +141,8 @@ useEffect(() => {
       } else {
         // ✅ build original object
         const original = {
+          first_name: initialData.firstName,
+          last_name: initialData.lastName,
           mobile_number: initialData.mobileNumber,
           job_title: initialData.jobTitle,
           work_location: initialData.workLocation,
@@ -177,6 +185,22 @@ useEffect(() => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {/* Email */}
+        <div>
+          <Label>First Name</Label>
+          <Input
+            type='text'
+            value={form.first_name}
+            onChange={(e) => handleChange('first_name', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label>Last Name</Label>
+          <Input
+            type='text'
+            value={form.last_name}
+            onChange={(e) => handleChange('last_name', e.target.value)}
+          />
+        </div>
         <div>
           <Label>Email *</Label>
           <Input
@@ -290,10 +314,10 @@ useEffect(() => {
 
       {/* Actions */}
       <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={onSuccess}>
+        <Button variant="lighterror" type="button" onClick={onSuccess}>
           Cancel
         </Button>
-        <Button type="submit">
+        <Button variant="lightprimary" type="submit">
           {mode === 'create' ? 'Create' : 'Update'}
         </Button>
       </div>

@@ -164,8 +164,8 @@ const ModulePermissionForm = ({ mode, initialData, onSuccess }: Props) => {
       </div>
 
       <div className="flex justify-end gap-3">
-        <Button variant="outline" onClick={onSuccess}>Cancel</Button>
-        <Button type="submit">
+        <Button variant="lighterror" onClick={onSuccess}>Cancel</Button>
+        <Button variant="lightprimary" type="submit">
           {mode === 'create' ? 'Create' : 'Update'}
         </Button>
       </div>

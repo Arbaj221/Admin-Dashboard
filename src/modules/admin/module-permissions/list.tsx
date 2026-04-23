@@ -14,6 +14,7 @@ import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context'
 import { toast } from 'sonner';
 import { Icon } from '@iconify/react';
 import Can from 'src/permissions/Can';
+import { Button } from 'src/components/ui/button';
 
 const ModulePermissionsList = () => {
   const [data, setData] = useState<any[]>([]);
@@ -73,13 +74,12 @@ const ModulePermissionsList = () => {
         <div className="flex justify-between mb-4">
           <h5 className="card-title">Module Permissions</h5>
           <Can module="module-permissions" actions={['create']}>
-            <button
+            <Button variant="lightprimary"
               onClick={() => { setMode('create'); setOpen(true); }}
-              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md"
             >
               <Icon icon="solar:add-circle-linear" width={18} />
               Create Permission
-            </button>
+            </Button>
           </Can>
         </div>
 

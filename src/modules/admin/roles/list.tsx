@@ -17,6 +17,7 @@ import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context'
 import { toast } from 'sonner';
 import { Icon } from '@iconify/react';
 import Can from 'src/permissions/Can';
+import { Button } from 'src/components/ui/button';
 
 const RolesList = () => {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -94,13 +95,12 @@ const RolesList = () => {
           <h5 className="card-title">Roles List</h5>
           <Can module="roles" actions={['create']}>
 
-            <button
+            <Button variant="lightprimary"
               onClick={openCreate}
-              className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md"
             >
               <Icon icon="solar:add-circle-linear" width={18} />
               Create Role
-            </button>
+            </Button>
           </Can>
         </div>
 
