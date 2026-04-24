@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router';
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
-import ClientForm from './components/ClientForm';
+import ClientForm from './components/form';
 import { clientsData } from './data/client.data';
 
 const EditClient = () => {

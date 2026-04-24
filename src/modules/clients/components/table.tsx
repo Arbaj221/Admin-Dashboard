@@ -1,0 +1,210 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from 'src/components/ui/table';
+
+import { Button } from 'src/components/ui/button';
+import { Pencil, Trash2, Download } from 'lucide-react';
+import { useNavigate } from 'react-router';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from 'src/components/ui/tooltip';
+
+import { Client, clientService } from '../services/clientService';
+import { User } from 'src/modules/users/services/userService';
+
+import { capitalizeFirst } from 'src/utils/format';
+import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
+import Can from 'src/permissions/Can';
+
+interface Props {
+  clients: Client[];
+  users: User[];
+  onEdit: (client: Client) => void;
+  onDelete: (client: Client) => void;
+}
+
+const ClientTable = ({
+  clients,
+  users,
+  onEdit,
+  onDelete,
+}: Props) => {
+  const navigate = useNavigate();
+
+  const getAssignedUserEmail = (userId: number) => {
+    const user = users.find((u) => u.id === userId);
+    return user ? user.email : 'N/A';
+  };
+
+  // ✅ Download handler
+  const handleDownload = async (id: number) => {
+    await clientService.downloadContract(id);
+  };
+  return (
+    <TooltipProvider delayDuration={200}>
+      <div className="overflow-x-auto border border-border rounded-md">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">ID</TableHead>
+              <TableHead className="text-center">Client Name</TableHead>
+              <TableHead className="text-center">Person</TableHead>
+              <TableHead className="text-center">Email</TableHead>
+              <TableHead className="text-center">Number</TableHead>
+              <TableHead className="text-center">Assigned To</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Contract</TableHead>
+
+              <Can module="client" actions={['edit', 'delete']}>
+                <TableHead className="text-center">Actions</TableHead>
+              </Can>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {clients.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                  No clients found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              clients.map((client) => (
+                <TableRow
+                  key={client.id}
+                  className="even:bg-lightprimary/80 cursor-pointer hover:bg-muted/50"
+                  onClick={() => navigate(`/clients/details/${client.id}`)}
+                >
+                  {/* ID */}
+                  <TableCell className="text-center">{client.id}</TableCell>
+
+                  {/* Name */}
+                  <TableCell className="text-center">
+                    {capitalizeFirst(client.name)}
+                  </TableCell>
+
+                  {/* Person */}
+                  <TableCell className="text-center">
+                    {capitalizeFirst(client.firstName)} {capitalizeFirst(client.lastName)}
+                  </TableCell>
+
+                  {/* Email */}
+                  <TableCell className="text-center">
+                    {client.contactEmail}
+                  </TableCell>
+
+                  {/* Mobile */}
+                  <TableCell className="text-center">
+                    {client.contactMobileNumber}
+                  </TableCell>
+
+                  {/* Assigned */}
+                  <TableCell className="text-center">
+                    {getAssignedUserEmail(client.assignedTo)}
+                  </TableCell>
+
+                  {/* ✅ Status */}
+                  <TableCell className="text-center">
+                    <StatusBadge value={client.isActive ? 'Active' : 'Inactive'} />
+                  </TableCell>
+
+                  {/* ✅ Contract Download */}
+                  <TableCell
+                    className="text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {client.contractFileName ? (
+                      <div className="flex items-center justify-center gap-2">
+
+                        {/* ✅ File Name with Tooltip */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="text-sm truncate max-w-[120px] cursor-pointer">
+                              {client.contractFileName}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {client.contractFileName}
+                          </TooltipContent>
+                        </Tooltip>
+
+                        {/* ✅ Download Button */}
+                        <Tooltip >
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="lightinfo"
+                              onClick={() => handleDownload(client.id)}
+                            >
+                              <Download className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Download</TooltipContent>
+                        </Tooltip>
+
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">N/A</span>
+                    )}
+                  </TableCell>
+
+                  {/* Actions */}
+                  <TableCell
+                    className="text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex justify-center gap-2">
+
+                      <Can module="client" action="edit">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="lightprimary"
+                              onClick={() => onEdit(client)}
+                            >
+                              <Pencil className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Edit</TooltipContent>
+                        </Tooltip>
+                      </Can>
+
+                      <Can module="client" action="delete">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="lighterror"
+                              onClick={() => onDelete(client)}
+                            >
+                              <Trash2 className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Delete</TooltipContent>
+                        </Tooltip>
+                      </Can>
+
+                    </div>
+                  </TableCell>
+
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </TooltipProvider>
+  );
+};
+
+export default ClientTable;

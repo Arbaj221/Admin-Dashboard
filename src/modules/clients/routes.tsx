@@ -1,7 +1,6 @@
 import { RouteObject } from 'react-router-dom';
-import ClientsList from './ClientsList';
-import CreateClient from './CreateClient';
-import EditClient from './EditClient';
+import ClientsList from './list';
+import ClientDetails from './details';
 
 const clientRoutes: RouteObject[] = [
     {
@@ -9,12 +8,8 @@ const clientRoutes: RouteObject[] = [
         element: <ClientsList />,
     },
     {
-        path: '/clients/create',
-        element: <CreateClient />,
-    },
-    {
-        path: '/clients/edit/:id',
-        element: <EditClient />,
+        path: '/clients/details/:id',
+        element: <ClientDetails />,
     }
 ];
 
