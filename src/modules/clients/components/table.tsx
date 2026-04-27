@@ -134,7 +134,7 @@ const ClientTable = ({
                         {/* ✅ File Name with Tooltip */}
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <span className="text-sm truncate max-w-[120px] cursor-pointer">
+                            <span className="text-sm truncate max-w-120 cursor-pointer">
                               {client.contractFileName}
                             </span>
                           </TooltipTrigger>
