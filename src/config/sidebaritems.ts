@@ -133,6 +133,7 @@ const SidebarContent: MenuItem[] = [
             name: 'All Campaigns',
             icon: 'lucide:list',
             url: '/campaigns',
+            module: 'campaign'
           },
           {
             id: uniqueId(),

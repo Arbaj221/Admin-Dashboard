@@ -1,7 +1,6 @@
 import { RouteObject } from 'react-router-dom';
 import CampaignsList from './list';
-import CreateCampaign from './create';
-import EditCampaign from './edit';
+import CompaignDetails from './details';
 
 const CampaignRoutes: RouteObject[] = [
     {
@@ -9,13 +8,9 @@ const CampaignRoutes: RouteObject[] = [
         element: <CampaignsList />,
     },
     {
-        path: '/campaigns/create',
-        element: <CreateCampaign />,
+        path: '/campaigns/details/:id',
+        element: <CompaignDetails />,
     },
-    {
-        path: '/campaigns/edit/:id',
-        element: <EditCampaign />,
-    }
 ];
 
 

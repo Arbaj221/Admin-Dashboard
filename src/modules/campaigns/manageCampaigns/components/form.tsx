@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
 import { Button } from 'src/components/ui/button';
-import { Textarea } from 'src/components/ui/textarea';
 import {
     Select,
     SelectContent,
@@ -11,359 +9,462 @@ import {
     SelectTrigger,
     SelectValue,
 } from 'src/components/ui/select';
-import CardBox from 'src/components/shared/CardBox';
+import { Calendar } from 'src/components/ui/calendar';
+import { format } from 'date-fns';
+
 import { Icon } from '@iconify/react';
+import { toast } from 'sonner';
+import { campaignService } from '../services/campaignService';
+import { Client } from 'src/modules/clients/services/clientService';
+
+import {
+    CAMPAIGN_TYPE_OPTIONS,
+    DELIVERY_MODE_OPTIONS,
+    DELIVERY_METHOD_OPTIONS,
+    CAMPAIGN_STATUS_OPTIONS,
+    CAMPAIGN_CURRENCY_OPTIONS,
+    CAMPAIGN_PRIORITY_OPTIONS,
+} from 'src/config/constant-data/campaignOptions';
 
 interface CampaignFormData {
-    campaignName: string;
-    campaignType: string;
-    deliveryMode: string;
-    client: string;
-    deliveryMethod: string;
+    campaign_name: string;
+    campaign_type: string;
+    delivery_mode: string;
+    delivery_method: string;
+    client_id: string;
     status: string;
-    startDate: string;
-    endDate: string;
-    totalAllocation: string;
-    totalDelivered: string;
-    totalAccepted: string;
-    totalRejected: string;
+
+    start_date: string;
+    end_date: string;
+
+    total_allocation: string;
+    total_delivered: string;
+    total_accepted: string;
+    total_rejected: string;
+
     currency: string;
     cpl: string;
     priority: string;
-    campaignDocument: File | null;
+
+    campaign_document_name: string;
+    campaign_document: string;
     comment: string;
 }
 
-interface CampaignFormProps {
+interface Props {
     mode: 'create' | 'edit';
     initialData?: Partial<CampaignFormData>;
+    clients: Client[];
+    onSuccess: () => void;
+    campaignId?: number;
 }
 
-const defaultFormData: CampaignFormData = {
-    campaignName: '',
-    campaignType: '',
-    deliveryMode: '',
-    client: '',
-    deliveryMethod: '',
-    status: '',
-    startDate: '',
-    endDate: '',
-    totalAllocation: '',
-    totalDelivered: '',
-    totalAccepted: '',
-    totalRejected: '',
-    currency: '',
-    cpl: '',
-    priority: '',
-    campaignDocument: null,
-    comment: '',
-};
+const CampaignForm = ({
+    mode,
+    initialData,
+    clients,
+    onSuccess,
+    campaignId,
+}: Props) => {
 
-const CampaignForm = ({ mode, initialData }: CampaignFormProps) => {
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState<CampaignFormData>({
-        ...defaultFormData,
-        ...initialData,
+    // ✅ Initialize directly from initialData — no useEffect needed
+    // key prop on this component forces a full remount when campaign changes
+    const [form, setForm] = useState<CampaignFormData>({
+        campaign_name: initialData?.campaign_name ?? '',
+        campaign_type: initialData?.campaign_type ?? '',
+        delivery_mode: initialData?.delivery_mode ?? '',
+        delivery_method: initialData?.delivery_method ?? '',
+        client_id: initialData?.client_id ?? '',
+        status: initialData?.status ?? '',
+        start_date: initialData?.start_date ?? '',
+        end_date: initialData?.end_date ?? '',
+        total_allocation: initialData?.total_allocation ?? '',
+        total_delivered: initialData?.total_delivered ?? '',
+        total_accepted: initialData?.total_accepted ?? '',
+        total_rejected: initialData?.total_rejected ?? '',
+        currency: initialData?.currency ?? '',
+        cpl: initialData?.cpl ?? '',
+        priority: initialData?.priority ?? '',
+        campaign_document_name: initialData?.campaign_document_name ?? '',
+        campaign_document: '',
+        comment: initialData?.comment ?? '',
     });
-    const [errors, setErrors] = useState<Partial<Record<keyof CampaignFormData, string>>>({});
 
-    const handleChange = (field: keyof CampaignFormData, value: string | File | null) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-        if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
+    const handleChange = (key: keyof CampaignFormData, value: any) => {
+        setForm((prev) => ({ ...prev, [key]: value }));
     };
 
-    const validate = (): boolean => {
-        const newErrors: Partial<Record<keyof CampaignFormData, string>> = {};
-        if (!formData.campaignName.trim()) newErrors.campaignName = 'Campaign name is required';
-        if (!formData.campaignType) newErrors.campaignType = 'Campaign type is required';
-        if (!formData.deliveryMode) newErrors.deliveryMode = 'Delivery mode is required';
-        if (!formData.client) newErrors.client = 'Client is required';
-        if (!formData.deliveryMethod) newErrors.deliveryMethod = 'Delivery method is required';
-        if (!formData.status) newErrors.status = 'Status is required';
-        if (!formData.startDate) newErrors.startDate = 'Start date is required';
-        if (!formData.endDate) newErrors.endDate = 'End date is required';
-        if (!formData.totalAllocation) newErrors.totalAllocation = 'Total allocation is required';
-        if (!formData.currency) newErrors.currency = 'Currency is required';
-        if (!formData.priority) newErrors.priority = 'Priority is required';
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+    // ✅ FILE → BASE64
+    const handleFile = (file: File | null) => {
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setForm((prev) => ({
+                ...prev,
+                campaign_document: reader.result as string,
+                campaign_document_name: file.name,
+            }));
+        };
+        reader.readAsDataURL(file);
     };
 
-    const handleSubmit = () => {
-        if (!validate()) return;
-        navigate('/campaigns');
+    // ✅ VALIDATION
+    const validate = () => {
+        if (!form.campaign_name) return 'Campaign name required';
+        if (!form.client_id) return 'Client required';
+        if (!form.start_date) return 'Start date required';
+        if (!form.end_date) return 'End date required';
+        return null;
     };
 
-    const inputClass = (field: keyof CampaignFormData) =>
-        `mt-2 ${errors[field] ? 'border-error focus-visible:border-error' : ''}`;
+    // ✅ DIFF — only return fields that changed
+    const getChangedFields = (original: any, current: any) => {
+        const diff: any = {};
 
-    const selectClass = (field: keyof CampaignFormData) =>
-        `mt-2 w-full ${errors[field] ? 'border-error' : ''}`;
+        Object.keys(current).forEach((key) => {
+            const currentValue = current[key];
+            const originalValue = original[key];
+
+            const normalizedCurrent = currentValue === '' || currentValue === null ? undefined : currentValue;
+            const normalizedOriginal = originalValue === '' || originalValue === null ? undefined : originalValue;
+
+            if (normalizedCurrent !== normalizedOriginal) {
+                diff[key] = currentValue;
+            }
+        });
+
+        return diff;
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const error = validate();
+        if (error) {
+            toast.error(error);
+            return;
+        }
+
+        // ✅ Typed current values (numbers converted)
+        const current = {
+            campaign_name: form.campaign_name,
+            campaign_type: form.campaign_type,
+            delivery_mode: form.delivery_mode,
+            delivery_method: form.delivery_method,
+            client_id: Number(form.client_id),
+            status: form.status,
+            start_date: form.start_date,
+            end_date: form.end_date,
+            total_allocation: Number(form.total_allocation || 0),
+            total_delivered: Number(form.total_delivered || 0),
+            total_accepted: Number(form.total_accepted || 0),
+            total_rejected: Number(form.total_rejected || 0),
+            currency: form.currency,
+            cpl: Number(form.cpl || 0),
+            priority: form.priority,
+            campaign_document_name: form.campaign_document_name,
+            comment: form.comment,
+        };
+
+        try {
+            if (mode === 'create') {
+                // ✅ Create — send full payload including document
+                const payload = {
+                    ...current,
+                    campaign_document: form.campaign_document,
+                };
+                await campaignService.createCampaign(payload);
+                toast.success('Campaign created');
+            } else {
+                // ✅ Edit — build original from initialData with same types
+                const original = {
+                    campaign_name: initialData?.campaign_name ?? '',
+                    campaign_type: initialData?.campaign_type ?? '',
+                    delivery_mode: initialData?.delivery_mode ?? '',
+                    delivery_method: initialData?.delivery_method ?? '',
+                    client_id: Number(initialData?.client_id || 0),
+                    status: initialData?.status ?? '',
+                    start_date: initialData?.start_date ?? '',
+                    end_date: initialData?.end_date ?? '',
+                    total_allocation: Number(initialData?.total_allocation || 0),
+                    total_delivered: Number(initialData?.total_delivered || 0),
+                    total_accepted: Number(initialData?.total_accepted || 0),
+                    total_rejected: Number(initialData?.total_rejected || 0),
+                    currency: initialData?.currency ?? '',
+                    cpl: Number(initialData?.cpl || 0),
+                    priority: initialData?.priority ?? '',
+                    campaign_document_name: initialData?.campaign_document_name ?? '',
+                    comment: initialData?.comment ?? '',
+                };
+
+                let payload = getChangedFields(original, current);
+
+                // ✅ Only include document if a new file was selected
+                if (form.campaign_document) {
+                    payload.campaign_document = form.campaign_document;
+                    payload.campaign_document_name = form.campaign_document_name;
+                }
+
+                if (Object.keys(payload).length === 0) {
+                    toast.info('No changes detected');
+                    onSuccess();
+                    return;
+                }
+
+                await campaignService.updateCampaign(campaignId!, payload);
+                toast.success('Campaign updated');
+            }
+
+            onSuccess();
+        } catch (e: any) {
+            const msg = e?.response?.data?.detail;
+
+            if (msg === 'Campaign already exists') {
+                toast.error('Campaign already exists');
+            } else if (msg === 'Campaign exists but is deleted') {
+                toast.error('Campaign exists but is deleted');
+            } else {
+                toast.error('Something went wrong');
+            }
+        }
+    };
 
     return (
-        <CardBox>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {/* 1. Campaign Name */}
-                <div>
-                    <Label htmlFor="campaignName">Campaign Name <span className="text-error">*</span></Label>
-                    <Input
-                        id="campaignName"
-                        type="text"
-                        placeholder="Enter campaign name"
-                        value={formData.campaignName}
-                        onChange={(e) => handleChange('campaignName', e.target.value)}
-                        className={inputClass('campaignName')}
-                    />
-                    {errors.campaignName && <p className="text-xs text-error mt-1">{errors.campaignName}</p>}
-                </div>
+            {/* CAMPAIGN NAME */}
+            <div>
+                <Label>Campaign Name</Label>
+                <Input
+                    className="mt-2 w-full"
+                    value={form.campaign_name}
+                    onChange={(e) => handleChange('campaign_name', e.target.value)}
+                />
+            </div>
 
-                {/* 2. Campaign Type */}
-                <div>
-                    <Label>Campaign Type <span className="text-error">*</span></Label>
-                    <Select value={formData.campaignType} onValueChange={(val) => handleChange('campaignType', val)}>
-                        <SelectTrigger className={selectClass('campaignType')}>
-                            <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="email">Email</SelectItem>
-                            <SelectItem value="bant">BANT</SelectItem>
-                            <SelectItem value="telemarketing">Telemarketing</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {errors.campaignType && <p className="text-xs text-error mt-1">{errors.campaignType}</p>}
-                </div>
+            <div>
+                <Label>Campaign Type</Label>
+                <Select value={form.campaign_type} onValueChange={(v) => handleChange('campaign_type', v)}>
+                    <SelectTrigger className="mt-2 w-full">
+                        <SelectValue placeholder="Select Campaign Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {CAMPAIGN_TYPE_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-                {/* 3. Delivery Mode */}
-                <div>
-                    <Label>Delivery Mode <span className="text-error">*</span></Label>
-                    <Select value={formData.deliveryMode} onValueChange={(val) => handleChange('deliveryMode', val)}>
-                        <SelectTrigger className={selectClass('deliveryMode')}>
-                            <SelectValue placeholder="Select delivery mode" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="email_delivery">Email Delivery</SelectItem>
-                            <SelectItem value="portal_delivery">Portal Delivery</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {errors.deliveryMode && <p className="text-xs text-error mt-1">{errors.deliveryMode}</p>}
-                </div>
+            <div>
+                <Label>Status</Label>
+                <Select value={form.status} onValueChange={(v) => handleChange('status', v)}>
+                    <SelectTrigger className="mt-2 w-full">
+                        <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {CAMPAIGN_STATUS_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-                {/* 4. Client */}
-                <div>
-                    <Label>Client <span className="text-error">*</span></Label>
-                    <Select value={formData.client} onValueChange={(val) => handleChange('client', val)}>
-                        <SelectTrigger className={selectClass('client')}>
-                            <SelectValue placeholder="Select client" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="pv01">Acme Corporation</SelectItem>
-                            <SelectItem value="pv02">Globex Industries</SelectItem>
-                            <SelectItem value="pv03">Initech Solutions</SelectItem>
-                            <SelectItem value="pv04">Umbrella Corp</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {errors.client && <p className="text-xs text-error mt-1">{errors.client}</p>}
-                </div>
+            {/* CLIENT */}
+            <div>
+                <Label>Client</Label>
+                <Select value={form.client_id} onValueChange={(v) => handleChange('client_id', v)}>
+                    <SelectTrigger className="mt-2 w-full">
+                        <SelectValue placeholder="Select client" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {clients.map((c) => (
+                            <SelectItem key={c.id} value={String(c.id)}>
+                                {c.code} - {c.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-                {/* 5. Delivery Method */}
-                <div>
-                    <Label>Delivery Method <span className="text-error">*</span></Label>
-                    <Select value={formData.deliveryMethod} onValueChange={(val) => handleChange('deliveryMethod', val)}>
-                        <SelectTrigger className={selectClass('deliveryMethod')}>
-                            <SelectValue placeholder="Select delivery method" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="front_load">Front Load</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {errors.deliveryMethod && <p className="text-xs text-error mt-1">{errors.deliveryMethod}</p>}
-                </div>
+            {/* SELECTS */}
 
-                {/* 6. Status */}
-                <div>
-                    <Label>Status <span className="text-error">*</span></Label>
-                    <Select value={formData.status} onValueChange={(val) => handleChange('status', val)}>
-                        <SelectTrigger className={selectClass('status')}>
-                            <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="live">Live</SelectItem>
-                            <SelectItem value="completed">Completed</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {errors.status && <p className="text-xs text-error mt-1">{errors.status}</p>}
-                </div>
 
-                {/* 7. Start Date */}
-                <div>
-                    <Label htmlFor="startDate">Start Date <span className="text-error">*</span></Label>
-                    <Input
-                        id="startDate"
-                        type="date"
-                        value={formData.startDate}
-                        onChange={(e) => handleChange('startDate', e.target.value)}
-                        className={inputClass('startDate')}
-                    />
-                    {errors.startDate && <p className="text-xs text-error mt-1">{errors.startDate}</p>}
-                </div>
+            <div>
+                <Label>Delivery Mode</Label>
+                <Select value={form.delivery_mode} onValueChange={(v) => handleChange('delivery_mode', v)}>
+                    <SelectTrigger className="mt-2 w-full">
+                        <SelectValue placeholder="Select Delivery Mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {DELIVERY_MODE_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-                {/* 8. End Date */}
-                <div>
-                    <Label htmlFor="endDate">End Date <span className="text-error">*</span></Label>
-                    <Input
-                        id="endDate"
-                        type="date"
-                        value={formData.endDate}
-                        onChange={(e) => handleChange('endDate', e.target.value)}
-                        className={inputClass('endDate')}
-                    />
-                    {errors.endDate && <p className="text-xs text-error mt-1">{errors.endDate}</p>}
-                </div>
+            <div>
+                <Label>Delivery Method</Label>
+                <Select value={form.delivery_method} onValueChange={(v) => handleChange('delivery_method', v)}>
+                    <SelectTrigger className="mt-2 w-full">
+                        <SelectValue placeholder="Select Delivery Method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {DELIVERY_METHOD_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-                {/* 9. Total Allocation */}
-                <div>
-                    <Label htmlFor="totalAllocation">Total Allocation <span className="text-error">*</span></Label>
-                    <Input
-                        id="totalAllocation"
-                        type="number"
-                        placeholder="Enter total allocation"
-                        value={formData.totalAllocation}
-                        onChange={(e) => handleChange('totalAllocation', e.target.value)}
-                        className={inputClass('totalAllocation')}
-                    />
-                    {errors.totalAllocation && <p className="text-xs text-error mt-1">{errors.totalAllocation}</p>}
-                </div>
+            {/* NUMBERS */}
+            <div>
+                <Label>Total Allocation</Label>
+                <Input
+                    type='number'
+                    className="mt-2 w-full"
+                    placeholder="Total Allocation"
+                    value={form.total_allocation}
+                    onChange={(e) => handleChange('total_allocation', e.target.value)}
+                />
+            </div>
 
-                {/* 10. Total Delivered */}
-                <div>
-                    <Label htmlFor="totalDelivered">Total Delivered</Label>
-                    <Input
-                        id="totalDelivered"
-                        type="number"
-                        placeholder="Enter total delivered"
-                        value={formData.totalDelivered}
-                        onChange={(e) => handleChange('totalDelivered', e.target.value)}
-                        className="mt-2"
-                    />
-                </div>
+            <div>
+                <Label>Total Delivered</Label>
+                <Input
+                    type='number'
+                    className="mt-2 w-full"
+                    placeholder="Total Delivered"
+                    value={form.total_delivered}
+                    onChange={(e) => handleChange('total_delivered', e.target.value)}
+                />
+            </div>
 
-                {/* 11. Total Accepted */}
-                <div>
-                    <Label htmlFor="totalAccepted">Total Accepted</Label>
-                    <Input
-                        id="totalAccepted"
-                        type="number"
-                        placeholder="Enter total accepted"
-                        value={formData.totalAccepted}
-                        onChange={(e) => handleChange('totalAccepted', e.target.value)}
-                        className="mt-2"
-                    />
-                </div>
+            <div>
+                <Label>Total Accepted</Label>
+                <Input
+                    type='number'
+                    className="mt-2 w-full"
+                    placeholder="Total Accepted"
+                    value={form.total_accepted}
+                    onChange={(e) => handleChange('total_accepted', e.target.value)}
+                />
+            </div>
 
-                {/* 12. Total Rejected */}
-                <div>
-                    <Label htmlFor="totalRejected">Total Rejected</Label>
-                    <Input
-                        id="totalRejected"
-                        type="number"
-                        placeholder="Enter total rejected"
-                        value={formData.totalRejected}
-                        onChange={(e) => handleChange('totalRejected', e.target.value)}
-                        className="mt-2"
-                    />
-                </div>
+            <div>
+                <Label>Total Rejected</Label>
+                <Input
+                    type='number'
+                    className="mt-2 w-full"
+                    placeholder="Total Rejected"
+                    value={form.total_rejected}
+                    onChange={(e) => handleChange('total_rejected', e.target.value)}
+                />
+            </div>
 
-                {/* 13. Currency */}
-                <div>
-                    <Label>Currency <span className="text-error">*</span></Label>
-                    <Select value={formData.currency} onValueChange={(val) => handleChange('currency', val)}>
-                        <SelectTrigger className={selectClass('currency')}>
-                            <SelectValue placeholder="Select currency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="usd">USD</SelectItem>
-                            <SelectItem value="eur">EUR</SelectItem>
-                            <SelectItem value="gbp">GBP</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {errors.currency && <p className="text-xs text-error mt-1">{errors.currency}</p>}
-                </div>
+            <div>
+                <Label>Currency</Label>
+                <Select value={form.currency} onValueChange={(v) => handleChange('currency', v)}>
+                    <SelectTrigger className="mt-2 w-full">
+                        <SelectValue placeholder="Select Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {CAMPAIGN_CURRENCY_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-                {/* 14. CPL */}
-                <div>
-                    <Label htmlFor="cpl">CPL</Label>
-                    <Input
-                        id="cpl"
-                        type="number"
-                        placeholder="Enter CPL"
-                        value={formData.cpl}
-                        onChange={(e) => handleChange('cpl', e.target.value)}
-                        className="mt-2"
-                    />
-                </div>
+            <div>
+                <Label>CPL</Label>
+                <Input
+                    className="mt-2 w-full"
+                    placeholder="CPL"
+                    value={form.cpl}
+                    onChange={(e) => handleChange('cpl', e.target.value)}
+                />
+            </div>
 
-                {/* 15. Priority */}
-                <div>
-                    <Label>Priority <span className="text-error">*</span></Label>
-                    <Select value={formData.priority} onValueChange={(val) => handleChange('priority', val)}>
-                        <SelectTrigger className={selectClass('priority')}>
-                            <SelectValue placeholder="Select priority" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="low">Low</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="high">High</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {errors.priority && <p className="text-xs text-error mt-1">{errors.priority}</p>}
-                </div>
+            <div>
+                <Label>Priority</Label>
+                <Select value={form.priority} onValueChange={(v) => handleChange('priority', v)}>
+                    <SelectTrigger className="mt-2 w-full">
+                        <SelectValue placeholder="Select Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {CAMPAIGN_PRIORITY_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
 
-                {/* 16. Campaign Document */}
-                <div>
-                    <Label htmlFor="campaignDocument">Campaign Document</Label>
+            {/* FILE */}
+            <div>
+                <div >
+                    <Label>Campaign Document</Label>
                     <div className="mt-2 flex items-center gap-3 border border-border rounded-md px-3 py-2">
-                        <Icon icon="solar:file-linear" width={18} className="text-muted-foreground shrink-0" />
+                        <Icon icon="solar:file-linear" width={18} />
                         <input
-                            id="campaignDocument"
                             type="file"
-                            className="text-sm text-muted-foreground w-full bg-transparent outline-none cursor-pointer
-                file:mr-3 file:py-1 file:px-3 file:rounded file:border-0
-                file:text-xs file:font-medium file:bg-lightprimary file:text-primary
-                hover:file:bg-primary hover:file:text-white file:cursor-pointer file:transition-colors"
-                            onChange={(e) => handleChange('campaignDocument', e.target.files?.[0] ?? null)}
+                            className="w-full text-sm bg-transparent outline-none"
+                            onChange={(e) => handleFile(e.target.files?.[0] || null)}
                         />
                     </div>
                 </div>
-
-                {/* 17. Comment — full width */}
-                <div className="md:col-span-2">
-                    <Label htmlFor="comment">Comment</Label>
-                    <Textarea
-                        id="comment"
-                        placeholder="Add any additional comments..."
-                        rows={4}
-                        value={formData.comment}
-                        onChange={(e) => handleChange('comment', e.target.value)}
-                        className="mt-2"
-                    />
-                </div>
-
             </div>
 
-            {/* Actions */}
-            <div className="flex items-center justify-end gap-3 mt-6">
-                <Button variant="outline" onClick={() => navigate('/campaigns')} className="px-6">
+            {/* COMMENT */}
+            <div className="md:col-span-2">
+                <Label>Comment</Label>
+                <Input
+                    type="textarea"
+                    className="mt-2 w-full"
+                    value={form.comment}
+                    onChange={(e) => handleChange('comment', e.target.value)}
+                />
+            </div>
+
+            {/* START DATE */}
+            <div>
+                <Label>Start Date</Label>
+                <Calendar
+                    mode="single"
+                    selected={form.start_date ? new Date(form.start_date) : undefined}
+                    onSelect={(date) =>
+                        handleChange('start_date', date ? format(date, 'yyyy-MM-dd') : '')
+                    }
+                    className="mt-2 border rounded-md"
+                />
+            </div>
+
+            {/* END DATE */}
+            <div>
+                <Label>End Date</Label>
+                <Calendar
+                    mode="single"
+                    selected={form.end_date ? new Date(form.end_date) : undefined}
+                    onSelect={(date) =>
+                        handleChange('end_date', date ? format(date, 'yyyy-MM-dd') : '')
+                    }
+                    className="mt-2 border rounded-md"
+                />
+            </div>
+
+            {/* ACTIONS */}
+            <div className="md:col-span-2 flex justify-end gap-3">
+                <Button type="button" variant="lighterror" onClick={onSuccess}>
                     Cancel
                 </Button>
-                <Button
-                    onClick={handleSubmit}
-                    className="px-6 bg-primary hover:bg-primaryemphasis text-white"
-                >
-                    {mode === 'create' ? 'Save Campaign' : 'Update Campaign'}
+                <Button type="submit" variant="lightprimary">
+                    {mode === 'create' ? 'Create Campaign' : 'Update Campaign'}
                 </Button>
             </div>
-        </CardBox>
+
+        </form>
     );
 };
 

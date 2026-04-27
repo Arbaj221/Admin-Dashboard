@@ -1,44 +1,109 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
+
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
-import CampaignsTable from './components/table';
 import CardBox from 'src/components/shared/CardBox';
-import { campaignsData as initialData } from './data/campaigns.data';
-import { Campaign } from './types/campaign.types';
+import { Button } from 'src/components/ui/button';
 
-const CampaignsList = () => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>(initialData);
+import CampaignTable from './components/table';
+import CampaignDialog from './components/dialogForm';
 
-  const BCrumb = [
-    { to: '/', title: 'Home' },
-    { to: '/campaigns-ops-view', title: 'Campaigns Opc View' },
-    { title: 'Campaigns' },
-  ];
+import { campaignService, Campaign } from './services/campaignService';
+import { clientService, Client } from 'src/modules/clients/services/clientService';
 
-  const handleDelete = (id: number) => {
-    setCampaigns((prev) => prev.filter((c) => c.id !== id));
+import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
+import { toast } from 'sonner';
+import Can from 'src/permissions/Can';
+
+const CampaignList = () => {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+
+  const confirm = useConfirm();
+
+  const loadAll = async () => {
+    const [campaignData, clientData] = await Promise.all([
+      campaignService.getCampaigns(),
+      clientService.getClients(),
+    ]);
+
+    setCampaigns(campaignData);
+    setClients(clientData);
+  };
+
+  useEffect(() => {
+    loadAll();
+  }, []);
+
+  const openCreate = () => {
+    setDialogMode('create');
+    setSelectedCampaign(null);
+    setDialogOpen(true);
+  };
+
+  const openEdit = async (campaign: Campaign) => {
+    const full = await campaignService.getCampaignById(campaign.id);
+    setDialogMode('edit');
+    setSelectedCampaign(full);
+    setDialogOpen(true);
+  };
+
+  const handleDelete = async (campaign: Campaign) => {
+    const ok = await confirm({
+      title: 'Delete campaign?',
+      description: 'This action cannot be undone.',
+      confirmText: 'Delete',
+      variant: 'destructive',
+    });
+
+    if (!ok) return;
+
+    await campaignService.deleteCampaign(campaign.id);
+    toast.success('Campaign deleted');
+    loadAll();
   };
 
   return (
     <>
-      <SlimBreadcrumb title="" items={BCrumb} />
+      <SlimBreadcrumb title="Campaigns" items={[{ title: 'Campaigns' }]} />
 
       <CardBox>
         <div className="flex items-center justify-between mb-4">
           <h5 className="card-title">Campaigns List</h5>
-          <Link to="/campaigns/create">
-            <button className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md transition-colors duration-150 cursor-pointer">
-              <Icon icon="solar:add-circle-linear" width={18} height={18} />
+
+          <Can module="campaign" actions={['create']}>
+            <Button variant="lightprimary" onClick={openCreate}>
+              <Icon icon="solar:add-circle-linear" width={18} />
               Create Campaign
-            </button>
-          </Link>
+            </Button>
+          </Can>
         </div>
 
-        <CampaignsTable campaigns={campaigns} onDelete={handleDelete} />
+        <CampaignTable
+          campaigns={campaigns}
+          clients={clients}
+          onEdit={openEdit}
+          onDelete={handleDelete}
+        />
       </CardBox>
+
+      <CampaignDialog
+        key={selectedCampaign?.id ?? 'create'}
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+          loadAll();
+        }}
+        mode={dialogMode}
+        campaign={selectedCampaign || undefined}
+        clients={clients}
+      />
     </>
   );
 };
 
-export default CampaignsList;
+export default CampaignList;
