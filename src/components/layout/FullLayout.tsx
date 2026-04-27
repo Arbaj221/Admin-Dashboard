@@ -13,7 +13,7 @@ const LayoutContent: FC = () => {
     <div className="flex w-full min-h-screen">
       <div className="page-wrapper flex w-full" data-collapsed={collapsed}>
         {/* Desktop Sidebar */}
-        <div className="xl:block hidden">
+        <div className="block">
           <Sidebar />
         </div>
 
