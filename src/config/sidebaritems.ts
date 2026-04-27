@@ -115,6 +115,7 @@ const SidebarContent: MenuItem[] = [
         id: uniqueId(),
         icon: 'lucide:briefcase',
         url: '/clients',
+        module: 'client'
       },
       {
         name: 'Vendors',

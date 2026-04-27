@@ -55,7 +55,7 @@ const ClientTable = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center">ID</TableHead>
+              <TableHead className="text-center">Code</TableHead>
               <TableHead className="text-center">Client Name</TableHead>
               <TableHead className="text-center">Person</TableHead>
               <TableHead className="text-center">Email</TableHead>
@@ -85,7 +85,7 @@ const ClientTable = ({
                   onClick={() => navigate(`/clients/details/${client.id}`)}
                 >
                   {/* ID */}
-                  <TableCell className="text-center">{client.id}</TableCell>
+                  <TableCell className="text-center font-semibold text-primary">{client.code}</TableCell>
 
                   {/* Name */}
                   <TableCell className="text-center">

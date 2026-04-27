@@ -2,6 +2,7 @@ import apiClient from 'src/services/apiClient';
 
 export interface Client {
   id: number;
+  code: string;
   name: string;
   address: string;
   country: string;
@@ -32,6 +33,7 @@ export interface Client {
 
 const mapClient = (item: any): Client => ({
   id: item.id,
+  code: item.client_code,
   name: item.name,
   address: item.address,
   country: item.country,

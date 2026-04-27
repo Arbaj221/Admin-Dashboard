@@ -106,9 +106,8 @@ const renderSidebarItems = (
     }
 
     const itemClassNames = isSubItem
-      ? `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground !hover:bg-transparent ${
-          isSelected ? '!bg-transparent !text-primary' : ''
-        }`
+      ? `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground !hover:bg-transparent ${isSelected ? '!bg-transparent !text-primary' : ''
+      }`
       : `mt-0.5 text-sidebar-foreground dark:text-sidebar-foreground`;
 
     return (
@@ -140,7 +139,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   const { collapsed } = useSidebarCollapse();
 
   const sidebarMode = theme === 'light' || theme === 'dark' ? theme : undefined;
-const filteredMenu = useSidebarMenu(SidebarContent);
+  const filteredMenu = useSidebarMenu(SidebarContent);
   return (
     <AMSidebar
       collapsible="none"

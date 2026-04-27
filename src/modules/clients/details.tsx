@@ -3,8 +3,16 @@ import { useParams } from 'react-router';
 
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CardBox from 'src/components/shared/CardBox';
-
+import { Download } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from 'src/components/ui/tooltip';
+import { Button } from 'src/components/ui/button';
 import { clientService, Client } from './services/clientService';
+import companyImg from 'src/assets/images/dashboard/office.png';
 
 const ClientDetails = () => {
   const { id } = useParams();
@@ -26,68 +34,176 @@ const ClientDetails = () => {
     { title: 'Details' },
   ];
 
-  if (!client) {
-    return (
-      <div className="p-6 text-muted-foreground">
-        Loading client details...
-      </div>
-    );
-  }
+  if (!client) return null;
 
   return (
     <>
       <SlimBreadcrumb title="Client Details" items={BCrumb} />
 
-      <div className="space-y-6">
+      <div className="flex flex-col gap-6">
 
-        {/* Client Info */}
-        <CardBox>
-          <h5 className="card-title mb-4">Client Information</h5>
+        {/* 🔹 Header Card */}
+<CardBox className="p-6 overflow-hidden">
+  <div className="flex flex-col sm:flex-row items-center gap-6 w-full">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><strong>Name:</strong> {client.name}</div>
-            <div><strong>Country:</strong> {client.country}</div>
-            <div className="md:col-span-2">
-              <strong>Address:</strong> {client.address}
+    {/* Image */}
+    <div>
+      <img
+        src={companyImg}
+        alt="company"
+        width={80}
+        height={80}
+        className="rounded-lg"
+      />
+    </div>
+
+    {/* Content */}
+    <div className="flex justify-between items-center w-full flex-wrap gap-4">
+
+      {/* Left Info */}
+      <div className="flex flex-col gap-1.5 text-center sm:text-left">
+        <h5 className="card-title">
+          {client.name}
+        </h5>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm text-muted-foreground">
+            {client.country}
+          </p>
+
+          <div className="hidden h-4 w-px bg-border xl:block"></div>
+
+          <p className="text-sm text-muted-foreground">
+            {client.isActive ? 'Active' : 'Inactive'}
+          </p>
+        </div>
+      </div>
+
+      {/* ✅ Right Side Download */}
+      {client.contractFileName && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="lightprimary"
+                className="flex items-center gap-2"
+                onClick={() => clientService.downloadContract(client.id)}
+              >
+                <Download className="size-4" />
+                Download Contract
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {client.contractFileName}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+
+    </div>
+
+  </div>
+</CardBox>
+
+        {/* 🔹 Two Column Section */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+          {/* Client Info */}
+          <CardBox className="p-6">
+            <h5 className="card-title mb-6">Client Information</h5>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              <div>
+                <p className="text-xs text-muted-foreground">Client Name</p>
+                <p>{client.name}</p>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground">Country</p>
+                <p>{client.country}</p>
+              </div>
+
+              <div className="sm:col-span-2">
+                <p className="text-xs text-muted-foreground">Address</p>
+                <p>{client.address}</p>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground">Status</p>
+                <p>{client.isActive ? 'Active' : 'Inactive'}</p>
+              </div>
+
             </div>
-            <div><strong>Assigned To (ID):</strong> {client.assignedTo}</div>
-            <div><strong>Status:</strong> {client.isActive ? 'Active' : 'Inactive'}</div>
-          </div>
-        </CardBox>
+          </CardBox>
 
-        {/* Contact Info */}
-        <CardBox>
-          <h5 className="card-title mb-4">Contact Information</h5>
+          {/* Contact Info */}
+          <CardBox className="p-6">
+            <h5 className="card-title mb-6">Contact Information</h5>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><strong>Name:</strong> {client.firstName} {client.lastName}</div>
-            <div><strong>Email:</strong> {client.contactEmail}</div>
-            <div><strong>Mobile:</strong> {client.contactMobileNumber}</div>
-            <div><strong>Office:</strong> {client.contactOfficeNumber}</div>
-            <div><strong>Designation:</strong> {client.contactDesignation}</div>
-          </div>
-        </CardBox>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-        {/* Billing Info */}
-        <CardBox>
-          <h5 className="card-title mb-4">Billing Information</h5>
+              <div>
+                <p className="text-xs text-muted-foreground">First Name</p>
+                <p>{client.firstName}</p>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><strong>Name:</strong> {client.billingName}</div>
-            <div><strong>Email:</strong> {client.billingEmail}</div>
-            <div className="md:col-span-2">
-              <strong>Address:</strong> {client.billingAddress}
+              <div>
+                <p className="text-xs text-muted-foreground">Last Name</p>
+                <p>{client.lastName}</p>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground">Email</p>
+                <p>{client.contactEmail}</p>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground">Mobile</p>
+                <p>{client.contactMobileNumber}</p>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground">Office Number</p>
+                <p>{client.contactOfficeNumber}</p>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground">Designation</p>
+                <p>{client.contactDesignation}</p>
+              </div>
+
             </div>
-            <div><strong>Terms:</strong> {client.billingTerms}</div>
-          </div>
-        </CardBox>
+          </CardBox>
 
-        {/* Contract Info */}
-        <CardBox>
-          <h5 className="card-title mb-4">Contract</h5>
+        </div>
 
-          <div>
-            <strong>File Name:</strong> {client.contractFileName || 'N/A'}
+        {/* 🔹 Billing Full Width */}
+        <CardBox className="p-6">
+          <h5 className="card-title mb-6">Billing Information</h5>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <div>
+              <p className="text-xs text-muted-foreground">Billing Name</p>
+              <p>{client.billingName}</p>
+            </div>
+
+            <div>
+              <p className="text-xs text-muted-foreground">Billing Email</p>
+              <p>{client.billingEmail}</p>
+            </div>
+
+            <div className="sm:col-span-2">
+              <p className="text-xs text-muted-foreground">Billing Address</p>
+              <p>{client.billingAddress}</p>
+            </div>
+
+            <div>
+              <p className="text-xs text-muted-foreground">Billing Terms</p>
+              <p>{client.billingTerms}</p>
+            </div>
+
           </div>
         </CardBox>
 
