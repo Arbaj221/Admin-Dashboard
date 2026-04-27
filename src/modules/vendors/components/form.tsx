@@ -16,7 +16,7 @@ import CardBox from 'src/components/shared/CardBox';
 
 import { vendorService } from '../services/vendorService';
 import { User } from 'src/modules/users/services/userService';
-import { PAYMENT_TERMS_OPTIONS } from 'src/config/paymentTerms';
+import { PAYMENT_TERMS_OPTIONS } from 'src/config/constant-data/paymentTerms';
 
 interface Props {
   mode: 'create' | 'edit';
