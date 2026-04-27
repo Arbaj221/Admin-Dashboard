@@ -16,6 +16,7 @@ import CardBox from 'src/components/shared/CardBox';
 
 import { clientService } from '../services/clientService';
 import { User } from 'src/modules/users/services/userService';
+import { PAYMENT_TERMS_OPTIONS } from 'src/config/paymentTerms';
 
 interface Props {
   mode: 'create' | 'edit';
@@ -27,12 +28,6 @@ interface Props {
 const countries = [
   'India', 'USA', 'UK', 'Canada', 'Australia',
   'Germany', 'France', 'Japan', 'Singapore', 'UAE',
-];
-
-const billingTermsOptions = [
-  { label: 'Net 10', value: '10' },
-  { label: 'Net 20', value: '20' },
-  { label: 'Net 30', value: '30' },
 ];
 
 // ✅ Extracted builder — used in useState init AND useEffect sync
@@ -62,15 +57,6 @@ const buildFormState = (initialData?: any) => ({
 });
 
 const ClientForm = ({ mode, initialData, users, onSuccess }: Props) => {
-  // ✅ THE KEY FIX: initialize directly from initialData, not empty strings.
-  //
-  // The old code did: useState({ assigned_to: '' }) then setForm(...) in useEffect.
-  // Problem: useEffect runs AFTER the first render. shadcn's Select sees value=""
-  // on that first render and some internal Radix state "locks in" the empty state,
-  // so even when setForm fires with the real value, the displayed option doesn't update.
-  //
-  // Solution: pass initialData into useState() directly so the correct value
-  // is present on render #1 — no timing gap.
   const [form, setForm] = useState(() => buildFormState(initialData));
 
   // ✅ Still needed: openEdit() does an async fetch, so initialData arrives
@@ -374,7 +360,7 @@ const ClientForm = ({ mode, initialData, users, onSuccess }: Props) => {
                 <SelectValue placeholder="Select billing terms" />
               </SelectTrigger>
               <SelectContent>
-                {billingTermsOptions.map((b) => (
+                {PAYMENT_TERMS_OPTIONS.map((b) => (
                   <SelectItem key={b.value} value={b.value}>
                     {b.label}
                   </SelectItem>

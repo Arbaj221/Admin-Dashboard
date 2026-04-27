@@ -12,7 +12,7 @@ import {
 } from 'src/components/ui/tooltip';
 import { Button } from 'src/components/ui/button';
 import { vendorService, Vendor } from './services/vendorService';
-import companyImg from 'src/assets/images/dashboard/office.png';
+import companyImg from 'src/assets/images/dashboard/vendor.png';
 
 const VendorDetails = () => {
     const { id } = useParams();
@@ -76,6 +76,12 @@ const VendorDetails = () => {
                                     <p className="text-sm text-muted-foreground">
                                         {vendor.isActive ? 'Active' : 'Inactive'}
                                     </p>
+
+                                    <div className="hidden h-4 w-px bg-border xl:block"></div>
+
+                                    <p className="text-sm text-muted-foreground">
+                                        {vendor.code}
+                                    </p>
                                 </div>
                             </div>
 
@@ -108,14 +114,14 @@ const VendorDetails = () => {
                 {/* 🔹 Two Column Section */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-                    {/* Client Info */}
+                    {/* Vendors Info */}
                     <CardBox className="p-6">
                         <h5 className="card-title mb-6">Vendors Information</h5>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                             <div>
-                                <p className="text-xs text-muted-foreground">Client Name</p>
+                                <p className="text-xs text-muted-foreground">Vendor Name</p>
                                 <p>{vendor.name}</p>
                             </div>
 

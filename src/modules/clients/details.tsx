@@ -43,67 +43,73 @@ const ClientDetails = () => {
       <div className="flex flex-col gap-6">
 
         {/* 🔹 Header Card */}
-<CardBox className="p-6 overflow-hidden">
-  <div className="flex flex-col sm:flex-row items-center gap-6 w-full">
+        <CardBox className="p-6 overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-center gap-6 w-full">
 
-    {/* Image */}
-    <div>
-      <img
-        src={companyImg}
-        alt="company"
-        width={80}
-        height={80}
-        className="rounded-lg"
-      />
-    </div>
+            {/* Image */}
+            <div>
+              <img
+                src={companyImg}
+                alt="company"
+                width={80}
+                height={80}
+                className="rounded-lg"
+              />
+            </div>
 
-    {/* Content */}
-    <div className="flex justify-between items-center w-full flex-wrap gap-4">
+            {/* Content */}
+            <div className="flex justify-between items-center w-full flex-wrap gap-4">
 
-      {/* Left Info */}
-      <div className="flex flex-col gap-1.5 text-center sm:text-left">
-        <h5 className="card-title">
-          {client.name}
-        </h5>
+              {/* Left Info */}
+              <div className="flex flex-col gap-1.5 text-center sm:text-left">
+                <h5 className="card-title">
+                  {client.name}
+                </h5>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm text-muted-foreground">
-            {client.country}
-          </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-sm text-muted-foreground">
+                    {client.country}
+                  </p>
 
-          <div className="hidden h-4 w-px bg-border xl:block"></div>
+                  <div className="hidden h-4 w-px bg-border xl:block"></div>
 
-          <p className="text-sm text-muted-foreground">
-            {client.isActive ? 'Active' : 'Inactive'}
-          </p>
-        </div>
-      </div>
+                  <p className="text-sm text-muted-foreground">
+                    {client.isActive ? 'Active' : 'Inactive'}
+                  </p>
 
-      {/* ✅ Right Side Download */}
-      {client.contractFileName && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="lightprimary"
-                className="flex items-center gap-2"
-                onClick={() => clientService.downloadContract(client.id)}
-              >
-                <Download className="size-4" />
-                Download Contract
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              {client.contractFileName}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      )}
 
-    </div>
+                  <div className="hidden h-4 w-px bg-border xl:block"></div>
+                  <p className="text-sm text-muted-foreground">
+                    {client.code}
+                  </p>
+                </div>
+              </div>
 
-  </div>
-</CardBox>
+              {/* ✅ Right Side Download */}
+              {client.contractFileName && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="lightprimary"
+                        className="flex items-center gap-2"
+                        onClick={() => clientService.downloadContract(client.id)}
+                      >
+                        <Download className="size-4" />
+                        Download Contract
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {client.contractFileName}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+
+            </div>
+
+          </div>
+        </CardBox>
 
         {/* 🔹 Two Column Section */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
