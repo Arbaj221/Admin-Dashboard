@@ -8,6 +8,9 @@ import {
 import CampaignForm from './form';
 import { Campaign } from '../services/campaignService';
 import { Client } from 'src/modules/clients/services/clientService';
+import SegmentTable from './segmentTable';
+import { useEffect, useState } from 'react';
+import { campaignService } from '../services/campaignService';
 
 interface Props {
     open: boolean;
@@ -17,13 +20,16 @@ interface Props {
     clients: Client[];
 }
 
-const CampaignDialog = ({
-    open,
-    onClose,
-    mode,
-    campaign,
-    clients,
-}: Props) => {
+const CampaignDialog = ({ open, onClose, mode, campaign, clients, }: Props) => {
+    const [segments, setSegments] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (campaign?.id) {
+            campaignService.getSegmentsByCampaignId(campaign.id)
+                .then(setSegments)
+                .catch(() => setSegments([]));
+        }
+    }, [campaign?.id]);
     return (
         <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
             <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
@@ -60,6 +66,7 @@ const CampaignDialog = ({
                         }
                     />
                 )}
+                <SegmentTable segments={segments} />
             </DialogContent>
         </Dialog>
     );

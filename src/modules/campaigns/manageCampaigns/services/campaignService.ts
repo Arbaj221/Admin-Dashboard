@@ -90,4 +90,9 @@ export const campaignService = {
 
         window.URL.revokeObjectURL(url);
     },
+
+    async getSegmentsByCampaignId(id: number) {
+        const res = await apiClient.get(`/segments/${id}`);
+        return res.data;
+    },
 };

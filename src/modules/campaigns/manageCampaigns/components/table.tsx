@@ -17,13 +17,8 @@ import { Campaign, campaignService } from '../services/campaignService';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import Can from 'src/permissions/Can';
 
-const CampaignTable = ({ campaigns, clients, onEdit, onDelete }: any) => {
+const CampaignTable = ({ campaigns, onEdit, onDelete }: any) => {
   const navigate = useNavigate();
-
-  const getClient = (id: number) => {
-    const c = clients.find((x: any) => x.id === id);
-    return c ? `${c.code} - ${c.name}` : 'N/A';
-  };
 
   return (
     <TooltipProvider delayDuration={200}>
