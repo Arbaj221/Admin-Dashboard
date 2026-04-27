@@ -1,45 +1,108 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
+
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
 import CardBox from 'src/components/shared/CardBox';
-import { vendorsData as initialData } from './data/vendors.data';
-import { Vendor } from './types/vendor.type';
-import VendorTable from './component/table';
+import { Button } from 'src/components/ui/button';
 
+import VendorTable from './components/table';
+import VendorDialog from './components/dialogForm';
+
+import { vendorService, Vendor } from './services/vendorService';
+import { userService, User } from 'src/modules/users/services/userService';
+
+import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
+import { toast } from 'sonner';
+import Can from 'src/permissions/Can';
 
 const VendorList = () => {
-  const [vendors, setVendors] = useState<Vendor[]>(initialData);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
-  const BCrumb = [
-    { to: '/', title: 'Home' },
-    { title: 'Vendors' },
-  ];
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
+  const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
 
-  const handleDelete = (id: number) => {
-    setVendors((prev) => prev.filter((c) => c.id !== id));
+  const confirm = useConfirm();
+
+  const loadAll = async () => {
+    const [vendorData, userData] = await Promise.all([
+      vendorService.getVendors(),
+      userService.getActiveUsers(),
+    ]);
+
+    setVendors(vendorData);
+    setUsers(userData);
+  };
+
+  useEffect(() => {
+    loadAll();
+  }, []);
+
+  const openCreate = () => {
+    setDialogMode('create');
+    setSelectedVendor(null);
+    setDialogOpen(true);
+  };
+
+  const openEdit = async (vendor: Vendor) => {
+    const fullVendor = await vendorService.getVendorById(vendor.id);
+    setDialogMode('edit');
+    setSelectedVendor(fullVendor);
+    setDialogOpen(true);
+  };
+
+  const handleDelete = async (vendor: Vendor) => {
+    const ok = await confirm({
+      title: 'Delete vendor?',
+      description: 'Are you sure you want to remove this vendor?',
+      confirmText: 'Delete',
+      variant: 'destructive',
+    });
+
+    if (!ok) return;
+
+    await vendorService.deleteVendor(vendor.id);
+    toast.success('Vendor deleted');
+    loadAll();
   };
 
   return (
     <>
-      <SlimBreadcrumb title="Vendors" items={BCrumb} />
+      <SlimBreadcrumb title="Vendors" items={[{ title: 'Vendors' }]} />
 
       <CardBox>
         <div className="flex items-center justify-between mb-4">
           <h5 className="card-title">Vendors List</h5>
-          <Link to="/vendors/create">
-            <button className="flex items-center gap-2 bg-primary hover:bg-primaryemphasis text-white text-sm font-medium px-4 py-2.5 rounded-md transition-colors duration-150 cursor-pointer">
+          <Can module="vendor" actions={['create']}>
+            <Button variant="lightprimary" onClick={openCreate}>
               <Icon icon="solar:add-circle-linear" width={18} height={18} />
               Create Vendor
-            </button>
-          </Link>
+            </Button>
+          </Can>
         </div>
 
-        <VendorTable vendor={vendors} onDelete={handleDelete} />
+        <VendorTable
+          vendors={vendors}
+          users={users}
+          onEdit={openEdit}
+          onDelete={handleDelete}
+        />
       </CardBox>
+
+      <VendorDialog
+        key={selectedVendor?.id ?? 'create'}
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+          loadAll();
+        }}
+        mode={dialogMode}
+        vendor={selectedVendor || undefined}
+        users={users}
+      />
     </>
   );
 };
 
-
-export default VendorList
+export default VendorList;

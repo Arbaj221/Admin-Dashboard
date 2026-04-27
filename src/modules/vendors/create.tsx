@@ -1,5 +1,5 @@
 import SlimBreadcrumb from 'src/components/shared/breadcrumb/SlimBreadcrumb';
-import VendorForm from './component/form';
+import VendorForm from './components/form';
 
 const CreateVendor = () => {
   const BCrumb = [

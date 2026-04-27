@@ -1,7 +1,6 @@
 import { RouteObject } from 'react-router-dom';
-import EditVendor from './edit';
-import CreateVendor from './create';
 import VendorList from './list';
+import VendorDetails from './details';
 
 const VendorRoutes: RouteObject[] = [
     {
@@ -9,12 +8,8 @@ const VendorRoutes: RouteObject[] = [
         element: <VendorList />,
     },
     {
-        path: '/vendors/create',
-        element: <CreateVendor />,
-    },
-    {
-        path: '/vendors/edit/:id',
-        element: <EditVendor />,
+        path: '/vendors/details/:id',
+        element: <VendorDetails />,
     }
 ];
 

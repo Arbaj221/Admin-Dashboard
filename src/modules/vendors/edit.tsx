@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router";
 import SlimBreadcrumb from "src/components/shared/breadcrumb/SlimBreadcrumb";
-import VendorForm from "./component/form";
+import VendorForm from "./components/form";
 import { vendorsData } from "./data/vendors.data";
 
 const EditVendor = () => {

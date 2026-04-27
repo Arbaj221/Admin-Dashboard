@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
 } from 'src/components/ui/tooltip';
 
-import { Client, clientService } from '../services/clientService';
+import { Vendor, vendorService } from '../services/vendorService';
 import { User } from 'src/modules/users/services/userService';
 
 import { capitalizeFirst } from 'src/utils/format';
@@ -26,14 +26,14 @@ import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import Can from 'src/permissions/Can';
 
 interface Props {
-  clients: Client[];
+  vendors: Vendor[];
   users: User[];
-  onEdit: (client: Client) => void;
-  onDelete: (client: Client) => void;
+  onEdit: (vendor: Vendor) => void;
+  onDelete: (vendor: Vendor) => void;
 }
 
-const ClientTable = ({
-  clients,
+const VendorTable = ({
+  vendors,
   users,
   onEdit,
   onDelete,
@@ -47,7 +47,7 @@ const ClientTable = ({
 
   // ✅ Download handler
   const handleDownload = async (id: number) => {
-    await clientService.downloadContract(id);
+    await vendorService.downloadContract(id);
   };
   return (
     <TooltipProvider delayDuration={200}>
@@ -56,7 +56,7 @@ const ClientTable = ({
           <TableHeader>
             <TableRow>
               <TableHead className="text-center">Code</TableHead>
-              <TableHead className="text-center">Client Name</TableHead>
+              <TableHead className="text-center">Vendor Name</TableHead>
               <TableHead className="text-center">Person</TableHead>
               <TableHead className="text-center">Email</TableHead>
               <TableHead className="text-center">Number</TableHead>
@@ -64,32 +64,32 @@ const ClientTable = ({
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">Contract</TableHead>
 
-              <Can module="client" actions={['edit', 'delete']}>
+              <Can module="vendor" actions={['edit', 'delete']}>
                 <TableHead className="text-center">Actions</TableHead>
               </Can>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {clients.length === 0 ? (
+            {vendors.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                  No clients found.
+                  No vendors found.
                 </TableCell>
               </TableRow>
             ) : (
-              clients.map((client) => (
+              vendors.map((vendor) => (
                 <TableRow
-                  key={client.id}
+                  key={vendor.id}
                   className="even:bg-lightprimary/80 cursor-pointer hover:bg-muted/50"
-                  onClick={() => navigate(`/clients/details/${client.id}`)}
+                  onClick={() => navigate(`/vendors/details/${vendor.id}`)}
                 >
                   {/* ID */}
-                  <TableCell className="text-center font-semibold text-primary">{client.code}</TableCell>
+                  <TableCell className="text-center font-semibold text-primary">{vendor.code}</TableCell>
 
                   {/* Name */}
                   <TableCell className="text-center">
-                    {capitalizeFirst(client.name)}
+                    {capitalizeFirst(vendor.name)}
                   </TableCell>
 
                   {/* Person */}
@@ -97,30 +97,30 @@ const ClientTable = ({
                     <div className="flex items-center gap-2">
 
                       <div className="h-8 w-8 rounded-full bg-lightprimary text-primary flex items-center justify-center text-xs font-bold shrink-0">
-                        {client.firstName.charAt(0).toUpperCase()}
+                        {vendor.firstName.charAt(0).toUpperCase()}
                       </div>
-                      <span className="text-sm text-foreground whitespace-nowrap">{client.firstName} {client.lastName}</span>
+                      <span className="text-sm text-foreground whitespace-nowrap">{vendor.firstName} {vendor.lastName}</span>
                     </div>
                   </TableCell>
 
                   {/* Email */}
                   <TableCell className="text-center">
-                    {client.contactEmail}
+                    {vendor.contactEmail}
                   </TableCell>
 
                   {/* Mobile */}
                   <TableCell className="text-center">
-                    {client.contactMobileNumber}
+                    {vendor.contactMobileNumber}
                   </TableCell>
 
                   {/* Assigned */}
                   <TableCell className="text-center">
-                    {getAssignedUserEmail(client.assignedTo)}
+                    {getAssignedUserEmail(vendor.assignedTo)}
                   </TableCell>
 
                   {/* ✅ Status */}
                   <TableCell className="text-center">
-                    <StatusBadge value={client.isActive ? 'Active' : 'Inactive'} />
+                    <StatusBadge value={vendor.isActive ? 'Active' : 'Inactive'} />
                   </TableCell>
 
                   {/* ✅ Contract Download */}
@@ -128,18 +128,18 @@ const ClientTable = ({
                     className="text-center"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {client.contractFileName ? (
+                    {vendor.contractFileName ? (
                       <div className="flex items-center justify-center gap-2">
 
                         {/* ✅ File Name with Tooltip */}
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <span className="text-sm truncate max-w-[120px] cursor-pointer">
-                              {client.contractFileName}
+                            <span className="text-sm truncate max-w-120 cursor-pointer">
+                              {vendor.contractFileName}
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
-                            {client.contractFileName}
+                            {vendor.contractFileName}
                           </TooltipContent>
                         </Tooltip>
 
@@ -149,7 +149,7 @@ const ClientTable = ({
                             <Button
                               size="sm"
                               variant="lightinfo"
-                              onClick={() => handleDownload(client.id)}
+                              onClick={() => handleDownload(vendor.id)}
                             >
                               <Download className="size-4" />
                             </Button>
@@ -170,13 +170,13 @@ const ClientTable = ({
                   >
                     <div className="flex justify-center gap-2">
 
-                      <Can module="client" action="edit">
+                      <Can module="vendor" action="edit">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               size="sm"
                               variant="lightprimary"
-                              onClick={() => onEdit(client)}
+                              onClick={() => onEdit(vendor)}
                             >
                               <Pencil className="size-4" />
                             </Button>
@@ -185,13 +185,13 @@ const ClientTable = ({
                         </Tooltip>
                       </Can>
 
-                      <Can module="client" action="delete">
+                      <Can module="vendor" action="delete">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               size="sm"
                               variant="lighterror"
-                              onClick={() => onDelete(client)}
+                              onClick={() => onDelete(vendor)}
                             >
                               <Trash2 className="size-4" />
                             </Button>
@@ -213,4 +213,4 @@ const ClientTable = ({
   );
 };
 
-export default ClientTable;
+export default VendorTable;
