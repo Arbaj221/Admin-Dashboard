@@ -13,6 +13,7 @@ import {
 import { Button } from 'src/components/ui/button';
 import { clientService, Client } from './services/clientService';
 import companyImg from 'src/assets/images/dashboard/office.png';
+import Can from 'src/permissions/Can';
 
 const ClientDetails = () => {
   const { id } = useParams();
@@ -86,25 +87,27 @@ const ClientDetails = () => {
               </div>
 
               {/* ✅ Right Side Download */}
-              {client.contractFileName && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="lightprimary"
-                        className="flex items-center gap-2"
-                        onClick={() => clientService.downloadContract(client.id)}
-                      >
-                        <Download className="size-4" />
-                        Download Contract
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {client.contractFileName}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
+              <Can module="client" action="download">
+                {client.contractFileName && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="lightprimary"
+                          className="flex items-center gap-2"
+                          onClick={() => clientService.downloadContract(client.id)}
+                        >
+                          <Download className="size-4" />
+                          Download Contract
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {client.contractFileName}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </Can>
 
             </div>
 

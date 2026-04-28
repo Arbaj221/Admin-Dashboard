@@ -13,6 +13,7 @@ import {
 import { Button } from 'src/components/ui/button';
 import { vendorService, Vendor } from './services/vendorService';
 import companyImg from 'src/assets/images/dashboard/vendor.png';
+import Can from 'src/permissions/Can';
 
 const VendorDetails = () => {
     const { id } = useParams();
@@ -84,28 +85,28 @@ const VendorDetails = () => {
                                     </p>
                                 </div>
                             </div>
-
-                            {/* ✅ Right Side Download */}
-                            {vendor.contractFileName && (
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button
-                                                variant="lightprimary"
-                                                className="flex items-center gap-2"
-                                                onClick={() => vendorService.downloadContract(vendor.id)}
-                                            >
-                                                <Download className="size-4" />
-                                                Download Contract
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            {vendor.contractFileName}
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            )}
-
+                            <Can module="vendor" action="download">
+                                {/* ✅ Right Side Download */}
+                                {vendor.contractFileName && (
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    variant="lightprimary"
+                                                    className="flex items-center gap-2"
+                                                    onClick={() => vendorService.downloadContract(vendor.id)}
+                                                >
+                                                    <Download className="size-4" />
+                                                    Download Contract
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                {vendor.contractFileName}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                )}
+                            </Can>
                         </div>
 
                     </div>

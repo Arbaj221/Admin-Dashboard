@@ -62,9 +62,8 @@ const VendorTable = ({
               <TableHead className="text-center">Number</TableHead>
               <TableHead className="text-center">Assigned To</TableHead>
               <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-center">Contract</TableHead>
 
-              <Can module="vendor" actions={['edit', 'delete']}>
+              <Can module="vendor" actions={['edit', 'delete', 'download']}>
                 <TableHead className="text-center">Actions</TableHead>
               </Can>
             </TableRow>
@@ -123,53 +122,32 @@ const VendorTable = ({
                     <StatusBadge value={vendor.isActive ? 'Active' : 'Inactive'} />
                   </TableCell>
 
-                  {/* ✅ Contract Download */}
-                  <TableCell
-                    className="text-center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {vendor.contractFileName ? (
-                      <div className="flex items-center justify-center gap-2">
-
-                        {/* ✅ File Name with Tooltip */}
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="text-sm truncate max-w-120 cursor-pointer">
-                              {vendor.contractFileName}
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {vendor.contractFileName}
-                          </TooltipContent>
-                        </Tooltip>
-
-                        {/* ✅ Download Button */}
-                        <Tooltip >
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="lightinfo"
-                              onClick={() => handleDownload(vendor.id)}
-                            >
-                              <Download className="size-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Download</TooltipContent>
-                        </Tooltip>
-
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">N/A</span>
-                    )}
-                  </TableCell>
-
                   {/* Actions */}
                   <TableCell
                     className="text-center"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex justify-center gap-2">
-
+                      <Can module="vendor" action="download">
+                        {vendor.contractFileName ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="lightinfo"
+                                onClick={() => handleDownload(vendor.id)}
+                              >
+                                <Download className="size-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {vendor.contractFileName}
+                            </TooltipContent>
+                          </Tooltip>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">N/A</span>
+                        )}
+                      </Can>
                       <Can module="vendor" action="edit">
                         <Tooltip>
                           <TooltipTrigger asChild>

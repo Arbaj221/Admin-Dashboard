@@ -47,66 +47,66 @@ const SidebarContent: MenuItem[] = [
     ],
   },
   {
-  heading: 'Admin',
-  children: [
-    {
-      name: 'User Management',
-      icon: 'lucide:users',
-      id: uniqueId(),
-      children: [
-        {
-          id: uniqueId(),
-          name: 'All Users',
-          icon: 'lucide:user',
-          url: '/users',
-          module: 'users'
-        },
-        {
-          id: uniqueId(),
-          name: 'Roles',
-          icon: 'lucide:shield',
-          url: '/admin/roles',
-          module: 'roles'
-        },
-        {
-          id: uniqueId(),
-          name: 'Departments',
-          icon: 'lucide:building',
-          url: '/admin/departments',
-          module: 'department'
-        },
-        {
-          id: uniqueId(),
-          name: 'Module Permissions',
-          icon: 'lucide:key-round',
-          url: '/admin/module-permissions',
-          module: 'module-permissions'
-        },
-        {
-          id: uniqueId(),
-          name: 'Role Department Permissions',
-          icon: 'lucide:network',
-          url: '/admin/rdp',
-          module: 'role-department-permissions'
-        },
-        {
-          id: uniqueId(),
-          name: 'User Permission',
-          icon: 'lucide:user-cog',
-          url: '/admin/userpermission',
-          module: 'users-permissions'
-        },
-        {
-          id: uniqueId(),
-          name: 'App Settings',
-          icon: 'lucide:settings',
-          url: '/admin/app-settings',
-          module: 'settings'
-        },
-      ],
-    }
-  ],
-},
+    heading: 'Admin',
+    children: [
+      {
+        name: 'User Management',
+        icon: 'lucide:users',
+        id: uniqueId(),
+        children: [
+          {
+            id: uniqueId(),
+            name: 'All Users',
+            icon: 'lucide:user',
+            url: '/users',
+            module: 'users'
+          },
+          {
+            id: uniqueId(),
+            name: 'Roles',
+            icon: 'lucide:shield',
+            url: '/admin/roles',
+            module: 'roles'
+          },
+          {
+            id: uniqueId(),
+            name: 'Departments',
+            icon: 'lucide:building',
+            url: '/admin/departments',
+            module: 'department'
+          },
+          {
+            id: uniqueId(),
+            name: 'Module Permissions',
+            icon: 'lucide:key-round',
+            url: '/admin/module-permissions',
+            module: 'module-permissions'
+          },
+          {
+            id: uniqueId(),
+            name: 'Role Department Permissions',
+            icon: 'lucide:network',
+            url: '/admin/rdp',
+            module: 'role-department-permissions'
+          },
+          {
+            id: uniqueId(),
+            name: 'User Permission',
+            icon: 'lucide:user-cog',
+            url: '/admin/userpermission',
+            module: 'users-permissions'
+          },
+          {
+            id: uniqueId(),
+            name: 'App Settings',
+            icon: 'lucide:settings',
+            url: '/admin/app-settings',
+            module: 'settings'
+          },
+        ],
+      }
+    ],
+  },
   {
     heading: 'Sales',
     children: [
@@ -122,6 +122,7 @@ const SidebarContent: MenuItem[] = [
         id: uniqueId(),
         icon: 'lucide:store',
         url: '/vendors',
+        module:'vendor'
       },
       {
         name: 'Campaigns',
