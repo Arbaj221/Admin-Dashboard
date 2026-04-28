@@ -88,7 +88,7 @@ const CampaignDetails = () => {
                 {/* Right */}
                 {campaign.campaign_document_name && (
                   <Button
-                    variant="lightinfo"
+                    variant="lightprimary"
                     className="flex items-center gap-2"
                     onClick={() => campaignService.downloadDocument(campaign.id)}
                   >

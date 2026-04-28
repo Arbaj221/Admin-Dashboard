@@ -14,6 +14,7 @@ import { Button } from 'src/components/ui/button';
 import { vendorService, Vendor } from './services/vendorService';
 import companyImg from 'src/assets/images/dashboard/vendor.png';
 import Can from 'src/permissions/Can';
+import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 
 const VendorDetails = () => {
     const { id } = useParams();
@@ -75,7 +76,7 @@ const VendorDetails = () => {
                                     <div className="hidden h-4 w-px bg-border xl:block"></div>
 
                                     <p className="text-sm text-muted-foreground">
-                                        {vendor.isActive ? 'Active' : 'Inactive'}
+                                        <StatusBadge value={vendor.isActive ? 'Active' : 'Inactive'} />
                                     </p>
 
                                     <div className="hidden h-4 w-px bg-border xl:block"></div>

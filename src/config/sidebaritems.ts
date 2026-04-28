@@ -122,7 +122,7 @@ const SidebarContent: MenuItem[] = [
         id: uniqueId(),
         icon: 'lucide:store',
         url: '/vendors',
-        module:'vendor'
+        module: 'vendor'
       },
       {
         name: 'Campaigns',
