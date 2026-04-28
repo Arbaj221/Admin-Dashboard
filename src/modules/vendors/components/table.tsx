@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   Table,
   TableBody,
@@ -19,7 +21,7 @@ import {
 } from 'src/components/ui/tooltip';
 
 import { Vendor, vendorService } from '../services/vendorService';
-import { User } from 'src/modules/users/services/userService';
+import { userService, User } from 'src/modules/users/services/userService';
 
 import { capitalizeFirst } from 'src/utils/format';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
@@ -27,28 +29,42 @@ import Can from 'src/permissions/Can';
 
 interface Props {
   vendors: Vendor[];
-  users: User[];
   onEdit: (vendor: Vendor) => void;
   onDelete: (vendor: Vendor) => void;
 }
 
 const VendorTable = ({
   vendors,
-  users,
   onEdit,
   onDelete,
 }: Props) => {
   const navigate = useNavigate();
+
+  const [users, setUsers] = useState<User[]>([]);
+
+  // ✅ Load users inside table
+  const loadUsers = async () => {
+    try {
+      const data = await userService.getAllUsersList();
+      setUsers(data || []);
+    } catch {
+      setUsers([]);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   const getAssignedUserEmail = (userId: number) => {
     const user = users.find((u) => u.id === userId);
     return user ? user.email : 'N/A';
   };
 
-  // ✅ Download handler
   const handleDownload = async (id: number) => {
     await vendorService.downloadContract(id);
   };
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="overflow-x-auto border border-border rounded-md">
@@ -72,7 +88,7 @@ const VendorTable = ({
           <TableBody>
             {vendors.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                   No vendors found.
                 </TableCell>
               </TableRow>
@@ -83,41 +99,37 @@ const VendorTable = ({
                   className="even:bg-lightprimary/80 cursor-pointer hover:bg-muted/50"
                   onClick={() => navigate(`/vendors/details/${vendor.id}`)}
                 >
-                  {/* ID */}
-                  <TableCell className="text-center font-semibold text-primary">{vendor.code}</TableCell>
+                  <TableCell className="text-center font-semibold text-primary">
+                    {vendor.code}
+                  </TableCell>
 
-                  {/* Name */}
                   <TableCell className="text-center">
                     {capitalizeFirst(vendor.name)}
                   </TableCell>
 
-                  {/* Person */}
                   <TableCell className="text-center">
-                    <div className="flex items-center gap-2">
-
+                    <div className="flex items-center gap-2 justify-center">
                       <div className="h-8 w-8 rounded-full bg-lightprimary text-primary flex items-center justify-center text-xs font-bold shrink-0">
                         {vendor.firstName.charAt(0).toUpperCase()}
                       </div>
-                      <span className="text-sm text-foreground whitespace-nowrap">{vendor.firstName} {vendor.lastName}</span>
+                      <span className="text-sm text-foreground whitespace-nowrap">
+                        {vendor.firstName} {vendor.lastName}
+                      </span>
                     </div>
                   </TableCell>
 
-                  {/* Email */}
                   <TableCell className="text-center">
                     {vendor.contactEmail}
                   </TableCell>
 
-                  {/* Mobile */}
                   <TableCell className="text-center">
                     {vendor.contactMobileNumber}
                   </TableCell>
 
-                  {/* Assigned */}
                   <TableCell className="text-center">
                     {getAssignedUserEmail(vendor.assignedTo)}
                   </TableCell>
 
-                  {/* ✅ Status */}
                   <TableCell className="text-center">
                     <StatusBadge value={vendor.isActive ? 'Active' : 'Inactive'} />
                   </TableCell>
@@ -128,6 +140,8 @@ const VendorTable = ({
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex justify-center gap-2">
+
+                      {/* Download */}
                       <Can module="vendor" action="download">
                         {vendor.contractFileName ? (
                           <Tooltip>
@@ -148,6 +162,8 @@ const VendorTable = ({
                           <span className="text-muted-foreground text-sm">N/A</span>
                         )}
                       </Can>
+
+                      {/* Edit */}
                       <Can module="vendor" action="edit">
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -163,6 +179,7 @@ const VendorTable = ({
                         </Tooltip>
                       </Can>
 
+                      {/* Delete */}
                       <Can module="vendor" action="delete">
                         <Tooltip>
                           <TooltipTrigger asChild>

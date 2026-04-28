@@ -20,7 +20,7 @@ const UserPermissionList = () => {
 
   useEffect(() => {
     const load = async () => {
-      const res = await userService.getActiveUsers();
+      const res = await userService.getAllActiveUsersList();
       setUsers(res);
     };
 

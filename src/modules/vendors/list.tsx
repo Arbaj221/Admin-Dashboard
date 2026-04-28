@@ -9,15 +9,12 @@ import VendorTable from './components/table';
 import VendorDialog from './components/dialogForm';
 
 import { vendorService, Vendor } from './services/vendorService';
-import { userService, User } from 'src/modules/users/services/userService';
-
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
 import { toast } from 'sonner';
 import Can from 'src/permissions/Can';
 
 const VendorList = () => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
@@ -26,13 +23,11 @@ const VendorList = () => {
   const confirm = useConfirm();
 
   const loadAll = async () => {
-    const [vendorData, userData] = await Promise.all([
+    const [vendorData] = await Promise.all([
       vendorService.getVendors(),
-      userService.getActiveUsers(),
     ]);
 
     setVendors(vendorData);
-    setUsers(userData);
   };
 
   useEffect(() => {
@@ -84,7 +79,6 @@ const VendorList = () => {
 
         <VendorTable
           vendors={vendors}
-          users={users}
           onEdit={openEdit}
           onDelete={handleDelete}
         />
@@ -99,7 +93,6 @@ const VendorList = () => {
         }}
         mode={dialogMode}
         vendor={selectedVendor || undefined}
-        users={users}
       />
     </>
   );

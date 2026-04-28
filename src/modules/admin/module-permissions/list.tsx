@@ -29,7 +29,7 @@ const ModulePermissionsList = () => {
   const loadAll = async () => {
     const [mp, users] = await Promise.all([
       modulePermissionService.getAllModulePermissions(),
-      userService.getActiveUsers(),
+      userService.getAllUsersList(),
     ]);
 
     setData(mp);

@@ -9,7 +9,6 @@ import ClientTable from './components/table';
 import ClientDialog from './components/dialogForm';
 
 import { clientService, Client } from './services/clientService';
-import { userService, User } from 'src/modules/users/services/userService';
 
 import { useConfirm } from 'src/components/shared/confirmdialog/confirm-context';
 import { toast } from 'sonner';
@@ -17,7 +16,6 @@ import Can from 'src/permissions/Can';
 
 const ClientList = () => {
   const [clients, setClients] = useState<Client[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
@@ -27,13 +25,11 @@ const ClientList = () => {
 
   // ✅ Load all data
   const loadAll = async () => {
-    const [clientData, userData] = await Promise.all([
+    const [clientData] = await Promise.all([
       clientService.getClients(),
-      userService.getActiveUsers(), // 👈 for assigned dropdown + table
     ]);
 
     setClients(clientData);
-    setUsers(userData);
   };
 
   useEffect(() => {
@@ -98,7 +94,6 @@ const ClientList = () => {
         {/* Table */}
         <ClientTable
           clients={clients}
-          users={users}
           onEdit={openEdit}
           onDelete={handleDelete}
         />
@@ -114,7 +109,6 @@ const ClientList = () => {
         }}
         mode={dialogMode}
         client={selectedClient || undefined}
-        users={users}
       />
     </>
   );
