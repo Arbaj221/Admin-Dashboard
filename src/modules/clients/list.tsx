@@ -29,7 +29,7 @@ const ClientList = () => {
   const loadAll = async () => {
     const [clientData, userData] = await Promise.all([
       clientService.getClients(),
-      userService.getActiveUsers(), // 👈 for assigned dropdown + table
+      userService.getActiveUsersList(), // 👈 for assigned dropdown + table
     ]);
 
     setClients(clientData);

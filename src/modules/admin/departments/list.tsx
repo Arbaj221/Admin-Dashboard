@@ -29,7 +29,7 @@ const DepartmentsList = () => {
   const loadAll = async () => {
     const [deptData, usersData] = await Promise.all([
       departmentService.getDepartments(),
-      userService.getActiveUsers(),
+      userService.getActiveUsersList(),
     ]);
 
     setDepartments(deptData);
