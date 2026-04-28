@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { rdpService } from '../services/rdpService';
 import { modulePermissionService } from 'src/modules/admin/module-permissions/services/modulePermissionService';
 import { capitalizeFirst } from 'src/utils/format';
+import { Checkbox } from 'src/components/ui/checkbox';
 
 interface Props {
     roleId: number;
@@ -122,11 +123,9 @@ const RDPForm = ({ roleId, departmentId, setActiveCount }: Props) => {
                 `}
                                 >
 
-                                    <input
-                                        type="checkbox"
+                                    <Checkbox
                                         checked={isChecked}
-                                        onChange={() => toggle(p.id)}
-                                        className="accent-primary"
+                                        onCheckedChange={() => toggle(p.id)}
                                     />
 
                                     <span>

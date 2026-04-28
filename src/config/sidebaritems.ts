@@ -141,6 +141,7 @@ const SidebarContent: MenuItem[] = [
             name: 'Ops View',
             icon: 'lucide:eye',
             url: '/campaigns-ops-view',
+            module:'campaigns-ops-view'
           },
         ],
       },

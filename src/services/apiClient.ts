@@ -28,7 +28,6 @@ apiClient.interceptors.response.use(
     const message =
       error?.response?.data?.detail ||
       error?.response?.data?.message ||
-      error?.message ||
       'Something went wrong';
 
     const method = error?.config?.method?.toLowerCase();
@@ -37,6 +36,19 @@ apiClient.interceptors.response.use(
     if (status === 401) {
       localStorage.removeItem('access_token');
       window.location.href = '/login';
+      return Promise.reject(error);
+    }
+
+    // 🚫 403 → permission issue
+    if (status === 403) {
+      const backendMessage =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message;
+
+      toast.error(
+        backendMessage || 'You do not have permission to perform this action'
+      );
+
       return Promise.reject(error);
     }
 
