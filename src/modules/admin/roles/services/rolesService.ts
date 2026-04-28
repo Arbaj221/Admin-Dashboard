@@ -11,6 +11,7 @@ export interface Role {
 }
 
 export const rolesService = {
+
   async getRoles(): Promise<Role[]> {
     const res = await apiClient.get('/roles');
 
@@ -24,17 +25,22 @@ export const rolesService = {
       updatedAt: new Date(item.updated_at).toLocaleDateString(),
     }));
   },
-  async getActiveRoles(): Promise<Role[]> {
-    const res = await apiClient.get('/roles/?is_active=true');
+
+  async getAllRolesList(): Promise<Role[]> {
+    const res = await apiClient.get('/roles/list');
 
     return res.data.map((item: any) => ({
       id: item.id,
       name: item.name,
-      isActive: item.is_active,
-      createdBy: item.created_by,
-      updatedBy: item.updated_by,
-      createdAt: new Date(item.created_at).toLocaleDateString(),
-      updatedAt: new Date(item.updated_at).toLocaleDateString(),
+    }));
+  },
+
+  async getActiveRolesList(): Promise<Role[]> {
+    const res = await apiClient.get('/roles/list?is_active=true');
+
+    return res.data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
     }));
   },
 

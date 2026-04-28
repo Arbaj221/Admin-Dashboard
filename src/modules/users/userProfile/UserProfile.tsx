@@ -22,8 +22,8 @@ const UserProfile = () => {
             try {
                 const [profileData, rolesData, deptData] = await Promise.all([
                     userService.getProfile(),
-                    rolesService.getRoles(),
-                    departmentService.getDepartments(),
+                    rolesService.getAllRolesList(),
+                    departmentService.getAllDepartmentsList(),
                 ]);
 
                 setProfile(profileData);

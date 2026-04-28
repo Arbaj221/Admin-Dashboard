@@ -31,8 +31,8 @@ const UserDetails = () => {
     try {
       const [userData, roles, departments] = await Promise.all([
         userService.getUserById(Number(id)),
-        rolesService.getRoles(),
-        departmentService.getDepartments(),
+        rolesService.getAllRolesList(),
+        departmentService.getAllDepartmentsList(),
       ]);
 
       setUser(userData);

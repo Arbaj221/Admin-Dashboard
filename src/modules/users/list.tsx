@@ -39,8 +39,8 @@ const UsersList = () => {
   const loadAll = async () => {
     const [usersData, rolesData, deptData] = await Promise.all([
       userService.getUsers(),
-      rolesService.getRoles(),
-      departmentService.getDepartments(),
+      rolesService.getAllRolesList(),
+      departmentService.getAllDepartmentsList(),
     ]);
 
     setUsers(usersData);

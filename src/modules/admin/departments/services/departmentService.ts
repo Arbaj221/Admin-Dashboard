@@ -11,6 +11,7 @@ export interface Department {
 }
 
 export const departmentService = {
+
   async getDepartments(): Promise<Department[]> {
     const res = await apiClient.get('/departments');
 
@@ -25,17 +26,21 @@ export const departmentService = {
     }));
   },
 
-  async getActiveDepartments(): Promise<Department[]> {
-    const res = await apiClient.get('/departments/?is_active=true');
+  async getAllDepartmentsList(): Promise<Department[]> {
+    const res = await apiClient.get('/departments/list');
 
     return res.data.map((item: any) => ({
       id: item.id,
       name: item.name,
-      isActive: item.is_active,
-      createdBy: item.created_by,
-      updatedBy: item.updated_by,
-      createdAt: new Date(item.created_at).toLocaleDateString(),
-      updatedAt: new Date(item.updated_at).toLocaleDateString(),
+    }));
+  },
+
+  async getActiveDepartmentsList(): Promise<Department[]> {
+    const res = await apiClient.get('/departments/list?is_active=true');
+
+    return res.data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
     }));
   },
 
