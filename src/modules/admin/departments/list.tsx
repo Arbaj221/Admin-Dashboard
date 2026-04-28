@@ -40,16 +40,22 @@ const DepartmentsList = () => {
     loadAll();
   }, []);
 
-  const getUserEmail = (id?: number) => {
-    if (!id) return '—';
-    return users.find((u) => u.id === id)?.email || '—';
-  };
+const getUser = (id?: number) => {
+  if (!id) return null;
+  return users.find((u) => u.id === id) || null;
+};
 
-  const mappedDepartments = departments.map((d) => ({
+const mappedDepartments = departments.map((d) => {
+  const user = getUser(d.updatedBy);
+
+  return {
     ...d,
-    createdByEmail: getUserEmail(d.createdBy),
-    updatedByEmail: getUserEmail(d.updatedBy),
-  }));
+    updatedByName: user
+      ? `${user.firstName} ${user.lastName}`
+      : '—',
+    updatedByEmail: user?.email || '—',
+  };
+});
 
   const openCreate = () => {
     setMode('create');

@@ -48,16 +48,22 @@ const RolesList = () => {
     { title: 'Roles' },
   ];
 
-  const getUserEmail = (id?: number) => {
-    if (!id) return '—';
-    return users.find((u) => u.id === id)?.email || '—';
-  };
+const getUser = (id?: number) => {
+  if (!id) return null;
+  return users.find((u) => u.id === id) || null;
+};
 
-  const mappedRoles = roles.map((role) => ({
+const mappedRoles = roles.map((role) => {
+  const updatedUser = getUser(role.updatedBy);
+
+  return {
     ...role,
-    createdByEmail: getUserEmail(role.createdBy),
-    updatedByEmail: getUserEmail(role.updatedBy),
-  }));
+    updatedByName: updatedUser
+      ? `${updatedUser.firstName} ${updatedUser.lastName}`
+      : '—',
+    updatedByEmail: updatedUser?.email || '—',
+  };
+});
 
   const openCreate = () => {
     setMode('create');

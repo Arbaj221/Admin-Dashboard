@@ -72,7 +72,22 @@ const CampaignTable = ({ campaigns, onEdit, onDelete }: any) => {
                   </TableCell>
 
                   <TableCell className="text-center">
-                    {c.campaign_name}
+                    {c.campaign_name?.length > 20 ? (
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="inline-block max-w-[180px] truncate cursor-pointer">
+                              {c.campaign_name.slice(0, 20)}...
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {c.campaign_name}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      c.campaign_name
+                    )}
                   </TableCell>
 
                   <TableCell className="text-center">

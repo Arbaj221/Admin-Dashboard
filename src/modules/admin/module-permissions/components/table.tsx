@@ -6,6 +6,12 @@ import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import { capitalizeFirst } from 'src/utils/format';
 import Can from 'src/permissions/Can';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from 'src/components/ui/tooltip';
 
 interface Props {
   data: any[];
@@ -23,15 +29,11 @@ const ModulePermissionsTable = ({ data, onEdit, onDelete }: Props) => {
             <TableHead>Menu</TableHead>
             <TableHead>Module</TableHead>
             <TableHead>Permission</TableHead>
-            <TableHead>Description</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Created By</TableHead>
             <TableHead>Updated By</TableHead>
-            <TableHead>Created At</TableHead>
             <TableHead>Updated At</TableHead>
             <Can module="module-permissions" actions={['edit', 'delete']}>
               <TableHead>Actions</TableHead>
-
             </Can>
           </TableRow>
         </TableHeader>
@@ -54,25 +56,30 @@ const ModulePermissionsTable = ({ data, onEdit, onDelete }: Props) => {
                 <TableCell>{capitalizeFirst(row.menuName)}</TableCell>
                 <TableCell>{capitalizeFirst(row.moduleName)}</TableCell>
                 <TableCell>{capitalizeFirst(row.permissionName)}</TableCell>
-                <TableCell>{capitalizeFirst(row.description)}</TableCell>
 
                 <TableCell>
                   <StatusBadge value={row.isActive ? 'Active' : 'Inactive'} />
                 </TableCell>
 
                 <TableCell>
-                  {row.createdByEmail
-                    ? capitalizeFirst(row.createdByEmail)
-                    : '—'}
+                  {row.updatedByName !== '—' ? (
+                    <TooltipProvider delayDuration={200}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-pointer">
+                            {row.updatedByName}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {row.updatedByEmail}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : (
+                    '—'
+                  )}
                 </TableCell>
 
-                <TableCell>
-                  {row.updatedByEmail
-                    ? capitalizeFirst(row.updatedByEmail)
-                    : '—'}
-                </TableCell>
-
-                <TableCell>{row.createdAt || '—'}</TableCell>
                 <TableCell>{row.updatedAt || '—'}</TableCell>
 
                 <TableCell>

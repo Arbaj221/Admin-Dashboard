@@ -11,14 +11,19 @@ import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import { capitalizeFirst } from 'src/utils/format';
 import Can from 'src/permissions/Can';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from 'src/components/ui/tooltip';
 
 interface RoleUI {
   id: number;
   name: string;
   isActive: boolean;
-  createdAt: string;
   updatedAt: string;
-  createdByEmail: string;
+  updatedByName: string;
   updatedByEmail: string;
 }
 
@@ -37,9 +42,7 @@ const RolesTable = ({ roles, onEdit, onDelete }: Props) => {
             <TableHead className="text-center">ID</TableHead>
             <TableHead className="text-center">Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Created By</TableHead>
             <TableHead className="text-center">Updated By</TableHead>
-            <TableHead className="text-center">Created At</TableHead>
             <TableHead className="text-center">Updated At</TableHead>
             <Can module="roles" actions={['edit', 'delete']}>
               <TableHead className="text-center">Actions</TableHead>
@@ -70,15 +73,22 @@ const RolesTable = ({ roles, onEdit, onDelete }: Props) => {
                 </TableCell>
 
                 <TableCell className="text-center">
-                  {capitalizeFirst(role.createdByEmail)}
-                </TableCell>
-
-                <TableCell className="text-center">
-                  {capitalizeFirst(role.updatedByEmail)}
-                </TableCell>
-
-                <TableCell className="text-center">
-                  {role.createdAt}
+                  {role.updatedByName !== '—' ? (
+                    <TooltipProvider delayDuration={200}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-pointer">
+                            {role.updatedByName}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {role.updatedByEmail}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : (
+                    '—'
+                  )}
                 </TableCell>
 
                 <TableCell className="text-center">

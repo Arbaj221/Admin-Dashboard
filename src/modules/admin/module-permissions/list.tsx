@@ -40,16 +40,22 @@ const ModulePermissionsList = () => {
     loadAll();
   }, []);
 
-  const getEmail = (id?: number) => {
-    if (!id) return '—';
-    return users.find((u) => u.id === id)?.email || '—';
-  };
+const getUser = (id?: number) => {
+  if (!id) return null;
+  return users.find((u) => u.id === id) || null;
+};
 
-  const mapped = data.map((d) => ({
+const mapped = data.map((d) => {
+  const updatedUser = getUser(d.updatedBy);
+
+  return {
     ...d,
-    createdByEmail: getEmail(d.createdBy),
-    updatedByEmail: getEmail(d.updatedBy),
-  }));
+    updatedByName: updatedUser
+      ? `${updatedUser.firstName} ${updatedUser.lastName}`
+      : '—',
+    updatedByEmail: updatedUser?.email || '—',
+  };
+});
 
   const handleDelete = async (row: any) => {
     const ok = await confirm({

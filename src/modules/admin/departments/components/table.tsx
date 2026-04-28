@@ -6,14 +6,19 @@ import { Pencil, Trash2 } from 'lucide-react';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import { capitalizeFirst } from 'src/utils/format';
 import Can from 'src/permissions/Can';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from 'src/components/ui/tooltip';
 
 interface DepartmentUI {
   id: number;
   name: string;
   isActive: boolean;
-  createdAt: string;
   updatedAt: string;
-  createdByEmail: string;
+  updatedByName: string;
   updatedByEmail: string;
 }
 
@@ -32,9 +37,7 @@ const DepartmentsTable = ({ departments, onEdit, onDelete }: Props) => {
             <TableHead className="text-center">ID</TableHead>
             <TableHead className="text-center">Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Created By</TableHead>
             <TableHead className="text-center">Updated By</TableHead>
-            <TableHead className="text-center">Created At</TableHead>
             <TableHead className="text-center">Updated At</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
@@ -57,10 +60,24 @@ const DepartmentsTable = ({ departments, onEdit, onDelete }: Props) => {
                 <TableCell className="text-center">
                   <StatusBadge value={d.isActive ? 'Active' : 'Inactive'} />
                 </TableCell>
-
-                <TableCell className="text-center">{capitalizeFirst(d.createdByEmail)}</TableCell>
-                <TableCell className="text-center">{capitalizeFirst(d.updatedByEmail)}</TableCell>
-                <TableCell className="text-center">{d.createdAt}</TableCell>
+                <TableCell className="text-center">
+                  {d.updatedByName !== '—' ? (
+                    <TooltipProvider delayDuration={200}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-pointer">
+                            {d.updatedByName}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {d.updatedByEmail}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
                 <TableCell className="text-center">{d.updatedAt}</TableCell>
 
                 <TableCell className="text-center">
