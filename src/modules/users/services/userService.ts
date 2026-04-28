@@ -17,7 +17,6 @@ export interface User {
 }
 
 export const userService = {
-
   async getUsers(): Promise<User[]> {
     const res = await apiClient.get('/users');
 
@@ -37,7 +36,6 @@ export const userService = {
       createdAt: new Date(item.created_at).toLocaleDateString(),
     }));
   },
-
   async getActiveUsers(): Promise<User[]> {
     const res = await apiClient.get('/users?is_active=true');
 
@@ -55,17 +53,6 @@ export const userService = {
       createdBy: item.created_by,
       updatedBy: item.updated_by,
       createdAt: new Date(item.created_at).toLocaleDateString(),
-    }));
-  },
-
-  async getActiveUsersList(): Promise<User[]> {
-    const res = await apiClient.get('/users/list');
-
-    return res.data.map((item: any) => ({
-      id: item.id,
-      firstName: item.first_name,
-      lastName: item.last_name,
-      email: item.email,
     }));
   },
 

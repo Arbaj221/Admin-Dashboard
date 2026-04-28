@@ -28,7 +28,7 @@ const VendorList = () => {
   const loadAll = async () => {
     const [vendorData, userData] = await Promise.all([
       vendorService.getVendors(),
-      userService.getActiveUsersList(),
+      userService.getActiveUsers(),
     ]);
 
     setVendors(vendorData);
