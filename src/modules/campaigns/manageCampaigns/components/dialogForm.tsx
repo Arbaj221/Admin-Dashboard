@@ -9,8 +9,7 @@ import CampaignForm from './form';
 import { Campaign } from '../services/campaignService';
 import { Client } from 'src/modules/clients/services/clientService';
 import SegmentTable from './segmentTable';
-import { useEffect, useState } from 'react';
-import { campaignService } from '../services/campaignService';
+import Can from 'src/permissions/Can';
 
 interface Props {
     open: boolean;
@@ -21,18 +20,10 @@ interface Props {
 }
 
 const CampaignDialog = ({ open, onClose, mode, campaign, clients, }: Props) => {
-    const [segments, setSegments] = useState<any[]>([]);
 
-    useEffect(() => {
-        if (campaign?.id) {
-            campaignService.getSegmentsByCampaignId(campaign.id)
-                .then(setSegments)
-                .catch(() => setSegments([]));
-        }
-    }, [campaign?.id]);
     return (
         <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-            <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-8xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {mode === 'create' ? 'Create Campaign' : 'Edit Campaign'}
@@ -66,7 +57,11 @@ const CampaignDialog = ({ open, onClose, mode, campaign, clients, }: Props) => {
                         }
                     />
                 )}
-                <SegmentTable segments={segments} />
+                <Can module="Campaign_segment" action="view">
+                    {mode === 'edit' && campaign?.id && (
+                        <SegmentTable campaignId={campaign.id} />
+                    )}
+                </Can>
             </DialogContent>
         </Dialog>
     );

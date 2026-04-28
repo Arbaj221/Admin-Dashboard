@@ -16,7 +16,7 @@ type BadgeValue =
     | 'DataOps'
     // Priority
     | 'Low'
-    | 'Normal'
+    | 'Medium'
     | 'High'
     // Client/Vendor Status
     | 'Active'
@@ -41,7 +41,7 @@ const badgeConfig: Record<BadgeValue, string> = {
 
     // ── Priority ─────────────────────────────────────────
     'High': 'bg-lighterror     dark:bg-error/20     text-erroremphasis     dark:text-error',
-    'Normal': 'bg-lightinfo      dark:bg-info/20      text-infoemphasis      dark:text-info',
+    'Medium': 'bg-lightinfo      dark:bg-info/20      text-infoemphasis      dark:text-info',
     'Low': 'bg-muted          dark:bg-muted/40     text-muted-foreground',
 
     // ── Client / Vendor Status ───────────────────────────
