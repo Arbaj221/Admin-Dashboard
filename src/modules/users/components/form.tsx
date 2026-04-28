@@ -43,7 +43,7 @@ const UserForm = ({ mode, initialData, onSuccess }: Props) => {
   useEffect(() => {
     const load = async () => {
       const [r, d] = await Promise.all([
-        rolesService.getActiveRoles(),
+        rolesService.getActiveRolesList(),
         departmentService.getActiveDepartments(),
       ]);
       setRoles(r);

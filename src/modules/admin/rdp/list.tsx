@@ -27,7 +27,7 @@ const RDPList = () => {
     useEffect(() => {
         const load = async () => {
             const [r, d] = await Promise.all([
-                rolesService.getActiveRoles(),
+                rolesService.getActiveRolesList(),
                 departmentService.getActiveDepartments(),
             ]);
 
