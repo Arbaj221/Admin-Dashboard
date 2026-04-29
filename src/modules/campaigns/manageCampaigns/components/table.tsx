@@ -26,7 +26,6 @@ const CampaignTable = ({ campaigns, onEdit, onDelete }: any) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center">Code</TableHead>
               <TableHead className="text-center">Name</TableHead>
               <TableHead className="text-center">Type</TableHead>
               <TableHead className="text-center">Start</TableHead>
@@ -67,27 +66,31 @@ const CampaignTable = ({ campaigns, onEdit, onDelete }: any) => {
                   className="even:bg-lightprimary/80 cursor-pointer hover:bg-muted/50"
                   onClick={() => navigate(`/campaigns/details/${c.id}`)}
                 >
-                  <TableCell className="text-center font-semibold text-primary">
-                    {c.code}
-                  </TableCell>
+                  <TableCell className="">
+                    {/* NAME */}
+                    <div>
+                      {c.campaign_name?.length > 20 ? (
+                        <TooltipProvider delayDuration={200}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="inline-block max-w-[180px] truncate cursor-pointer">
+                                {c.campaign_name.slice(0, 20)}...
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {c.campaign_name}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        c.campaign_name
+                      )}
+                    </div>
 
-                  <TableCell className="text-center">
-                    {c.campaign_name?.length > 20 ? (
-                      <TooltipProvider delayDuration={200}>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="inline-block max-w-[180px] truncate cursor-pointer">
-                              {c.campaign_name.slice(0, 20)}...
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            {c.campaign_name}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : (
-                      c.campaign_name
-                    )}
+                    {/* CODE */}
+                    <div className="text-xs font-semibold text-primary mt-1">
+                      {c.code}
+                    </div>
                   </TableCell>
 
                   <TableCell className="text-center">

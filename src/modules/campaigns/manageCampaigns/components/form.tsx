@@ -153,7 +153,7 @@ const CampaignForm = ({
             delivery_mode: form.delivery_mode,
             delivery_method: form.delivery_method,
             client_id: Number(form.client_id),
-            status: form.status,
+            status: mode === 'create' ? 'Not Started' : form.status,
             start_date: form.start_date,
             end_date: form.end_date,
             total_allocation: Number(form.total_allocation || 0),
@@ -224,8 +224,6 @@ const CampaignForm = ({
                 toast.error('Campaign already exists');
             } else if (msg === 'Campaign exists but is deleted') {
                 toast.error('Campaign exists but is deleted');
-            } else {
-                toast.error('Something went wrong');
             }
         }
     };
@@ -257,36 +255,42 @@ const CampaignForm = ({
                 </Select>
             </div>
 
-            <div>
-                <Label>Status</Label>
-                <Select value={form.status} onValueChange={(v) => handleChange('status', v)}>
-                    <SelectTrigger className="mt-2 w-full">
-                        <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {CAMPAIGN_STATUS_OPTIONS.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+            {mode === 'edit' && (
+                <div>
+                    <Label>Status</Label>
+                    <Select value={form.status} onValueChange={(v) => handleChange('status', v)}>
+                        <SelectTrigger className="mt-2 w-full">
+                            <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {CAMPAIGN_STATUS_OPTIONS.map((o) => (
+                                <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            )}
 
             {/* CLIENT */}
-            <div>
-                <Label>Client</Label>
-                <Select value={form.client_id} onValueChange={(v) => handleChange('client_id', v)}>
-                    <SelectTrigger className="mt-2 w-full">
-                        <SelectValue placeholder="Select client" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {clients.map((c) => (
-                            <SelectItem key={c.id} value={String(c.id)}>
-                                {c.code} - {c.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+            {mode === 'create' && (
+                <div>
+                    <Label>Client</Label>
+                    <Select value={form.client_id} onValueChange={(v) => handleChange('client_id', v)}>
+                        <SelectTrigger className="mt-2 w-full">
+                            <SelectValue placeholder="Select client" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {clients.map((c) => (
+                                <SelectItem key={c.id} value={String(c.id)}>
+                                    {c.code} - {c.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            )}
 
             {/* SELECTS */}
 
@@ -313,6 +317,20 @@ const CampaignForm = ({
                     </SelectTrigger>
                     <SelectContent>
                         {DELIVERY_METHOD_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div>
+                <Label>Priority</Label>
+                <Select value={form.priority} onValueChange={(v) => handleChange('priority', v)}>
+                    <SelectTrigger className="mt-2 w-full">
+                        <SelectValue placeholder="Select Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {CAMPAIGN_PRIORITY_OPTIONS.map((o) => (
                             <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                         ))}
                     </SelectContent>
@@ -408,20 +426,6 @@ const CampaignForm = ({
                     value={form.cpl}
                     onChange={(e) => handleChange('cpl', e.target.value)}
                 />
-            </div>
-
-            <div>
-                <Label>Priority</Label>
-                <Select value={form.priority} onValueChange={(v) => handleChange('priority', v)}>
-                    <SelectTrigger className="mt-2 w-full">
-                        <SelectValue placeholder="Select Priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {CAMPAIGN_PRIORITY_OPTIONS.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
             </div>
 
             {/* FILE */}

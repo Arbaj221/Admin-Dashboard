@@ -138,10 +138,17 @@ const SidebarContent: MenuItem[] = [
           },
           {
             id: uniqueId(),
+            name: 'Campaign Segment',
+            icon: 'lucide:list',
+            url: '/campaigns-segment',
+            module: 'campaign_segment'
+          },
+          {
+            id: uniqueId(),
             name: 'Ops View',
             icon: 'lucide:eye',
             url: '/campaigns-ops-view',
-            module:'campaigns-ops-view'
+            module: 'campaigns-ops-view'
           },
         ],
       },
