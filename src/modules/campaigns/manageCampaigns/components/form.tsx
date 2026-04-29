@@ -319,6 +319,28 @@ const CampaignForm = ({
                 </Select>
             </div>
 
+            {/* START DATE */}
+            <div>
+                <Label>Start Date</Label>
+                <input
+                    type="date"
+                    value={form.start_date || ''}
+                    onChange={(e) => handleChange('start_date', e.target.value)}
+                    className="mt-2 w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+            </div>
+
+            {/* END DATE */}
+            <div>
+                <Label>End Date</Label>
+                <input
+                    type="date"
+                    value={form.end_date || ''}
+                    onChange={(e) => handleChange('end_date', e.target.value)}
+                    className="mt-2 w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+            </div>
+
             {/* NUMBERS */}
             <div>
                 <Label>Total Allocation</Label>
@@ -420,37 +442,12 @@ const CampaignForm = ({
             {/* COMMENT */}
             <div className="md:col-span-2">
                 <Label>Comment</Label>
-                <Input
-                    type="textarea"
-                    className="mt-2 w-full"
-                    value={form.comment}
+                <textarea
+                    value={form.comment || ''}
                     onChange={(e) => handleChange('comment', e.target.value)}
-                />
-            </div>
-
-            {/* START DATE */}
-            <div>
-                <Label>Start Date</Label>
-                <Calendar
-                    mode="single"
-                    selected={form.start_date ? new Date(form.start_date) : undefined}
-                    onSelect={(date) =>
-                        handleChange('start_date', date ? format(date, 'yyyy-MM-dd') : '')
-                    }
-                    className="mt-2 border rounded-md"
-                />
-            </div>
-
-            {/* END DATE */}
-            <div>
-                <Label>End Date</Label>
-                <Calendar
-                    mode="single"
-                    selected={form.end_date ? new Date(form.end_date) : undefined}
-                    onSelect={(date) =>
-                        handleChange('end_date', date ? format(date, 'yyyy-MM-dd') : '')
-                    }
-                    className="mt-2 border rounded-md"
+                    rows={4}
+                    className="mt-2 w-full px-3 py-2 rounded-md border border-input bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                    placeholder="Enter comment..."
                 />
             </div>
 

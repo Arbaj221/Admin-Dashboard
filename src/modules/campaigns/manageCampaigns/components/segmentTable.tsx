@@ -38,6 +38,8 @@ interface Props {
 
 const SegmentTable = ({ campaignId }: Props) => {
   const [segments, setSegments] = useState<any[]>([]);
+  const [campaign, setCampaign] = useState<any>(null);
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedRow, setEditedRow] = useState<any>({});
   const [newRow, setNewRow] = useState<any | null>(null);
@@ -52,9 +54,22 @@ const SegmentTable = ({ campaignId }: Props) => {
     }
   };
 
+  const loadCampaign = async () => {
+    if (!campaignId) return;
+    try {
+      const data = await campaignService.getCampaignById(campaignId);
+      setCampaign(data);
+    } catch {
+      setCampaign(null);
+    }
+  };
+
   useEffect(() => {
     setSegments([]);
-    if (campaignId) loadSegments();
+    if (campaignId) {
+      loadSegments();
+      loadCampaign();
+    }
   }, [campaignId]);
 
   const handleChange = (field: string, value: any) => {
@@ -72,6 +87,9 @@ const SegmentTable = ({ campaignId }: Props) => {
       handleSave();
     }
   };
+
+  const getDeficit = (row: any) =>
+    Number(row.allocation || 0) - Number(row.delivered || 0);
 
   const validateRow = (row: any) => {
     if (
@@ -100,6 +118,11 @@ const SegmentTable = ({ campaignId }: Props) => {
       Number(row.rejected) < 0
     ) {
       toast.error('Negative values are not allowed');
+      return false;
+    }
+
+    if (getDeficit(row) !== 0 && row.status === 'Completed') {
+      toast.error('Cannot mark as Completed until deficit is 0');
       return false;
     }
 
@@ -225,8 +248,16 @@ const SegmentTable = ({ campaignId }: Props) => {
         onChange={(e) => handleChange(field, e.target.value)}
         onKeyDown={handleKeyDown}
         className="h-8 text-sm"
-        max={isStart && row.segment_end_date ? row.segment_end_date : undefined}
-        min={isEnd && row.segment_start_date ? row.segment_start_date : undefined}
+        min={
+          isStart
+            ? campaign?.start_date
+            : row.segment_start_date || campaign?.start_date
+        }
+        max={
+          isEnd
+            ? campaign?.end_date
+            : row.segment_end_date || campaign?.end_date
+        }
       />
     );
   };
@@ -253,8 +284,9 @@ const SegmentTable = ({ campaignId }: Props) => {
             <TableHead className="text-center text-xs">Delivered</TableHead>
             <TableHead className="text-center text-xs">Accepted</TableHead>
             <TableHead className="text-center text-xs">Rejected</TableHead>
+            <TableHead className="text-center text-xs">Deficit</TableHead>
             <TableHead className="text-center text-xs">Status</TableHead>
-            <Can module="Campaign_segment" actions={['create', 'edit', 'delete',]}>
+            <Can module="Campaign_segment" actions={['create', 'edit', 'delete']}>
               <TableHead className="text-center text-xs">Actions</TableHead>
             </Can>
           </TableRow>
@@ -275,17 +307,26 @@ const SegmentTable = ({ campaignId }: Props) => {
               <TableCell>{renderNumber('accepted', newRow.accepted)}</TableCell>
               <TableCell>{renderNumber('rejected', newRow.rejected)}</TableCell>
 
+              <TableCell className="text-center">
+                {getDeficit(newRow)}
+              </TableCell>
+
               <TableCell>
                 <Select onValueChange={(v) => handleChange('status', v)}>
                   <SelectTrigger className="h-8 w-full text-xs">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CAMPAIGN_STATUS_OPTIONS.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
-                        {s.label}
-                      </SelectItem>
-                    ))}
+                    {CAMPAIGN_STATUS_OPTIONS.map((s) => {
+                      const disableCompleted =
+                        s.value === 'Completed' && getDeficit(newRow) !== 0;
+
+                      return (
+                        <SelectItem key={s.value} value={s.value} disabled={disableCompleted}>
+                          {s.label}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </TableCell>
@@ -305,7 +346,7 @@ const SegmentTable = ({ campaignId }: Props) => {
 
           {segments.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+              <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
                 No Segments Found
               </TableCell>
             </TableRow>
@@ -370,6 +411,10 @@ const SegmentTable = ({ campaignId }: Props) => {
                   </TableCell>
 
                   <TableCell className="text-center">
+                    {isEditing ? getDeficit(editedRow) : getDeficit(s)}
+                  </TableCell>
+
+                  <TableCell className="text-center">
                     {isEditing ? (
                       <Select
                         value={editedRow.status}
@@ -379,11 +424,16 @@ const SegmentTable = ({ campaignId }: Props) => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {CAMPAIGN_STATUS_OPTIONS.map((s) => (
-                            <SelectItem key={s.value} value={s.value}>
-                              {s.label}
-                            </SelectItem>
-                          ))}
+                          {CAMPAIGN_STATUS_OPTIONS.map((opt) => {
+                            const disableCompleted =
+                              opt.value === 'Completed' && getDeficit(editedRow) !== 0;
+
+                            return (
+                              <SelectItem key={opt.value} value={opt.value} disabled={disableCompleted}>
+                                {opt.label}
+                              </SelectItem>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
                     ) : (
