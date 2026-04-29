@@ -58,7 +58,10 @@ const CampSegmentTable = ({ campaignId, addTrigger }: Props) => {
     }, [campaignId]);
 
     const getDeficit = (row: any) =>
-        Number(row.allocation || 0) - Number(row.delivered || 0);
+        Number(row.allocation || 0) - Number(row.accepted || 0);
+
+    const getTBD = (row: any) =>
+    Number(row.delivered || 0) - (Number(row.accepted || 0) + Number(row.rejected || 0));
 
     const handleChange = (field: string, value: any) => {
         if (editingId) {
@@ -199,6 +202,7 @@ const CampSegmentTable = ({ campaignId, addTrigger }: Props) => {
                         <TableHead>Accepted</TableHead>
                         <TableHead>Rejected</TableHead>
                         <TableHead>Deficit</TableHead>
+                        <TableHead>TBD</TableHead>
                         <TableHead>Status</TableHead>
                         <Can module="campaign_segment" actions={["edit", "delete", "create"]}>
                             <TableHead>Actions</TableHead>
@@ -242,6 +246,7 @@ const CampSegmentTable = ({ campaignId, addTrigger }: Props) => {
                             <TableCell className='min-w-32'><Input type="number" min="0" value={newRow.rejected} onChange={(e) => handleChange('rejected', e.target.value)} /></TableCell>
 
                             <TableCell>{getDeficit(newRow)}</TableCell>
+                            <TableCell>{getTBD(newRow)}</TableCell>
 
                             <TableCell>
                                 <Select onValueChange={(v) => handleChange('status', v)}>
@@ -321,9 +326,26 @@ const CampSegmentTable = ({ campaignId, addTrigger }: Props) => {
                                 <TableCell className='min-w-32'>{isEditing ? <Input type="number" min="0" value={editedRow.allocation} onChange={(e) => handleChange('allocation', e.target.value)} /> : s.allocation}</TableCell>
                                 <TableCell className='min-w-32'>{isEditing ? <Input type="number" min="0" value={editedRow.delivered} onChange={(e) => handleChange('delivered', e.target.value)} /> : s.delivered}</TableCell>
                                 <TableCell className='min-w-32'>{isEditing ? <Input type="number" min="0" value={editedRow.accepted} onChange={(e) => handleChange('accepted', e.target.value)} /> : s.accepted}</TableCell>
-                                <TableCell className='min-w-32 text-error'>{isEditing ? <Input type="number" min="0" value={editedRow.rejected} onChange={(e) => handleChange('rejected', e.target.value)} /> : s.rejected}</TableCell>
+                                <TableCell className='min-w-32'>{isEditing ? <Input type="number" min="0" value={editedRow.rejected} onChange={(e) => handleChange('rejected', e.target.value)} /> : s.rejected}</TableCell>
 
-                                <TableCell>{isEditing ? getDeficit(editedRow) : getDeficit(s)}</TableCell>
+                                <TableCell
+                                    className={
+                                        (isEditing ? getDeficit(editedRow) : getDeficit(s)) === 0
+                                            ? 'text-successemphasis font-medium'
+                                            : 'text-error font-medium'
+                                    }
+                                >
+                                    {isEditing ? getDeficit(editedRow) : getDeficit(s)}
+                                </TableCell>
+                                <TableCell
+                                    className={
+                                        (isEditing ? getTBD(editedRow) : getTBD(s)) > 0
+                                            ? 'text-successemphasis font-medium'
+                                            : 'text-error font-medium'
+                                    }
+                                >
+                                    {isEditing ? getTBD(editedRow) : getTBD(s)}
+                                </TableCell>
 
                                 <TableCell>
                                     {isEditing ? (
@@ -331,22 +353,22 @@ const CampSegmentTable = ({ campaignId, addTrigger }: Props) => {
                                             <SelectTrigger><SelectValue /></SelectTrigger>
                                             <SelectContent>
                                                 {CAMPAIGN_STATUS_OPTIONS.map((opt) => {
-  const deficit = getDeficit(editedRow);
+                                                    const deficit = getDeficit(editedRow);
 
-  const disableCompleted =
-    opt.value === 'Completed' &&
-    (deficit !== 0 || Number(editedRow.allocation) === 0);
+                                                    const disableCompleted =
+                                                        opt.value === 'Completed' &&
+                                                        (deficit !== 0 || Number(editedRow.allocation) === 0);
 
-  return (
-    <SelectItem
-      key={opt.value}
-      value={opt.value}
-      disabled={disableCompleted}
-    >
-      {opt.label}
-    </SelectItem>
-  );
-})}
+                                                    return (
+                                                        <SelectItem
+                                                            key={opt.value}
+                                                            value={opt.value}
+                                                            disabled={disableCompleted}
+                                                        >
+                                                            {opt.label}
+                                                        </SelectItem>
+                                                    );
+                                                })}
                                             </SelectContent>
                                         </Select>
                                     ) : <StatusBadge value={s.status} />}
