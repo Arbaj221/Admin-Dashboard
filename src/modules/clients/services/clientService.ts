@@ -63,8 +63,19 @@ const mapClient = (item: any): Client => ({
 });
 
 export const clientService = {
+  
   async getClients(): Promise<Client[]> {
     const res = await apiClient.get('/clients/');
+    return res.data.map(mapClient);
+  },
+
+  async getAllClients(): Promise<Client[]> {
+    const res = await apiClient.get('/clients/list');
+    return res.data.map(mapClient);
+  },
+
+  async getAllActiveClients(): Promise<Client[]> {
+    const res = await apiClient.get('/clients/list?is_active=true');
     return res.data.map(mapClient);
   },
 

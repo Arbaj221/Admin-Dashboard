@@ -28,7 +28,7 @@ const CampaignList = () => {
   const loadAll = async () => {
     const [campaignData, clientData] = await Promise.all([
       campaignService.getCampaigns(),
-      clientService.getClients(),
+      clientService.getAllActiveClients(),
     ]);
 
     setCampaigns(campaignData);

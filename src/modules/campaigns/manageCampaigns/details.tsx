@@ -27,7 +27,7 @@ const CampaignDetails = () => {
     const campaignData = await campaignService.getCampaignById(Number(id));
     setCampaign(campaignData);
 
-    const clientData = await clientService.getClients();
+    const clientData = await clientService.getAllClients();
     const selected = clientData.find((c) => c.id === campaignData.client_id);
     setClient(selected || null);
   };
