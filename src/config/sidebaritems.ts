@@ -139,7 +139,7 @@ const SidebarContent: MenuItem[] = [
           {
             id: uniqueId(),
             name: 'Campaign Segment',
-            icon: 'lucide:list',
+            icon: 'lucide:git-branch',
             url: '/campaigns-segment',
             module: 'campaign_segment'
           },

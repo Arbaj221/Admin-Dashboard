@@ -29,20 +29,17 @@ export interface Campaign {
 
 export const campaignSegmentService = {
 
-    async getSegmentsByCampaignId(id: number) {
-        const res = await apiClient.get(`/segments/${id}`);
+    async getAllCampaignSegment() {
+        const res = await apiClient.get(`/campaign-segments/`);
         return res.data;
     },
 
-    async createSegment(payload: any) {
-        return (await apiClient.post('/segments/', payload)).data;
+    async getSegmentsByCampaignId(id: number) {
+        const res = await apiClient.get(`/campaign-segments/${id}`);
+        return res.data;
     },
 
-    async updateSegment(id: number, payload: any) {
-        return (await apiClient.patch(`/segments/${id}`, payload)).data;
-    },
-
-    async deleteSegment(id: number) {
-        return (await apiClient.delete(`/segments/${id}`)).data;
+    async bulkUpdate(payload: any) {
+        return (await apiClient.patch('/campaign-segments/bulk', payload)).data;
     },
 };

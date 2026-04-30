@@ -12,66 +12,109 @@ import {
     SelectValue,
 } from "src/components/ui/select";
 
-import { campaignService } from "../manageCampaigns/services/campaignService";
 import { Button } from "src/components/ui/button";
+
+import { campaignService } from "../manageCampaigns/services/campaignService";
+import { campaignSegmentService } from "./services/campaignSegmentService";
+import { formatDateShort } from "src/utils/formatDateShort";
+import SegmentDetails from "./details";
 import Can from "src/permissions/Can";
 
 const CampaignSegmentList = () => {
-    const [addTrigger, setAddTrigger] = useState(0);
     const [campaigns, setCampaigns] = useState<any[]>([]);
+    const [allSegments, setAllSegments] = useState<any[]>([]);
+    const [filteredSegments, setFilteredSegments] = useState<any[]>([]);
+    const [originalSegments, setOriginalSegments] = useState<any[]>([]);
     const [selectedCampaignId, setSelectedCampaignId] = useState<number | undefined>();
     const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
+
+    const [isEditing, setIsEditing] = useState(false);
 
     const BCrumb = [
         { to: '/', title: 'Home' },
         { title: 'Campaign Segment' },
     ];
 
-    const loadCampaigns = async () => {
+    // 🔥 Load data ONCE
+    const loadAll = async () => {
         try {
-            const data = await campaignService.getCampaigns();
-            const list = data || [];
+            const [campaignData, segmentData] = await Promise.all([
+                campaignService.getCampaigns(),
+                campaignSegmentService.getAllCampaignSegment(), // :contentReference[oaicite:0]{index=0}
+            ]);
 
-            setCampaigns(list);
+            setCampaigns(campaignData || []);
+            setAllSegments(segmentData || []);
 
-            // ✅ AUTO SELECT FIRST CAMPAIGN
-            if (list.length > 0) {
-                setSelectedCampaignId(list[0].id);
-                setSelectedCampaign(list[0]);
-            }
+            setSelectedCampaignId(undefined);
+            setSelectedCampaign(null);
 
+            // 🔥 IMPORTANT
+            setFilteredSegments(segmentData || []);
+            setOriginalSegments(segmentData || []);
+            setFilteredSegments([]);
         } catch {
             setCampaigns([]);
+            setAllSegments([]);
+            setFilteredSegments([]);
         }
     };
 
     useEffect(() => {
-        loadCampaigns();
+        loadAll();
     }, []);
+
+    // 🔥 HANDLE SELECT CHANGE
+    const handleCampaignChange = (value: string) => {
+
+        // 🔥 ALL CASE
+        if (value === 'all') {
+            setSelectedCampaignId(undefined);
+            setSelectedCampaign(null);
+
+            setFilteredSegments(allSegments);
+            setOriginalSegments(allSegments);
+
+            setIsEditing(false);
+            return;
+        }
+
+        // 🔥 NORMAL CASE
+        const id = Number(value);
+
+        setSelectedCampaignId(id);
+
+        const campaign = campaigns.find((c) => c.id === id);
+        setSelectedCampaign(campaign);
+
+        const filtered = allSegments.filter((s) => s.campaign_id === id);
+
+        setFilteredSegments(filtered);
+        setOriginalSegments(filtered);
+
+        setIsEditing(false);
+    };
 
     return (
         <>
             <SlimBreadcrumb title="Campaigns" items={BCrumb} />
-
+            {/* <SegmentDetails /> */}
             <CardBox>
 
                 <div className="flex justify-between items-center">
+
+                    {/* DROPDOWN */}
                     <div className="max-w-sm">
                         <Select
-                            value={selectedCampaignId ? String(selectedCampaignId) : ''}
-                            onValueChange={(v) => {
-                                const id = Number(v);
-                                setSelectedCampaignId(id);
-
-                                const c = campaigns.find((c) => c.id === id);
-                                setSelectedCampaign(c);
-                            }}
+                            value={selectedCampaignId ? String(selectedCampaignId) : 'all'}
+                            onValueChange={handleCampaignChange}
                         >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="min-w-40 w-full max-w-sm">
                                 <SelectValue placeholder="Select Campaign" />
                             </SelectTrigger>
 
                             <SelectContent>
+                                <SelectItem value="all">All Campaigns</SelectItem>
                                 {campaigns.map((c) => (
                                     <SelectItem key={c.id} value={String(c.id)}>
                                         {c.code} - {c.campaign_name}
@@ -80,18 +123,21 @@ const CampaignSegmentList = () => {
                             </SelectContent>
                         </Select>
                     </div>
-                    <Can module="campaign_segment" action="create">
+
+                    {/* EDIT BUTTON */}
+                    <Can module="campaign_segment" action="edit">
                         <Button
                             variant="lightprimary"
                             disabled={!selectedCampaignId}
-                            onClick={() => setAddTrigger((v) => v + 1)}
+                            onClick={() => setIsEditing(true)}
                         >
-                            Add Segment
+                            Edit Segments
                         </Button>
                     </Can>
+
                 </div>
 
-                {/* ✅ Campaign Reference */}
+                {/* CAMPAIGN REFERENCE */}
                 {selectedCampaign && (
                     <div className="mt-4 p-3 border rounded-md bg-muted/30 text-sm space-y-2">
                         <div className="font-semibold">
@@ -99,8 +145,8 @@ const CampaignSegmentList = () => {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div><strong>Start:</strong> {selectedCampaign.start_date}</div>
-                            <div><strong>End:</strong> {selectedCampaign.end_date}</div>
+                            <div><strong>Start:</strong>  {formatDateShort(selectedCampaign.start_date)}</div>
+                            <div><strong>End:</strong> {formatDateShort(selectedCampaign.end_date)}</div>
                             <div><strong>Allocation:</strong> {selectedCampaign.total_allocation}</div>
                             <div><strong>Delivered:</strong> {selectedCampaign.total_delivered}</div>
                             <div><strong>Accepted:</strong> {selectedCampaign.total_accepted}</div>
@@ -109,8 +155,17 @@ const CampaignSegmentList = () => {
                     </div>
                 )}
 
-                <CampSegmentTable addTrigger={addTrigger}
-                    campaignId={selectedCampaignId} />
+                {/* TABLE */}
+                {/* TABLE */}
+                <CampSegmentTable
+                    originalSegments={originalSegments}
+                    campaignId={selectedCampaignId}
+                    campaign={selectedCampaign}
+                    segments={selectedCampaignId ? filteredSegments : allSegments}
+                    setSegments={selectedCampaignId ? setFilteredSegments : setAllSegments}
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                />
 
             </CardBox>
         </>
