@@ -17,7 +17,7 @@ import { Button } from "src/components/ui/button";
 import { campaignService } from "../manageCampaigns/services/campaignService";
 import { campaignSegmentService } from "./services/campaignSegmentService";
 import { formatDateShort } from "src/utils/formatDateShort";
-import SegmentDetails from "./details";
+// import SegmentDetails from "./details";
 import Can from "src/permissions/Can";
 
 const CampaignSegmentList = () => {
