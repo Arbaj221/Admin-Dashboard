@@ -11,7 +11,7 @@ import {
 
 import { CAMPAIGN_STATUS_OPTIONS } from "src/config/constant-data/campaignOptions";
 import { Button } from "src/components/ui/button";
-
+import { Download, Filter } from "lucide-react";
 interface Props {
     campaigns: { label: string; value: string }[];
 
@@ -94,17 +94,28 @@ const RevenueFilters = ({ campaigns, onApply, onDownload, downloading }: Props) 
 
             {/* BUTTONS */}
             <div className="ml-auto flex gap-2">
-                <Button variant="lightprimary" onClick={handleApply}>
+
+                {/* APPLY */}
+                <Button
+                    variant="lightprimary"
+                    onClick={handleApply}
+                    className="flex items-center gap-2"
+                >
+                    <Filter size={16} />
                     Apply
                 </Button>
 
+                {/* DOWNLOAD */}
                 <Button
                     variant="lightprimary"
                     onClick={handleDownload}
                     disabled={downloading}
+                    className="flex items-center gap-2"
                 >
+                    <Download size={16} />
                     {downloading ? "Downloading..." : "Download"}
                 </Button>
+
             </div>
 
         </div>
