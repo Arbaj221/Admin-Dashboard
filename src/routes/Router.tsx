@@ -19,6 +19,7 @@ import rdpRoutes from 'src/modules/admin/rdp/routes';
 import userPermissionRoutes from 'src/modules/admin/user-permission/routes';
 import modulePermissionsRoutes from 'src/modules/admin/module-permissions/routes';
 import appSettingsRoutes from 'src/modules/admin/app-settings/routes';
+import revnueRoutes from 'src/modules/reports/revenue/routes';
 
 const FullLayout = Loadable(lazy(() => import('../components/layout/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../modules/shared/pages/BlankLayout')));
@@ -49,6 +50,7 @@ const Router = [
       ...userPermissionRoutes,
       ...modulePermissionsRoutes,
       ...appSettingsRoutes,
+      ...revnueRoutes,
       { path: '/user-profile', exact: true, element: <UserProfile /> },
       { path: '/sample-page', exact: true, element: <SamplePage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },

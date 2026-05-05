@@ -184,6 +184,18 @@ const SidebarContent: MenuItem[] = [
       },
     ],
   },
+  {
+    heading: 'Reports',
+    children: [
+      {
+        name: 'Revenue',
+        id: uniqueId(),
+        icon: 'lucide:store',
+        url: '/reports/revenue',
+        module: 'revenue'
+      },
+    ],
+  },
 ];
 
 export default SidebarContent;
