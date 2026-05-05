@@ -12,5 +12,18 @@ export const revenueService = {
             responseType: "blob",
         });
         return res;
-    }
+    },
+
+    async getSummary(params: any) {
+        const res = await apiClient.get("/revenue/summary", { params });
+        return res.data;
+    },
+
+    async downloadSummary(params: any) {
+        const res = await apiClient.get("/revenue/summary/download", {
+            params,
+            responseType: "blob",
+        });
+        return res;
+    },
 };

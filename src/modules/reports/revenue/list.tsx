@@ -10,11 +10,12 @@ import Pagination from "./components/pagination";
 import { revenueService } from "./service/revenueService";
 import { campaignService } from "src/modules/campaigns/manageCampaigns/services/campaignService";
 import { toast } from "sonner";
+import SummaryDialog from "./components/SummaryDialog";
 
 const RevenueList = () => {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-
+    const [summaryOpen, setSummaryOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total, setTotal] = useState(0);
@@ -24,7 +25,9 @@ const RevenueList = () => {
         status?: string;
         date?: string;
     }>({});
-
+    const handleOpenSummary = () => {
+        setSummaryOpen(true);
+    };
     const [downloading, setDownloading] = useState(false);
 
     const [campaignOptions, setCampaignOptions] = useState<
@@ -143,6 +146,7 @@ const RevenueList = () => {
             <CardBox>
 
                 <RevenueFilters
+                    onOpenSummary={handleOpenSummary}
                     campaigns={campaignOptions}
                     onApply={handleApply}
                     onDownload={handleDownload}
@@ -163,6 +167,10 @@ const RevenueList = () => {
                 />
 
             </CardBox>
+            <SummaryDialog
+                open={summaryOpen}
+                onClose={() => setSummaryOpen(false)}
+            />
         </>
     );
 };

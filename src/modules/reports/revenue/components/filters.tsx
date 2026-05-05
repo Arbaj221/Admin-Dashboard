@@ -11,7 +11,9 @@ import {
 
 import { CAMPAIGN_STATUS_OPTIONS } from "src/config/constant-data/campaignOptions";
 import { Button } from "src/components/ui/button";
-import { Download, Filter } from "lucide-react";
+import { Download, Filter, BarChart3 } from "lucide-react";
+
+
 interface Props {
     campaigns: { label: string; value: string }[];
 
@@ -20,6 +22,8 @@ interface Props {
         status?: string;
         date?: string;
     }) => void;
+
+    onOpenSummary: () => void;
 
     onDownload: (filters: {
         campaign_code?: string;
@@ -30,7 +34,7 @@ interface Props {
     downloading: boolean;
 }
 
-const RevenueFilters = ({ campaigns, onApply, onDownload, downloading }: Props) => {
+const RevenueFilters = ({ campaigns, onApply, onDownload, downloading, onOpenSummary }: Props) => {
     const [selectedCampaigns, setSelectedCampaigns] = useState<string[]>([]);
     const [status, setStatus] = useState("all");
     const [date, setDate] = useState("");
@@ -114,6 +118,14 @@ const RevenueFilters = ({ campaigns, onApply, onDownload, downloading }: Props) 
                 >
                     <Download size={16} />
                     {downloading ? "Downloading..." : "Download"}
+                </Button>
+                <Button
+                    variant="lightprimary"
+                    onClick={onOpenSummary}
+                    className="flex items-center gap-2"
+                >
+                    <BarChart3 size={16} />
+                    Summary
                 </Button>
 
             </div>
