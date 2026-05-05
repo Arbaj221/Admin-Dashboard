@@ -79,9 +79,9 @@ const AutoComplete = ({
             {/* Input wrapper */}
             <div
                 className={`
-          flex items-center h-9 w-full
+          flex items-center min-h-10 w-full
           rounded-md border border-input bg-transparent
-          px-3 text-sm shadow-sm transition-colors
+          px-3 py-2 text-sm shadow-sm transition-colors
           ${open ? "border-primary ring-1 ring-ring" : "hover:border-primary"}
           ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-text"}
         `}
@@ -95,7 +95,7 @@ const AutoComplete = ({
                     onChange={handleInputChange}
                     onFocus={() => !disabled && setOpen(true)}
                     placeholder={selected ? "" : placeholder}
-                    className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground text-foreground disabled:cursor-not-allowed min-w-0"
+                    className="flex-1 h-full bg-transparent outline-none placeholder:text-muted-foreground text-foreground disabled:cursor-not-allowed min-w-0 py-0"
                 />
 
                 <div className="flex items-center gap-1 ml-1 shrink-0">
@@ -118,8 +118,8 @@ const AutoComplete = ({
 
             {/* Dropdown list */}
             {open && (
-                <div className="absolute z-50  mt-1 w-full rounded-md border border-border bg-popover shadow-md overflow-hidden">
-                    <ul className="max-h-60 overflow-y-auto py-1">
+                <div className="absolute z-50 mt-1 w-full rounded-md border border-border bg-popover shadow-md overflow-hidden">
+                    <ul className="max-h-64 overflow-y-auto py-1">
                         {filtered.length === 0 ? (
                             <li className="px-3 py-2 text-sm text-muted-foreground text-center">
                                 {emptyMessage}

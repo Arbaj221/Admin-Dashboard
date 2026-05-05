@@ -25,7 +25,6 @@ interface Props {
 const RevenueTable = ({ data, loading }: Props) => {
   return (
     <div className="border border-border rounded-md">
-
       <Table className="table-auto w-full">
         <TableHeader>
           <TableRow>

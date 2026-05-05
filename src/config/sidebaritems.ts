@@ -190,7 +190,7 @@ const SidebarContent: MenuItem[] = [
       {
         name: 'Revenue',
         id: uniqueId(),
-        icon: 'lucide:store',
+        icon: 'lucide:notepad-text',
         url: '/reports/revenue',
         module: 'revenue'
       },

@@ -18,10 +18,10 @@ interface Props {
 
 const Pagination = ({ page, limit, total, onPageChange, onLimitChange, }: Props) => {
     const totalPages = Math.ceil(total / limit);
-
+    const start = total === 0 ? 0 : (page - 1) * limit + 1;
+    const end = Math.min(page * limit, total);
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-t border-border">
-
             {/* LEFT */}
             <div className="flex gap-2">
                 <Button
@@ -42,8 +42,10 @@ const Pagination = ({ page, limit, total, onPageChange, onLimitChange, }: Props)
             </div>
 
             {/* CENTER */}
-            <div className="font-medium text-sm">
-                Page {page} of {totalPages || 1}
+            <div className="text-sm text-muted-foreground">
+                Showing <span className="font-medium text-foreground">{start}</span>–
+                <span className="font-medium text-foreground">{end}</span> of{" "}
+                <span className="font-medium text-foreground">{total}</span> results
             </div>
 
             {/* RIGHT */}
