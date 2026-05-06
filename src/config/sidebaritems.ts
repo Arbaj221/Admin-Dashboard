@@ -11,7 +11,7 @@ export interface ChildItem {
   badge?: boolean;
   badgeType?: string;
   isPro?: boolean;
-  module?: string; // for permission checks
+  module?: string;
 }
 
 export interface MenuItem {
@@ -28,13 +28,12 @@ export interface MenuItem {
   badgeType?: string;
   badge?: boolean;
   isPro?: boolean;
-  module?: string; // for permission checks
+  module?: string;
 }
 
 import { uniqueId } from 'lodash';
 
 const SidebarContent: MenuItem[] = [
-  // ==================== NON-PRO SECTIONS ====================
   {
     heading: 'Home',
     children: [
@@ -51,7 +50,7 @@ const SidebarContent: MenuItem[] = [
     children: [
       {
         name: 'User Management',
-        icon: 'lucide:users',
+        icon: 'lucide:users',                       // group of users
         id: uniqueId(),
         children: [
           {
@@ -64,14 +63,14 @@ const SidebarContent: MenuItem[] = [
           {
             id: uniqueId(),
             name: 'Roles',
-            icon: 'lucide:shield',
+            icon: 'lucide:shield-check',            // ✅ was lucide:shield (conflict with Sentinel)
             url: '/admin/roles',
             module: 'roles'
           },
           {
             id: uniqueId(),
             name: 'Departments',
-            icon: 'lucide:building',
+            icon: 'lucide:building-2',              // ✅ more specific building
             url: '/admin/departments',
             module: 'department'
           },
@@ -92,14 +91,14 @@ const SidebarContent: MenuItem[] = [
           {
             id: uniqueId(),
             name: 'User Permission',
-            icon: 'lucide:user-cog',
+            icon: 'lucide:user-check',              // ✅ was lucide:user-cog
             url: '/admin/userpermission',
             module: 'users-permissions'
           },
           {
             id: uniqueId(),
             name: 'App Settings',
-            icon: 'lucide:settings',
+            icon: 'lucide:settings-2',              // ✅ more distinct settings icon
             url: '/admin/app-settings',
             module: 'settings'
           },
@@ -132,7 +131,7 @@ const SidebarContent: MenuItem[] = [
           {
             id: uniqueId(),
             name: 'All Campaigns',
-            icon: 'lucide:list',
+            icon: 'lucide:layout-list',             // ✅ was lucide:list
             url: '/campaigns',
             module: 'campaign'
           },
@@ -146,7 +145,7 @@ const SidebarContent: MenuItem[] = [
           {
             id: uniqueId(),
             name: 'Ops View',
-            icon: 'lucide:eye',
+            icon: 'lucide:telescope',              // ✅ was lucide:eye — more "ops" feel
             url: '/campaigns-ops-view',
             module: 'campaigns-ops-view'
           },
@@ -160,7 +159,7 @@ const SidebarContent: MenuItem[] = [
       {
         name: 'Sentinel',
         id: uniqueId(),
-        icon: 'lucide:shield',
+        icon: 'lucide:radar',                      // ✅ was lucide:shield (conflict) — radar fits "sentinel"
         children: [
           {
             id: uniqueId(),
@@ -171,7 +170,7 @@ const SidebarContent: MenuItem[] = [
           {
             id: uniqueId(),
             name: 'Jobs',
-            icon: 'lucide:play-circle',
+            icon: 'lucide:circle-play',            // ✅ was lucide:play-circle
             url: '/sentinel-jobs',
           },
           {
@@ -190,7 +189,7 @@ const SidebarContent: MenuItem[] = [
       {
         name: 'Revenue',
         id: uniqueId(),
-        icon: 'lucide:notepad-text',
+        icon: 'lucide:circle-dollar-sign',         // ✅ was lucide:notepad-text — more "revenue" feel
         url: '/reports/revenue',
         module: 'revenue'
       },
