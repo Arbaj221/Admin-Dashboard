@@ -15,11 +15,17 @@ import {
 
 interface Props {
   data: any[];
+  loading: boolean;
   onEdit: (row: any) => void;
   onDelete: (row: any) => void;
 }
 
-const ModulePermissionsTable = ({ data, onEdit, onDelete }: Props) => {
+const ModulePermissionsTable = ({
+  data,
+  loading,
+  onEdit,
+  onDelete,
+}: Props) => {
   return (
     <div className="overflow-x-auto border border-border rounded-md">
       <Table className='overflow-x-auto'>
@@ -39,7 +45,17 @@ const ModulePermissionsTable = ({ data, onEdit, onDelete }: Props) => {
         </TableHeader>
 
         <TableBody>
-          {data.length === 0 ? (
+
+          {loading ? (
+            <TableRow>
+              <TableCell
+                colSpan={11}
+                className="text-center text-muted-foreground py-6"
+              >
+                Loading...
+              </TableCell>
+            </TableRow>
+          ) : data.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={11}

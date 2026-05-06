@@ -48,7 +48,7 @@ const RDPList = () => {
 
     return (
         <>
-            <SlimBreadcrumb title="RDP" items={BCrumb} />
+            <SlimBreadcrumb title="Role Department Permissions" items={BCrumb} />
 
             <CardBox>
 

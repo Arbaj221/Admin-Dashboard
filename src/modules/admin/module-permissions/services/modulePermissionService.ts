@@ -13,22 +13,46 @@ export interface ModulePermission {
   updatedAt: string;
 }
 
-export const modulePermissionService = {
-  async getAllModulePermissions(): Promise<ModulePermission[]> {
-    const res = await apiClient.get('/module-permissions');
+interface GetModulePermissionParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+}
 
-    return res.data.map((item: any) => ({
-      id: item.id,
-      moduleName: item.module_name,
-      menuName: item.menu_name,
-      permissionName: item.permission_name,
-      description: item.description,
-      isActive: item.is_active,
-      createdBy: item.created_by,
-      updatedBy: item.updated_by,
-      createdAt: new Date(item.created_at).toLocaleDateString(),
-      updatedAt: new Date(item.updated_at).toLocaleDateString(),
-    }));
+interface ModulePermissionResponse {
+  data: ModulePermission[];
+  page: number;
+  limit: number;
+  total: number;
+}
+
+export const modulePermissionService = {
+  async getAllModulePermissions(
+    params?: GetModulePermissionParams
+  ): Promise<ModulePermissionResponse> {
+
+    const res = await apiClient.get('/module-permissions', {
+      params,
+    });
+
+    return {
+      data: res.data.data.map((item: any) => ({
+        id: item.id,
+        moduleName: item.module_name,
+        menuName: item.menu_name,
+        permissionName: item.permission_name,
+        description: item.description,
+        isActive: item.is_active,
+        createdBy: item.created_by,
+        updatedBy: item.updated_by,
+        createdAt: new Date(item.created_at).toLocaleDateString(),
+        updatedAt: new Date(item.updated_at).toLocaleDateString(),
+      })),
+
+      page: res.data.page,
+      limit: res.data.limit,
+      total: res.data.total,
+    };
   },
 
   async getActiveModulePermissions(): Promise<ModulePermission[]> {
