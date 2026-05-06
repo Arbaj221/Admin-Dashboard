@@ -146,14 +146,14 @@ const SummaryDialog = ({ open, onClose }: Props) => {
             categories: months,
             labels: {
                 style: {
-                    colors: months.map(() => mutedText), // 🔥 FIX
+                    colors: months.map(() => textColor), // 🔥 FIX
                 },
             },
         },
         yaxis: {
             labels: {
                 style: {
-                    colors: [mutedText], // 🔥 FIX
+                    colors: [textColor], // 🔥 FIX
                 },
             },
         },
@@ -176,7 +176,18 @@ const SummaryDialog = ({ open, onClose }: Props) => {
 
     const leadsOptions: ApexOptions = {
         ...baseOptions,
-        chart: { ...baseOptions.chart, type: "bar" as const },
+
+        colors: [
+            "#FEB019", // 🔥 Apex yellow (Booked)
+            "#00E396", // 🔥 Apex green (Accepted)
+            "#FF4560", // 🔥 Apex red (Deficit)
+        ],
+
+        chart: {
+            ...baseOptions.chart,
+            type: "bar" as const,
+        },
+
         plotOptions: {
             bar: {
                 columnWidth: "30%",
@@ -184,11 +195,25 @@ const SummaryDialog = ({ open, onClose }: Props) => {
             },
         },
     };
-
     const revenueOptions: ApexOptions = {
         ...baseOptions,
-        chart: { ...baseOptions.chart, type: "line" as const },
-        stroke: { curve: "smooth", width: 2 },
+
+        colors: [
+            "#FEB019", // 🔥 Allocation / Booked
+            "#00E396", // 🔥 Accepted
+            "#FF4560", // 🔥 Pending / Deficit
+        ],
+
+        chart: {
+            ...baseOptions.chart,
+            type: "area" as const,
+        },
+
+        stroke: {
+            curve: "smooth",
+            width: 2,
+        },
+
         yaxis: {
             labels: {
                 formatter: (v: number) => `${v.toLocaleString()}`,

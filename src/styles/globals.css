@@ -119,6 +119,7 @@ body {
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-warningstrong: var(--warning-strong);
   --color-dark: var(--dark);
   --color-bodytext: var(--bodytext);
   --color-lightprimary: var(--lightprimary);
@@ -191,7 +192,7 @@ body {
   --dark: #1c2536;
   --bodytext: #5a6a85bf;
   --surface: #1c2536;
-
+  --warning-strong: #d97706;
   /* Light Variants */
   --lightprimary: color-mix(in oklab, var(--primary) 12%, transparent);
   --lightsecondary: color-mix(in oklab, var(--secondary) 12%, transparent);
@@ -251,7 +252,7 @@ body {
   --dark: #1c2536;
   --bodytext: #7c8fac;
   --surface: #ffffff;
-
+  --warning-strong: #f6b51e;
   /* Light Variants */
   --lightprimary: color-mix(in oklab, var(--primary) 20%, transparent);
   --lightsecondary: color-mix(in oklab, var(--secondary) 20%, transparent);

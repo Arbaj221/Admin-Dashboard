@@ -14,8 +14,8 @@ import {
 } from "src/components/ui/tooltip";
 
 import StatusBadge from "src/components/shared/status-badges/StatusBadge";
-import { formatSplitDate } from "src/utils/formatSplitDate";
 import { getCurrencySymbol } from "src/utils/currencySymbol";
+import { formatDateShort } from "src/utils/formatDateShort";
 
 interface Props {
   data: any[];
@@ -32,11 +32,8 @@ const RevenueTable = ({ data, loading }: Props) => {
             <TableHead>Title</TableHead>
             <TableHead>Start</TableHead>
             <TableHead>End</TableHead>
-            <TableHead>Allocation</TableHead>
-            <TableHead>Accepted</TableHead>
             <TableHead>Allocation Revenue</TableHead>
             <TableHead>Accepted Revenue</TableHead>
-            <TableHead>Deficit</TableHead>
             <TableHead>Deficit Revenue</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
@@ -60,14 +57,8 @@ const RevenueTable = ({ data, loading }: Props) => {
             data.map((r) => (
               <TableRow key={r.id} className="even:bg-lightprimary/80">
 
-                <TableCell className="wrap-break-word">
-                  <div className="text-sm font-medium">
-                    {r.campaign_code}
-                  </div>
-
-                  <div className="text-xs text-primary font-semibold">
-                    {r.segment_code}
-                  </div>
+                <TableCell className="wrap-break-word text-xs text-primary font-semibold">
+                  {r.segment_code}
                 </TableCell>
                 <TableCell className="max-w-200">
 
@@ -92,36 +83,62 @@ const RevenueTable = ({ data, loading }: Props) => {
                 </TableCell>
 
                 <TableCell>
-                  {formatSplitDate(r.segment_start_date)}
+                  {formatDateShort(r.segment_start_date)}
                 </TableCell>
 
                 <TableCell>
-                  {formatSplitDate(r.segment_end_date)}
+                  {formatDateShort(r.segment_end_date)}
                 </TableCell>
 
-                <TableCell>{r.allocation}</TableCell>
-                <TableCell>{r.accepted}</TableCell>
 
-                <TableCell className="font-medium text-successemphasis">
-                  {getCurrencySymbol(r.currency)} {r.allocation_revenue?.toLocaleString?.() || r.allocation_revenue}
-                </TableCell>
-
-                <TableCell className="font-medium text-successemphasis">
-                  {getCurrencySymbol(r.currency)} {r.accepted_revenue?.toLocaleString?.() || r.accepted_revenue}
-                </TableCell>
-
-                <TableCell
-                  className={
-                    r.deficit === 0
-                      ? "text-successemphasis font-medium"
-                      : "text-error font-medium"
-                  }
-                >
-                  {r.deficit}
-                </TableCell>
-
+                {/* ALLOCATION */}
                 <TableCell>
-                  {getCurrencySymbol(r.currency)} {r.deficit_revenue?.toLocaleString?.() || r.deficit_revenue}
+
+                  <div className="font-semibold text-warningstrong ">
+                    {getCurrencySymbol(r.currency)}{" "}
+                    {r.allocation_revenue?.toLocaleString?.() || r.allocation_revenue}
+                  </div>
+
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Leads: {r.allocation?.toLocaleString?.() || r.allocation}
+                  </div>
+
+                </TableCell>
+
+                {/* ACCEPTED */}
+                <TableCell>
+
+                  <div className="font-semibold text-successemphasis">
+                    {getCurrencySymbol(r.currency)}{" "}
+                    {r.accepted_revenue?.toLocaleString?.() || r.accepted_revenue}
+                  </div>
+
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Leads: {r.accepted?.toLocaleString?.() || r.accepted}
+                  </div>
+
+                </TableCell>
+
+                {/* DEFICIT */}
+                <TableCell>
+
+                  <div
+                    className={
+                      r.deficit === 0
+                        ? "font-semibold text-successemphasis"
+                        : "font-semibold text-erroremphasis"
+                    }
+                  >
+                    {getCurrencySymbol(r.currency)}{" "}
+                    {r.deficit_revenue?.toLocaleString?.() || r.deficit_revenue}
+                  </div>
+
+                  <div
+                    className="text-xs text-muted-foreground mt-0.5"
+                  >
+                    Leads: {r.deficit?.toLocaleString?.() || r.deficit}
+                  </div>
+
                 </TableCell>
 
                 <TableCell>
