@@ -16,6 +16,7 @@ import {
 import StatusBadge from "src/components/shared/status-badges/StatusBadge";
 import { getCurrencySymbol } from "src/utils/currencySymbol";
 import { formatDateShort } from "src/utils/formatDateShort";
+import { formatCurrencyNumber } from "src/utils/formatCurrencyNumber";
 
 interface Props {
   data: any[];
@@ -30,12 +31,12 @@ const RevenueTable = ({ data, loading }: Props) => {
           <TableRow>
             <TableHead>Code</TableHead>
             <TableHead>Title</TableHead>
-            <TableHead>Start</TableHead>
-            <TableHead>End</TableHead>
+            <TableHead className="text-center">Start date</TableHead>
+            <TableHead className="text-center">End date</TableHead>
             <TableHead>Allocation Revenue</TableHead>
             <TableHead>Accepted Revenue</TableHead>
             <TableHead>Deficit Revenue</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead className="text-center">Status</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -62,43 +63,42 @@ const RevenueTable = ({ data, loading }: Props) => {
                 </TableCell>
                 <TableCell className="max-w-200">
 
-                  {r.title?.length > 30 ? (
+                  {r.segment_title?.length > 30 ? (
                     <TooltipProvider delayDuration={200}>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="block truncate cursor-pointer">
-                            {r.title.slice(0, 30)}...
+                            {r.segment_title.slice(0, 30)}...
                           </span>
                         </TooltipTrigger>
 
                         <TooltipContent>
-                          {r.title}
+                          {r.segment_title}
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   ) : (
-                    <span className="wrap-break-word">{r.title}</span>
+                    <span className="wrap-break-word">{r.segment_title}</span>
                   )}
 
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="text-left">
                   {formatDateShort(r.segment_start_date)}
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="text-left">
                   {formatDateShort(r.segment_end_date)}
                 </TableCell>
 
 
                 {/* ALLOCATION */}
-                <TableCell>
+                <TableCell className="text-right">
 
                   <div className="font-semibold text-warningstrong ">
                     {getCurrencySymbol(r.currency)}{" "}
-                    {r.allocation_revenue?.toLocaleString?.() || r.allocation_revenue}
+                    {formatCurrencyNumber(r.allocation_revenue)}
                   </div>
-
                   <div className="text-xs text-muted-foreground mt-0.5">
                     Leads: {r.allocation?.toLocaleString?.() || r.allocation}
                   </div>
@@ -106,13 +106,12 @@ const RevenueTable = ({ data, loading }: Props) => {
                 </TableCell>
 
                 {/* ACCEPTED */}
-                <TableCell>
+                <TableCell className="text-right">
 
                   <div className="font-semibold text-successemphasis">
                     {getCurrencySymbol(r.currency)}{" "}
-                    {r.accepted_revenue?.toLocaleString?.() || r.accepted_revenue}
+                    {formatCurrencyNumber(r.accepted_revenue)}
                   </div>
-
                   <div className="text-xs text-muted-foreground mt-0.5">
                     Leads: {r.accepted?.toLocaleString?.() || r.accepted}
                   </div>
@@ -120,28 +119,20 @@ const RevenueTable = ({ data, loading }: Props) => {
                 </TableCell>
 
                 {/* DEFICIT */}
-                <TableCell>
+                <TableCell className="text-right">
 
-                  <div
-                    className={
-                      r.deficit === 0
-                        ? "font-semibold text-successemphasis"
-                        : "font-semibold text-erroremphasis"
-                    }
-                  >
+                  <div className={r.deficit === 0 ? "font-semibold text-successemphasis" : "font-semibold text-erroremphasis"}>
                     {getCurrencySymbol(r.currency)}{" "}
-                    {r.deficit_revenue?.toLocaleString?.() || r.deficit_revenue}
+                    {formatCurrencyNumber(r.deficit_revenue)}
                   </div>
 
-                  <div
-                    className="text-xs text-muted-foreground mt-0.5"
-                  >
+                  <div className="text-xs text-muted-foreground mt-0.5">
                     Leads: {r.deficit?.toLocaleString?.() || r.deficit}
                   </div>
 
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="text-center">
                   <StatusBadge value={r.segment_status} />
                 </TableCell>
 

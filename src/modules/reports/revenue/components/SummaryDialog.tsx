@@ -32,7 +32,6 @@ const SummaryDialog = ({ open, onClose }: Props) => {
 
     // 🔥 Theme (dark/light safe)
     const textColor = getCssVar("--foreground");
-    const mutedText = getCssVar("--muted-foreground");
     const borderColor = getCssVar("--border");
 
     // 🔥 Helpers
