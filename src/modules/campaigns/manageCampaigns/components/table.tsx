@@ -16,6 +16,7 @@ import {
 import { Campaign, campaignService } from '../services/campaignService';
 import StatusBadge from 'src/components/shared/status-badges/StatusBadge';
 import Can from 'src/permissions/Can';
+import { formatDateShort } from 'src/utils/formatDateShort';
 
 const CampaignTable = ({ campaigns, onEdit, onDelete }: any) => {
   const navigate = useNavigate();
@@ -98,11 +99,11 @@ const CampaignTable = ({ campaigns, onEdit, onDelete }: any) => {
                   </TableCell>
 
                   <TableCell className="text-center">
-                    {c.start_date}
+                    {formatDateShort(c.start_date)}
                   </TableCell>
 
                   <TableCell className="text-center">
-                    {c.end_date}
+                    {formatDateShort(c.end_date)}
                   </TableCell>
 
                   <TableCell className="text-center">
