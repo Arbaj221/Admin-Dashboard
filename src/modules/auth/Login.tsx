@@ -57,7 +57,7 @@ const Login = () => {
 
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("name", data.user.first_name);
-      localStorage.setItem("is_auth", "true");
+      sessionStorage.setItem("isAuth", "true");
 
       const access = await authService.getUserAccess();
       loadPermissions(access.permissions);

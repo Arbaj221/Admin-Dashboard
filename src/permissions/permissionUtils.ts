@@ -29,7 +29,7 @@ export function hasAccess(
   return permissions[mod]?.includes(act) ?? false;
 }
 
-// ✅ Check module-level access (for sidebar)
+// ✅ Check module-level access (for sidebar) — requires 'view' explicitly
 export function hasModuleAccess(
   permissions: PermissionMap,
   module: ModuleKey
@@ -38,5 +38,5 @@ export function hasModuleAccess(
 
   const mod = module.toLowerCase();
 
-  return (permissions[mod]?.length ?? 0) > 0;
+  return permissions[mod]?.includes('view') ?? false;
 }

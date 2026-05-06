@@ -1,4 +1,3 @@
-import { useState, useEffect, useEffectEvent } from 'react';
 import { Icon } from '@iconify/react';
 import Profile from './navbar-items/Profile';
 import { useTheme } from 'src/theme/theme-provider';
@@ -10,37 +9,18 @@ import { useSidebarCollapse } from 'src/context/useSidebarCollapse';
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const { collapsed, toggleCollapsed } = useSidebarCollapse();
-  const [isSticky, setIsSticky] = useState(false);
-
-  const handleScroll = useEffectEvent(() => {
-    setIsSticky(window.scrollY > 50);
-  });
-
-  const handleResize = useEffectEvent(() => {});
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   const toggleMode = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   return (
-    <header
-      className={`sticky top-0 z-50 ${
-        isSticky ? 'bg-white dark:bg-dark shadow-md fixed w-full' : 'bg-transparent'
-      }`}
-    >
+    // ✅ sticky top-0 works now because body-wrapper is the scroll container
+    <header className="sticky top-0 z-50 bg-white dark:bg-dark border-b border-border">
       <nav className="rounded-none bg-transparent dark:bg-transparent py-4 px-6 max-w-full! flex justify-between items-center">
+
         {/* Left side: Toggle + Search */}
         <div className="hidden xl:flex items-center gap-2">
-          {/* Sidebar Toggle Button */}
           <button
             onClick={toggleCollapsed}
             className="flex items-center justify-center w-9 h-9 rounded-md text-foreground dark:text-muted-foreground hover:text-primary hover:bg-lightprimary transition-colors duration-200 focus:outline-none"
@@ -62,6 +42,7 @@ const Navbar = () => {
 
         <div className="xl:block! hidden! md:hidden!">
           <div className="flex gap-0 items-center">
+
             {/* Theme Toggle */}
             {theme === 'light' ? (
               <div
@@ -92,8 +73,10 @@ const Navbar = () => {
 
             {/* Profile Dropdown */}
             <Profile />
+
           </div>
         </div>
+
       </nav>
     </header>
   );

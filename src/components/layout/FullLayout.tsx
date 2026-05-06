@@ -10,7 +10,7 @@ const LayoutContent: FC = () => {
   const { collapsed } = useSidebarCollapse();
 
   return (
-    <div className="flex w-full min-h-screen">
+    <div className="flex w-full h-screen overflow-hidden">
       <div className="page-wrapper flex w-full" data-collapsed={collapsed}>
         {/* Desktop Sidebar */}
         <div className="block">
