@@ -151,6 +151,7 @@ const RevenueList = () => {
                     onApply={handleApply}
                     onDownload={handleDownload}
                     downloading={downloading}
+                    hasData={data.length > 0}
                 />
 
                 <RevenueTable data={data} loading={loading} />
