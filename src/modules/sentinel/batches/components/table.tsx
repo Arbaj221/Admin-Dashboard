@@ -63,152 +63,141 @@ const stickySegmentBody: React.CSSProperties = { ...stickySegment, zIndex: 20 };
 const stickyTitleBody: React.CSSProperties = { ...stickyTitle, zIndex: 20 };
 
 const SentinelBatchesTable = ({ data, loading }: Props) => {
+
     return (
-        <div className="overflow-x-auto border border-border rounded-md" style={{ position: "relative" }}>
-            <Table style={{ minWidth: "2600px", borderCollapse: "separate", borderSpacing: 0 }}>
 
-                <TableHeader>
+        <div className=" border border-border rounded-md overflow-hidden">
+            {loading ? (
+                <div className="h-96 flex items-center justify-center text-muted-foreground text-lg font-bold">
+                    Loading batches...
+                </div>
+            ) : data.length === 0 ? (
+                <div className="h-96 flex items-center justify-center text-muted-foreground text-lg font-bold">
+                    No batches found.
+                </div>
+            ) : (
+                <div className="overflow-x-auto" style={{ position: "relative" }}>
+                    <Table style={{ minWidth: "2600px", borderCollapse: "separate", borderSpacing: 0 }}>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead rowSpan={2} className="text-center font-semibold border-b-2 border-r-2 border-border bg-muted" style={stickySegment}>
+                                    Segment Code
+                                </TableHead>
+                                <TableHead rowSpan={2} className="text-center font-semibold border-b-2 border-r-2 border-border bg-muted" style={stickyTitle}>
+                                    Title
+                                </TableHead>
+                                <GroupHead label="DataOps" colSpan={3} group="dataops" />
+                                <GroupHead label="Email" colSpan={4} group="email" />
+                                <GroupHead label="Quality" colSpan={4} group="quality" />
+                                <GroupHead label="DB Refresh" colSpan={4} group="dbr" />
+                                <GroupHead label="VV" colSpan={4} group="vv" />
+                                <GroupHead label="MIS" colSpan={7} group="mis" />
+                            </TableRow>
+                            <TableRow style={{ position: "relative", zIndex: 1 }}>
+                                <SubHead label="Total" isFirst group="dataops" />
+                                <SubHead label="Valid" group="dataops" />
+                                <SubHead label="Invalid" group="dataops" />
 
-                    {/* ── ROW 1 — group labels ── */}
-                    <TableRow>
+                                <SubHead label="Total" isFirst group="email" />
+                                <SubHead label="Pending" group="email" />
+                                <SubHead label="Valid" group="email" />
+                                <SubHead label="Invalid" group="email" />
 
-                        {/* ✅ NO rowSpan — rendered in BOTH rows to avoid stacking context issues */}
-                        {/* Row 1 segment cell — full height via rowSpan removed, use 2 cells instead */}
-                        <TableHead rowSpan={2} className="text-center font-semibold border-b-2 border-r-2 border-border bg-muted" style={stickySegment}>
-                            Segment Code
-                        </TableHead>
+                                <SubHead label="Total" isFirst group="quality" />
+                                <SubHead label="Pending" group="quality" />
+                                <SubHead label="Valid" group="quality" />
+                                <SubHead label="Invalid" group="quality" />
 
-                        <TableHead rowSpan={2} className="text-center font-semibold border-b-2 border-r-2 border-border bg-muted" style={stickyTitle}>
-                            Title
-                        </TableHead>
+                                <SubHead label="Total" isFirst group="dbr" />
+                                <SubHead label="Pending" group="dbr" />
+                                <SubHead label="Valid" group="dbr" />
+                                <SubHead label="Invalid" group="dbr" />
 
-                        <GroupHead label="DataOps" colSpan={3} group="dataops" />
-                        <GroupHead label="Email" colSpan={4} group="email" />
-                        <GroupHead label="Quality" colSpan={4} group="quality" />
-                        <GroupHead label="DB Refresh" colSpan={4} group="dbr" />
-                        <GroupHead label="VV" colSpan={4} group="vv" />
-                        <GroupHead label="MIS" colSpan={7} group="mis" />
-                    </TableRow>
+                                <SubHead label="Total" isFirst group="vv" />
+                                <SubHead label="Pending" group="vv" />
+                                <SubHead label="Valid" group="vv" />
+                                <SubHead label="Invalid" group="vv" />
 
-                    {/* ── ROW 2 — sub headers ── */}
-                    {/* ✅ The key: sub-header row cells must NOT overlap sticky cells.
-                        Since rowSpan cells are in DOM row 1, row 2 cells start after col 2.
-                        But their z-index from stacking context beats the sticky cells.
-                        Fix: give the entire second TR a z-index lower than sticky cells via wrapper. */}
-                    <TableRow style={{ position: "relative", zIndex: 1 }}>
-                        <SubHead label="Total" isFirst group="dataops" />
-                        <SubHead label="Valid" group="dataops" />
-                        <SubHead label="Invalid" group="dataops" />
+                                <SubHead label="Total" isFirst group="mis" />
+                                <SubHead label="Pending" group="mis" />
+                                <SubHead label="Delivered" group="mis" />
+                                <SubHead label="Accepted" group="mis" />
+                                <SubHead label="Client Rejected" group="mis" />
+                                <SubHead label="RTD" group="mis" />
+                                <SubHead label="Internal Rejected" group="mis" />
+                            </TableRow>
 
-                        <SubHead label="Total" isFirst group="email" />
-                        <SubHead label="Pending" group="email" />
-                        <SubHead label="Valid" group="email" />
-                        <SubHead label="Invalid" group="email" />
+                        </TableHeader>
 
-                        <SubHead label="Total" isFirst group="quality" />
-                        <SubHead label="Pending" group="quality" />
-                        <SubHead label="Valid" group="quality" />
-                        <SubHead label="Invalid" group="quality" />
+                        <TableBody>
+                            {data.map((batch) => (
+                                <TableRow key={batch.segment_code} className="odd:bg-transparent even:bg-muted/50 hover:bg-muted/50">
+                                    <Link to={`/sentinel-batches/${batch.segment_code}`} className="contents ">
+                                        <TableCell
+                                            className="font-medium text-primary text-center border-b border-r-2 border-border bg-background hover:underline"
+                                            style={stickySegmentBody}>
+                                            {batch.campaign_code}_{batch.segment_code}
+                                        </TableCell>
 
-                        <SubHead label="Total" isFirst group="dbr" />
-                        <SubHead label="Pending" group="dbr" />
-                        <SubHead label="Valid" group="dbr" />
-                        <SubHead label="Invalid" group="dbr" />
-
-                        <SubHead label="Total" isFirst group="vv" />
-                        <SubHead label="Pending" group="vv" />
-                        <SubHead label="Valid" group="vv" />
-                        <SubHead label="Invalid" group="vv" />
-
-                        <SubHead label="Total" isFirst group="mis" />
-                        <SubHead label="Pending" group="mis" />
-                        <SubHead label="Delivered" group="mis" />
-                        <SubHead label="Accepted" group="mis" />
-                        <SubHead label="Client Rejected" group="mis" />
-                        <SubHead label="RTD" group="mis" />
-                        <SubHead label="Internal Rejected" group="mis" />
-                    </TableRow>
-
-                </TableHeader>
-
-                <TableBody>
-                    {loading ? (
-                        <TableRow>
-                            <TableCell colSpan={30} className="text-center py-10 text-muted-foreground">Loading batches...</TableCell>
-                        </TableRow>
-                    ) : data.length === 0 ? (
-                        <TableRow>
-                            <TableCell colSpan={30} className="text-center py-10 text-muted-foreground">No batches found.</TableCell>
-                        </TableRow>
-                    ) : (
-                        data.map((batch) => (
-                            <TableRow key={batch.segment_code} className="odd:bg-transparent even:bg-muted/50 hover:bg-muted/50">
-                                <Link to={`/sentinel-batches/${batch.segment_code}`} className="contents ">
-                                    <TableCell
-                                        className="font-medium text-primary text-center border-b border-r-2 border-border bg-background hover:underline"
-                                        style={stickySegmentBody}
-                                    >
-                                        {batch.campaign_code}_{batch.segment_code}
+                                    </Link>
+                                    <TableCell className="border-b border-r-2 border-border bg-background" style={stickyTitleBody}>
+                                        {batch.title && batch.title.length > 35 ? (
+                                            <TooltipProvider delayDuration={200}>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <div className="truncate cursor-pointer">
+                                                            {batch.title.slice(0, 35)}...
+                                                        </div>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>{batch.title}</TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        ) : (
+                                            <div className="truncate">{batch.title || "-"}</div>
+                                        )}
                                     </TableCell>
 
-                                </Link>
-                                <TableCell
-                                    className="border-b border-r-2 border-border bg-background"
-                                    style={stickyTitleBody}
-                                >
-                                    {batch.title && batch.title.length > 35 ? (
-                                        <TooltipProvider delayDuration={200}>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <div className="truncate cursor-pointer">
-                                                        {batch.title.slice(0, 35)}...
-                                                    </div>
-                                                </TooltipTrigger>
-                                                <TooltipContent>{batch.title}</TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
-                                    ) : (
-                                        <div className="truncate">{batch.title || "-"}</div>
-                                    )}
-                                </TableCell>
+                                    <GCell isFirst group="dataops">{batch.dataops_total}</GCell>
+                                    <GCell group="dataops">{batch.dataops_valid}</GCell>
+                                    <GCell group="dataops">{batch.dataops_invalid}</GCell>
 
-                                <GCell isFirst group="dataops">{batch.dataops_total}</GCell>
-                                <GCell group="dataops">{batch.dataops_valid}</GCell>
-                                <GCell group="dataops">{batch.dataops_invalid}</GCell>
+                                    <GCell isFirst group="email">{batch.email_total}</GCell>
+                                    <GCell group="email">{batch.email_pending}</GCell>
+                                    <GCell group="email">{batch.email_valid}</GCell>
+                                    <GCell group="email">{batch.email_invalid}</GCell>
 
-                                <GCell isFirst group="email">{batch.email_total}</GCell>
-                                <GCell group="email">{batch.email_pending}</GCell>
-                                <GCell group="email">{batch.email_valid}</GCell>
-                                <GCell group="email">{batch.email_invalid}</GCell>
+                                    <GCell isFirst group="quality">{batch.quality_total}</GCell>
+                                    <GCell group="quality">{batch.quality_pending}</GCell>
+                                    <GCell group="quality">{batch.quality_valid}</GCell>
+                                    <GCell group="quality">{batch.quality_invalid}</GCell>
 
-                                <GCell isFirst group="quality">{batch.quality_total}</GCell>
-                                <GCell group="quality">{batch.quality_pending}</GCell>
-                                <GCell group="quality">{batch.quality_valid}</GCell>
-                                <GCell group="quality">{batch.quality_invalid}</GCell>
+                                    <GCell isFirst group="dbr">{batch.dbr_total}</GCell>
+                                    <GCell group="dbr">{batch.dbr_pending}</GCell>
+                                    <GCell group="dbr">{batch.dbr_valid}</GCell>
+                                    <GCell group="dbr">{batch.dbr_invalid}</GCell>
 
-                                <GCell isFirst group="dbr">{batch.dbr_total}</GCell>
-                                <GCell group="dbr">{batch.dbr_pending}</GCell>
-                                <GCell group="dbr">{batch.dbr_valid}</GCell>
-                                <GCell group="dbr">{batch.dbr_invalid}</GCell>
+                                    <GCell isFirst group="vv">{batch.vv_total}</GCell>
+                                    <GCell group="vv">{batch.vv_pending}</GCell>
+                                    <GCell group="vv">{batch.vv_valid}</GCell>
+                                    <GCell group="vv">{batch.vv_invalid}</GCell>
 
-                                <GCell isFirst group="vv">{batch.vv_total}</GCell>
-                                <GCell group="vv">{batch.vv_pending}</GCell>
-                                <GCell group="vv">{batch.vv_valid}</GCell>
-                                <GCell group="vv">{batch.vv_invalid}</GCell>
+                                    <GCell isFirst group="mis">{batch.mis_total}</GCell>
+                                    <GCell group="mis">{batch.mis_pending}</GCell>
+                                    <GCell group="mis">{batch.mis_delivered}</GCell>
+                                    <GCell group="mis">{batch.mis_accepted}</GCell>
+                                    <GCell group="mis">{batch.mis_client_rejected}</GCell>
+                                    <GCell group="mis">{batch.mis_rtd}</GCell>
+                                    <GCell group="mis">{batch.mis_internal_rejected}</GCell>
 
-                                <GCell isFirst group="mis">{batch.mis_total}</GCell>
-                                <GCell group="mis">{batch.mis_pending}</GCell>
-                                <GCell group="mis">{batch.mis_delivered}</GCell>
-                                <GCell group="mis">{batch.mis_accepted}</GCell>
-                                <GCell group="mis">{batch.mis_client_rejected}</GCell>
-                                <GCell group="mis">{batch.mis_rtd}</GCell>
-                                <GCell group="mis">{batch.mis_internal_rejected}</GCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
 
-                            </TableRow>
-                        ))
-                    )}
-                </TableBody>
-            </Table>
+                </div>
+
+            )}
+
         </div>
     );
 };

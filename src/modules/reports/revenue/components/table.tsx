@@ -36,6 +36,7 @@ const RevenueTable = ({ data, loading }: Props) => {
             <TableHead>Allocation Revenue</TableHead>
             <TableHead>Accepted Revenue</TableHead>
             <TableHead>Deficit Revenue</TableHead>
+            <TableHead>Unrealized</TableHead>
             <TableHead className="text-center">Status</TableHead>
           </TableRow>
         </TableHeader>
@@ -128,6 +129,19 @@ const RevenueTable = ({ data, loading }: Props) => {
 
                   <div className="text-xs text-muted-foreground mt-0.5">
                     Leads: {r.deficit?.toLocaleString?.() || r.deficit}
+                  </div>
+
+                </TableCell>
+                {/* UNREALIZED */}
+                <TableCell className="text-right">
+
+                  <div className={r.unrealized === 0 ? "font-semibold text-successemphasis" : "font-semibold text-muted-foreground"}>
+                    {getCurrencySymbol(r.currency)}{" "}
+                    {formatCurrencyNumber(r.unrealized_revenue)}
+                  </div>
+
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Leads: {r.unrealized?.toLocaleString?.() || r.unrealized}
                   </div>
 
                 </TableCell>

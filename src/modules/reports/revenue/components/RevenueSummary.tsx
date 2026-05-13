@@ -10,6 +10,8 @@ import RevenueStats from "./RevenueStats";
 
 const getCssVar = (name: string) =>
     getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const getMutedColor = () =>
+    getCssVar("--muted-foreground");
 
 const getThemeColors = () => ({
     textColor: getCssVar("--foreground"),
@@ -40,6 +42,7 @@ const RevenueSummary = () => {
     }, []);
 
     const { textColor, borderColor, isDark } = theme;
+    const mutedColor = getMutedColor();
 
     const hasFilters = !!range?.from || !!range?.to;
     const hasData = data.length > 0;
@@ -108,23 +111,46 @@ const RevenueSummary = () => {
     const months = data.map((d) => formatMonth(d.month));
 
     const leadsSeries = [
-        { name: "Booked",   data: data.map((d) => d.booked_leads) },
+        { name: "Booked", data: data.map((d) => d.booked_leads) },
         { name: "Accepted", data: data.map((d) => d.accepted_leads.value) },
-        { name: "Deficit",  data: data.map((d) => d.deficit_leads.value) },
+        { name: "Deficit", data: data.map((d) => d.deficit_leads.value) },
+        { name: "Unrealized", data: data.map((d) => d.unrealized.value) },
     ];
 
     const revenueSeries = [
-        { name: "Booked",  data: data.map((d) => d.booked_revenue) },
-        { name: "Accepted",data: data.map((d) => d.accepted_revenue) },
+        { name: "Booked", data: data.map((d) => d.booked_revenue) },
+        { name: "Accepted", data: data.map((d) => d.accepted_revenue) },
         { name: "Pending", data: data.map((d) => d.revenue_pending) },
+        { name: "Unrealized", data: data.map((d) => d.unrealized_revenue) },
     ];
 
     // ✅ base options now uses reactive theme values
     const baseOptions: ApexOptions = {
         chart: {
-            toolbar: { show: false },
-            zoom: { enabled: false },
+            toolbar: {
+                show: true,
+
+                tools: {
+                    download: true,
+                    selection: true,
+                    zoom: true,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: true,
+                    reset: true,
+                },
+            },
+
+            zoom: {
+                enabled: true,
+
+                type: "x",
+
+                autoScaleYaxis: true,
+            },
+
             foreColor: textColor,
+
             background: "transparent",
         },
         xaxis: {
@@ -153,19 +179,51 @@ const RevenueSummary = () => {
 
     const leadsOptions: ApexOptions = {
         ...baseOptions,
-        chart: { ...baseOptions.chart, type: "bar" },
+
+        colors: [
+            "#008FFB",
+            "#00E396",
+            "#FEB019",
+            mutedColor,
+        ],
+
+        chart: {
+            ...baseOptions.chart,
+            type: "bar",
+        },
+
         plotOptions: {
-            bar: { columnWidth: "30%", borderRadius: 3 },
+            bar: {
+                columnWidth: "30%",
+                borderRadius: 3,
+            },
         },
     };
 
     const revenueOptions: ApexOptions = {
         ...baseOptions,
-        chart: { ...baseOptions.chart, type: "area" },
-        stroke: { curve: "smooth", width: 2 },
+
+        colors: [
+            "#008FFB",
+            "#00E396",
+            "#FEB019",
+            mutedColor,
+        ],
+
+        chart: {
+            ...baseOptions.chart,
+            type: "area",
+        },
+
+        stroke: {
+            curve: "smooth",
+            width: 2,
+        },
+
         yaxis: {
             labels: {
-                formatter: (v: number) => `${v.toLocaleString()}`,
+                formatter: (v: number) =>
+                    `${v.toLocaleString()}`,
             },
         },
     };

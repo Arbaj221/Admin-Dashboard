@@ -2,7 +2,7 @@ import apiClient from "src/services/apiClient";
 
 export const revenueService = {
     async getRevenue(params: any) {
-        const res = await apiClient.get("/revenue", { params });
+        const res = await apiClient.get("/revenue/", { params });
         return res.data;
     },
 
