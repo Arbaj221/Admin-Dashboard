@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import {
-    Dialog, DialogContent, DialogDescription,
-    DialogFooter, DialogHeader, DialogTitle,
+    Dialog, DialogContent,
+    DialogFooter,
 } from "src/components/ui/dialog";
 import { Button } from "src/components/ui/button";
 import {
@@ -11,7 +11,7 @@ import {
 import AutoComplete from "src/components/ui/AutoComplete";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
-import { Upload, FileText, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Upload, FileText, AlertCircle, CheckCircle2, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Icon } from "@iconify/react";
 import { campaignService } from "src/modules/campaigns/manageCampaigns/services/campaignService";
@@ -24,6 +24,9 @@ import EmailCsv from "src/config/sample-csv-files/Email_Upload_Sample.csv?url";
 import MISCsv from "src/config/sample-csv-files/MIS_Upload_Sample.csv?url";
 import QualityCsv from "src/config/sample-csv-files/Quality_Upload_Sample.csv?url";
 import VVCsv from "src/config/sample-csv-files/VV_Upload_Sample.csv?url";
+import { SentinelBatchesService } from "../services/SentinelBatchesService";
+
+// ── Interfaces ────────────────────────────────────────────────
 
 interface Props {
     open: boolean;
@@ -47,7 +50,7 @@ interface Department {
     name: string;
 }
 
-interface ValidationResult {
+interface HeaderValidation {
     valid: boolean;
     missing: string[];
     extra: string[];
@@ -64,78 +67,82 @@ interface RowValidationResult {
     invalidRows: number;
     issues: RowIssue[];
     canUpload: boolean;
+    invalidRowData: { headers: string[]; rows: string[][] };
 }
 
 // ── Constants ─────────────────────────────────────────────────
 
+const DEPT_KEY_MAP: Record<string, string> = {
+    'DataOps': 'DataOps',
+    'Email': 'Email',
+    'Quality': 'Quality',
+    'DBR': 'DBR',
+    'Voice Verification': 'VV',
+    'MIS': 'MIS',
+};
+
 const CSV_MAP: Record<string, string> = {
-    DataOps: DataOpsCsv,
-    DBR: DBRCsv,
-    Email: EmailCsv,
-    Quality: QualityCsv,
-    "Voice Verification": VVCsv,
-    MIS: MISCsv,
+    'DataOps': DataOpsCsv,
+    'Email': EmailCsv,
+    'Quality': QualityCsv,
+    'DBR': DBRCsv,
+    'Voice Verification': VVCsv,
+    'MIS': MISCsv,
 };
 
 const MAX_ROWS = 50000;
 
-// ── Mandatory headers per department (lowercase) ──────────────
-// Only these columns are checked for emptiness.
-// All other columns in the CSV are optional.
-
 const MANDATORY_HEADERS: Record<string, string[]> = {
     DataOps: [
-        'work email',
+        'dataops agent',
         'first name',
         'last name',
-        'company name',
+        'work email',
         'country',
-        'linkedin url',
-        'dataops agent',
+        'contact linkedin profile',
         'email validation status',
     ],
     Email: [
         'batch id',
-        'work email',
         'email agent',
+        'work email',
         'email status',
-        // 'bounce reason' is conditionally mandatory — handled separately
     ],
     Quality: [
         'batch id',
-        'work email',
         'quality agent',
+        'work email',
         'quality status',
-        // 'disqualified reason' is conditionally mandatory — handled separately
     ],
     DBR: [
         'batch id',
-        'work email',
         'dbr agent',
+        'work email',
         'dbr status',
     ],
     VV: [
         'batch id',
-        'work email',
         'vv agent',
+        'work email',
         'vv disposition',
     ],
     MIS: [
         'batch id',
-        'work email',
         'mis agent',
+        'work email',
         'mis status',
     ],
 };
 
-// ── Enum allowed values per department ────────────────────────
-
 const ENUM_RULES: Record<string, Record<string, string[]>> = {
     DataOps: {
-        'email validation status': ['valid', 'invalid', 'catch-all', 'unknown', 'ok'],
+        'email validation status': ['valid', 'invalid', 'catch-all', 'unknown'],
     },
     Email: {
-        'email status': ['delivered', 'opened', 'clicked', 'soft bounce', 'hard bounce', 'unsubscribed'],
+        'email status': [
+            'delivered', 'opened', 'clicked',
+            'soft bounce', 'hard bounce', 'unsubscribed', 'invalid',
+        ],
     },
     Quality: {
         'quality status': ['qualified', 'disqualified'],
@@ -144,14 +151,20 @@ const ENUM_RULES: Record<string, Record<string, string[]>> = {
         'dbr status': ['yes', 'no'],
     },
     VV: {
-        'vv disposition': ['connected', 'wrong number', 'no response', 'callback', 'interested', 'not interested'],
+        'vv disposition': [
+            'connected', 'wrong number', 'no response',
+            'callback', 'interested', 'not interested',
+            'rpc voicemail', 'rpc answering machine',
+            'do not call', 'busy', 'disconnected',
+        ],
     },
     MIS: {
-        'mis status': ['rtd', 'tbd', 'delivered', 'accepted', 'internal rejected', 'client rejected', 'high cpc'],
+        'mis status': [
+            'rtd', 'tbd', 'delivered', 'accepted',
+            'internal rejected', 'client rejected', 'high cpc',
+        ],
     },
 };
-
-// ── Conditional required fields ───────────────────────────────
 
 const CONDITIONAL_REQUIRED: Record<
     string,
@@ -161,18 +174,22 @@ const CONDITIONAL_REQUIRED: Record<
         {
             triggerCol: 'email status',
             triggerValues: ['soft bounce', 'hard bounce'],
-            requiredCol: 'bounce reason',
-            label: 'Bounce reason missing',
+            requiredCol: 'email reason',
+            label: 'Email reason missing (required for Soft/Hard Bounce)',
         },
     ],
     Quality: [
         {
             triggerCol: 'quality status',
             triggerValues: ['disqualified'],
-            requiredCol: 'disqualified reason',
-            label: 'Disqualified reason missing',
+            requiredCol: 'quality reason',
+            label: 'Quality reason missing (required for Disqualified)',
         },
     ],
+};
+
+const LINKEDIN_PERSONAL_FIELD: Record<string, string> = {
+    DataOps: 'contact linkedin profile',
 };
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -182,46 +199,65 @@ const getSampleFileName = (url: string): string => {
     return parts[parts.length - 1].split('?')[0];
 };
 
-/**
- * A field value is considered empty if it is:
- * - blank string
- * - whitespace only (e.g. "   ")
- * - a dash "-"
- */
-const isEmpty = (value: string): boolean => {
-    return value === '' || value.trim() === '' || value.trim() === '-';
-};
+const isEmpty = (value: string): boolean =>
+    value === '' || value.trim() === '' || value.trim() === '-';
 
-/**
- * Validates a LinkedIn URL.
- * Accepts URLs containing "linkedin.com/in/" optionally prefixed with http(s)://www.
- */
-const isValidLinkedIn = (url: string): boolean => {
-    return /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/.+/i.test(url.trim());
+const isValidPersonalLinkedIn = (url: string): boolean =>
+    /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/.+/i.test(url.trim());
+
+const cleanText = (text: string): string =>
+    text.replace(/^\uFEFF/, '').replace(/\r/g, '');
+
+// ── Proper CSV row parser — handles quoted fields with commas ──
+const parseCSVLine = (line: string): string[] => {
+    const result: string[] = [];
+    let current = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+            // Handle escaped quotes ("")
+            if (insideQuotes && line[i + 1] === '"') {
+                current += '"';
+                i++;
+            } else {
+                insideQuotes = !insideQuotes;
+            }
+        } else if (char === ',' && !insideQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+
+    result.push(current.trim());
+    return result;
 };
 
 const fetchSampleHeaders = async (url: string): Promise<string[]> => {
     const res = await fetch(url);
-    const text = await res.text();
+    const text = cleanText(await res.text());
     const firstLine = text.split('\n')[0];
-    return firstLine.split(',').map((h) => h.trim().replace(/^"|"$/g, '').toLowerCase());
+    return parseCSVLine(firstLine).map((h) => h.toLowerCase());
 };
 
+// ── Updated parseUploadedFile using parseCSVLine ──
 const parseUploadedFile = (
     file: File,
 ): Promise<{ headers: string[]; rows: string[][]; rowCount: number }> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-            const text = e.target?.result as string;
+            const text = cleanText(e.target?.result as string);
             const lines = text.split('\n').filter((l) => l.trim() !== '');
             if (lines.length === 0) return reject(new Error('Empty file'));
-            const headers = lines[0]
-                .split(',')
-                .map((h) => h.trim().replace(/^"|"$/g, '').toLowerCase());
-            const rows = lines
-                .slice(1)
-                .map((line) => line.split(',').map((cell) => cell.trim().replace(/^"|"$/g, '')));
+
+            const headers = parseCSVLine(lines[0]).map((h) => h.toLowerCase());
+            const rows = lines.slice(1).map((line) => parseCSVLine(line));
+
             resolve({ headers, rows, rowCount: rows.length });
         };
         reader.onerror = () => reject(new Error('Failed to read file'));
@@ -232,175 +268,131 @@ const parseUploadedFile = (
 const validateHeaders = (
     sampleHeaders: string[],
     uploadedHeaders: string[],
-): ValidationResult => {
+): HeaderValidation => {
     const sampleSet = new Set(sampleHeaders);
     const uploadedSet = new Set(uploadedHeaders);
-    const missing = sampleHeaders.filter((h) => !uploadedSet.has(h));
-    const extra = uploadedHeaders.filter((h) => !sampleSet.has(h));
-    return { valid: missing.length === 0 && extra.length === 0, missing, extra };
+    return {
+        valid: sampleHeaders.every((h) => uploadedSet.has(h)) && uploadedHeaders.every((h) => sampleSet.has(h)),
+        missing: sampleHeaders.filter((h) => !uploadedSet.has(h)),
+        extra: uploadedHeaders.filter((h) => !sampleSet.has(h)),
+    };
 };
 
-// ── Row-level validation ──────────────────────────────────────
+// ── Row validation — unchanged logic ─────────────────────────
 
 const validateRows = (
-    departmentName: string,
+    deptKey: string,
     headers: string[],
     rows: string[][],
 ): RowValidationResult => {
-    const mandatoryHeaders = MANDATORY_HEADERS[departmentName] || [];
-    const enumRules = ENUM_RULES[departmentName] || {};
-    const conditionalRules = CONDITIONAL_REQUIRED[departmentName] || [];
+    const mandatoryHeaders = MANDATORY_HEADERS[deptKey] ?? [];
+    const enumRules = ENUM_RULES[deptKey] ?? {};
+    const conditionalRules = CONDITIONAL_REQUIRED[deptKey] ?? [];
+    const linkedInField = LINKEDIN_PERSONAL_FIELD[deptKey] ?? null;
 
-    // Issue counters — built dynamically so only non-zero ones show
     const issueCounts: Record<string, number> = {
         'Missing required field': 0,
-        'Email format invalid': 0,
+        'Invalid email format': 0,
         'Invalid enum value': 0,
+        'Duplicate work email': 0,
     };
 
-    issueCounts['Duplicate Work Email'] = 0;
-    // DataOps-specific issue keys
-    if (departmentName === 'DataOps') {
+    if (linkedInField) {
         issueCounts['Invalid LinkedIn URL'] = 0;
         issueCounts['Duplicate LinkedIn URL'] = 0;
     }
 
-    // Conditional issue labels
-    conditionalRules.forEach((r) => {
-        issueCounts[r.label] = 0;
-    });
+    conditionalRules.forEach((r) => { issueCounts[r.label] = 0; });
 
-    // ── File-level duplicate tracking (DataOps only) ──
-    // We pre-scan all rows to find which emails / linkedin URLs appear more than once.
-    // These sets contain the VALUES that are duplicated (appear 2+ times).
-// ── File-level duplicate tracking ──
+    const emailColIdx = headers.indexOf('work email');
+    const batchColIdx = headers.indexOf('batch id');
+    const linkedInColIdx = linkedInField ? headers.indexOf(linkedInField) : -1;
 
-const duplicateEmails = new Set<string>();
-const duplicateLinkedIns = new Set<string>();
+    const duplicateEmailKeys = new Set<string>();
+    const duplicateLinkedInKeys = new Set<string>();
 
-// Work Email duplicates — ALL departments
-// Work Email composite duplicate tracking
-// Unique combination:
-// (batch id + work email)
-
-const emailColIdx = headers.indexOf('work email');
-const batchIdColIdx = headers.indexOf('batch id');
-
-if (emailColIdx !== -1) {
-
-    const compositeFreq: Record<string, number> = {};
-
-    rows.forEach((row) => {
-
-        const email = (row[emailColIdx] ?? '').trim().toLowerCase();
-        const batchId =
-            batchIdColIdx !== -1
-                ? (row[batchIdColIdx] ?? '').trim().toLowerCase()
-                : '';
-
-        if (!email) return;
-
-        // Composite uniqueness key
-        const compositeKey = `${batchId}__${email}`;
-
-        compositeFreq[compositeKey] =
-            (compositeFreq[compositeKey] || 0) + 1;
-    });
-
-    Object.entries(compositeFreq).forEach(([key, count]) => {
-        if (count > 1) {
-            duplicateEmails.add(key);
-        }
-    });
-}
-
-// LinkedIn duplicates — DataOps only
-if (departmentName === 'DataOps') {
-    const linkedInColIdx = headers.indexOf('linkedin url');
-
-    if (linkedInColIdx !== -1) {
-        const linkedInFreq: Record<string, number> = {};
-
+    if (emailColIdx !== -1) {
+        const freq: Record<string, number> = {};
         rows.forEach((row) => {
-            const val = (row[linkedInColIdx] ?? '').trim().toLowerCase();
-
-            if (!val) return;
-
-            linkedInFreq[val] = (linkedInFreq[val] || 0) + 1;
+            const email = (row[emailColIdx] ?? '').trim().toLowerCase();
+            const batchId = batchColIdx !== -1 ? (row[batchColIdx] ?? '').trim().toLowerCase() : '';
+            if (!email) return;
+            const key = deptKey === 'DataOps' ? email : `${batchId}__${email}`;
+            freq[key] = (freq[key] ?? 0) + 1;
         });
-
-        Object.entries(linkedInFreq).forEach(([val, count]) => {
-            if (count > 1) {
-                duplicateLinkedIns.add(val);
-            }
+        Object.entries(freq).forEach(([key, count]) => {
+            if (count > 1) duplicateEmailKeys.add(key);
         });
     }
-}
 
-    // ── Per-row validation ────────────────────────────────────────
-    let validRows = 0;
-
-    for (const row of rows) {
-        // Build a map of header → cell value for this row
-        const rowMap: Record<string, string> = {};
-        headers.forEach((h, i) => {
-            rowMap[h] = row[i] ?? '';
+    if (linkedInField && linkedInColIdx !== -1) {
+        const freq: Record<string, number> = {};
+        rows.forEach((row) => {
+            const val = (row[linkedInColIdx] ?? '').trim().toLowerCase();
+            if (!val) return;
+            freq[val] = (freq[val] ?? 0) + 1;
         });
+        Object.entries(freq).forEach(([val, count]) => {
+            if (count > 1) duplicateLinkedInKeys.add(val);
+        });
+    }
+
+    let validRows = 0;
+    const invalidRowIndices = new Set<number>();
+
+    rows.forEach((row, rowIndex) => {
+        const rowMap: Record<string, string> = {};
+        headers.forEach((h, i) => { rowMap[h] = row[i] ?? ''; });
 
         let rowHasIssue = false;
 
-        // 1. Mandatory field check — only mandatory columns must be non-empty
-        const mandatoryBlank = mandatoryHeaders.some((h) => isEmpty(rowMap[h] ?? ''));
-        if (mandatoryBlank) {
-            issueCounts['Missing required field']++;
+        for (const field of mandatoryHeaders) {
+            if (isEmpty(rowMap[field] ?? '')) {
+                issueCounts['Missing required field']++;
+                rowHasIssue = true;
+                break;
+            }
+        }
+
+        const workEmail = (rowMap['work email'] ?? '').trim();
+        if (workEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(workEmail)) {
+            issueCounts['Invalid email format']++;
             rowHasIssue = true;
         }
 
-        // 2. Work Email format — if the column exists and is non-empty, validate format
-        const workEmailVal = (rowMap['work email'] ?? '').trim();
-        if (workEmailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(workEmailVal)) {
-            issueCounts['Email format invalid']++;
-            rowHasIssue = true;
-        }
-
-        // 3. DataOps-specific validations
-        if (departmentName === 'DataOps') {
-            // 3a. LinkedIn URL format — if non-empty, must be valid
-            const linkedInVal = (rowMap['linkedin url'] ?? '').trim();
-            if (linkedInVal && !isValidLinkedIn(linkedInVal)) {
-                issueCounts['Invalid LinkedIn URL']++;
+        if (workEmail) {
+            const batchId = (rowMap['batch id'] ?? '').trim().toLowerCase();
+            const key = deptKey === 'DataOps'
+                ? workEmail.toLowerCase()
+                : `${batchId}__${workEmail.toLowerCase()}`;
+            if (duplicateEmailKeys.has(key)) {
+                issueCounts['Duplicate work email']++;
                 rowHasIssue = true;
             }
-
-            // 3b. Duplicate LinkedIn URL
-            if (linkedInVal && duplicateLinkedIns.has(linkedInVal.toLowerCase())) {
-                issueCounts['Duplicate LinkedIn URL']++;
-                rowHasIssue = true;
-            }
-
         }
-        // 3c. Duplicate Work Email
-const batchIdVal = (rowMap['batch id'] ?? '').trim().toLowerCase();
 
-const compositeKey =
-    `${batchIdVal}__${workEmailVal.toLowerCase()}`;
+        if (linkedInField) {
+            const linkedin = (rowMap[linkedInField] ?? '').trim();
+            if (linkedin) {
+                if (!isValidPersonalLinkedIn(linkedin)) {
+                    issueCounts['Invalid LinkedIn URL']++;
+                    rowHasIssue = true;
+                } else if (duplicateLinkedInKeys.has(linkedin.toLowerCase())) {
+                    issueCounts['Duplicate LinkedIn URL']++;
+                    rowHasIssue = true;
+                }
+            }
+        }
 
-if (workEmailVal && duplicateEmails.has(compositeKey)) {
-    issueCounts['Duplicate Work Email']++;
-    rowHasIssue = true;
-}
-
-        // 4. Enum validation — only if the column value is non-empty
         for (const [col, allowed] of Object.entries(enumRules)) {
             const cellVal = (rowMap[col] ?? '').trim();
             if (cellVal && !allowed.includes(cellVal.toLowerCase())) {
                 issueCounts['Invalid enum value']++;
                 rowHasIssue = true;
-                break; // count once per row
+                break;
             }
         }
 
-        // 5. Conditional required fields
         for (const rule of conditionalRules) {
             const triggerVal = (rowMap[rule.triggerCol] ?? '').trim().toLowerCase();
             if (rule.triggerValues.includes(triggerVal)) {
@@ -411,23 +403,52 @@ if (workEmailVal && duplicateEmails.has(compositeKey)) {
             }
         }
 
-        if (!rowHasIssue) validRows++;
-    }
+        if (rowHasIssue) {
+            invalidRowIndices.add(rowIndex);
+        } else {
+            validRows++;
+        }
+    });
 
     const totalRows = rows.length;
     const invalidRows = totalRows - validRows;
 
-    const issues: RowIssue[] = Object.entries(issueCounts)
+    const issues = Object.entries(issueCounts)
         .filter(([, count]) => count > 0)
         .map(([label, count]) => ({ label, count }));
 
-    return {
-        totalRows,
-        validRows,
-        invalidRows,
-        issues,
-        canUpload: validRows > 0,
+    const invalidRowData = {
+        headers,
+        rows: rows.filter((_, i) => invalidRowIndices.has(i)),
     };
+
+    return { totalRows, validRows, invalidRows, issues, canUpload: validRows > 0, invalidRowData };
+};
+
+// ── Download invalid rows ─────────────────────────────────────
+
+const downloadInvalidRowsCSV = (
+    headers: string[],
+    rows: string[][],
+    originalFileName: string,
+) => {
+    const csvContent = [
+        headers.join(','),
+        ...rows.map((row) =>
+            row.map((cell) => (cell.includes(',') ? `"${cell}"` : cell)).join(','),
+        ),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const baseName = originalFileName.replace(/\.csv$/i, '');
+    link.href = url;
+    link.download = `${baseName}_invalid_rows.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 };
 
 // ── Component ─────────────────────────────────────────────────
@@ -442,7 +463,7 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
     const [segmentId, setSegmentId] = useState('');
     const [departmentId, setDepartmentId] = useState('');
     const [file, setFile] = useState<File | null>(null);
-    const [validation, setValidation] = useState<ValidationResult | null>(null);
+    const [headerValidation, setHeaderValidation] = useState<HeaderValidation | null>(null);
     const [rowValidation, setRowValidation] = useState<RowValidationResult | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -451,9 +472,8 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
     const selectedDepartment = departments.find((d) => String(d.id) === departmentId);
     const sampleFile = selectedDepartment ? CSV_MAP[selectedDepartment.name] : null;
     const sampleFileName = sampleFile ? getSampleFileName(sampleFile) : null;
+    const deptKey = selectedDepartment ? (DEPT_KEY_MAP[selectedDepartment.name] ?? selectedDepartment.name) : '';
     const disableDepartmentSelect = !['DataOps', 'Management'].includes(currentDepartment);
-
-    // ── Data loading ──────────────────────────────────────────────
 
     useEffect(() => {
         if (!open) return;
@@ -509,8 +529,6 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
         }
     };
 
-    // ── Reset on close ────────────────────────────────────────────
-
     useEffect(() => {
         if (!open) {
             setCampaignId('');
@@ -518,20 +536,17 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
             setDepartmentId('');
             setFile(null);
             setSegments([]);
-            setValidation(null);
+            setHeaderValidation(null);
             setRowValidation(null);
             setIsDragging(false);
         }
     }, [open]);
 
-    // Reset file state when department changes
     useEffect(() => {
         setFile(null);
-        setValidation(null);
+        setHeaderValidation(null);
         setRowValidation(null);
     }, [departmentId]);
-
-    // ── File processing ───────────────────────────────────────────
 
     const processFile = async (selected: File) => {
         if (!selected.name.endsWith('.csv')) {
@@ -540,10 +555,10 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
         }
 
         setFile(selected);
-        setValidation(null);
+        setHeaderValidation(null);
         setRowValidation(null);
 
-        if (!sampleFile || !selectedDepartment) return;
+        if (!sampleFile || !selectedDepartment || !deptKey) return;
 
         try {
             setValidating(true);
@@ -554,30 +569,28 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
             ]);
 
             if (rowCount > MAX_ROWS) {
-                toast.error(
-                    `File too large — max ${MAX_ROWS.toLocaleString()} rows allowed. Your file has ${rowCount.toLocaleString()} rows.`,
-                );
+                toast.error(`File too large — max ${MAX_ROWS.toLocaleString()} rows. Your file has ${rowCount.toLocaleString()} rows.`);
                 setFile(null);
                 return;
             }
 
-            // Step 1 — Header validation
-            const headerResult = validateHeaders(sampleHeaders, uploadedHeaders);
-            setValidation(headerResult);
+            if (rowCount === 0) {
+                toast.error('File has no data rows.');
+                setFile(null);
+                return;
+            }
 
-            // Step 2 — Row validation (only if headers are valid)
-            if (headerResult.valid) {
-                const rowResult = validateRows(selectedDepartment.name, uploadedHeaders, rows);
-                setRowValidation(rowResult);
+            const hResult = validateHeaders(sampleHeaders, uploadedHeaders);
+            setHeaderValidation(hResult);
 
-                if (rowResult.invalidRows === 0) {
-                    toast.success(
-                        `File validated — ${rowResult.validRows.toLocaleString()} rows ready to upload`,
-                    );
-                } else if (rowResult.canUpload) {
-                    toast.warning(
-                        `${rowResult.invalidRows.toLocaleString()} rows have issues — ${rowResult.validRows.toLocaleString()} valid rows will be uploaded`,
-                    );
+            if (hResult.valid) {
+                const rResult = validateRows(deptKey, uploadedHeaders, rows);
+                setRowValidation(rResult);
+
+                if (rResult.invalidRows === 0) {
+                    toast.success(`File validated — ${rResult.validRows.toLocaleString()} rows ready to upload`);
+                } else if (rResult.canUpload) {
+                    toast.warning(`${rResult.invalidRows.toLocaleString()} rows have issues — ${rResult.validRows.toLocaleString()} valid rows will be uploaded`);
                 } else {
                     toast.error('No valid rows found — please fix your file');
                 }
@@ -614,46 +627,120 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
         if (dropped) processFile(dropped);
     };
 
-    // ── Upload ────────────────────────────────────────────────────
     const handleUpload = async () => {
-        if (!validation?.valid || !rowValidation?.canUpload) return;
+        if (!headerValidation?.valid || !rowValidation || !rowValidation.canUpload || !file || !selectedDepartment) {
+            return;
+        }
         try {
             setLoading(true);
-            const payload = {
-                campaign_id: campaignId,
-                segment_id: segmentId,
-                department_id: departmentId,
-                file,
-            };
-            console.log(payload);
+            const selectedCampaign = campaigns.find((c) => String(c.id) === campaignId);
+            const selectedSegment = segments.find((s) => String(s.id) === segmentId);
+            if (!selectedCampaign || !selectedSegment) {
+                toast.error('Invalid campaign or segment selection');
+                return;
+            }
+
+            const formData = new FormData();
+
+            // department name
+            formData.append('department', selectedDepartment.name);
+            // array values
+            formData.append('campaign_codes', selectedCampaign.code ?? '');
+            formData.append('segment_codes', selectedSegment.segment_code);
+            // file
+            formData.append('file', file);
+            await SentinelBatchesService.uploadSentinelBatch(formData);
             toast.success('Batch uploaded successfully');
             onOpenChange(false);
-        } catch {
-            toast.error('Upload failed');
+        } catch (error: any) {
+            toast.error(
+                error?.response?.data?.detail ||
+                error?.response?.data?.message ||
+                'Upload failed'
+            );
         } finally {
             setLoading(false);
         }
     };
 
-    const isDisabled = !campaignId || !segmentId || !departmentId || !file || !validation?.valid || !rowValidation?.canUpload || validating || loading;
+    const handleDownloadInvalid = () => {
+        if (!rowValidation?.invalidRowData || !file) return;
+        downloadInvalidRowsCSV(
+            rowValidation.invalidRowData.headers,
+            rowValidation.invalidRowData.rows,
+            file.name,
+        );
+    };
 
-    // ── Render ────────────────────────────────────────────────────
+    const isDisabled =
+        !campaignId || !segmentId || !departmentId || !file ||
+        !headerValidation?.valid || !rowValidation?.canUpload ||
+        validating || loading;
+
+    // ── Derived for header area ───────────────────────────────
+    const showRowSummaryInHeader = headerValidation?.valid && rowValidation;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl p-0 overflow-hidden">
+            <DialogContent className="max-w-6xl p-0 overflow-hidden max-h-[90vh] flex flex-col">
 
-                {/* ── HEADER ── */}
-                <DialogHeader className="px-6 py-5 border-b bg-lightprimary/30 dark:bg-white/5">
-                    <DialogTitle className="text-xl">Upload Sentinel Batch</DialogTitle>
-                    <DialogDescription>
-                        Upload and configure batch processing details.
-                    </DialogDescription>
-                </DialogHeader>
+                {/* ── HEADER — compact, with inline validation summary ── */}
+                <div className="px-6 py-4 border-b bg-lightprimary/30 dark:bg-white/5 shrink-0">
+                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                        <div>
+                            <p className="text-base font-semibold text-foreground">Upload Sentinel Batch</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Upload and configure batch processing details.</p>
+                        </div>
 
-                {/* ── BODY ── */}
-                <div className="px-6 py-6 space-y-5">
+                        {/* Row validation summary — shown in header once available */}
+                        {showRowSummaryInHeader && (
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <div className="flex items-center gap-1.5">
+                                    <CheckCircle2 size={14} className="text-successemphasis shrink-0" />
+                                    <span className="text-xs font-semibold text-successemphasis">
+                                        {rowValidation!.validRows.toLocaleString()} valid
+                                    </span>
+                                </div>
+                                {rowValidation!.invalidRows > 0 && (
+                                    <div className="flex items-center gap-1.5">
+                                        <AlertCircle size={14} className="text-warningemphasis shrink-0" />
+                                        <span className="text-xs font-semibold text-warningemphasis">
+                                            {rowValidation!.invalidRows.toLocaleString()} issues
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
 
+                    {/* Issue breakdown — shown in header */}
+                    {showRowSummaryInHeader && rowValidation!.issues.length > 0 && (
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2.5">
+                            {rowValidation!.issues.map((issue) => (
+                                <div key={issue.label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
+                                    <span>{issue.label}</span>
+                                    <span className="font-semibold text-warningemphasis">{issue.count.toLocaleString()} rows</span>
+                                </div>
+                            ))}
+                            {rowValidation!.invalidRows > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={handleDownloadInvalid}
+                                    className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primaryemphasis transition-colors ml-auto"
+                                >
+                                    <Download size={12} />
+                                    Download invalid rows
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* ── BODY — scrollable ── */}
+                <div className="px-6 py-5 space-y-5 overflow-y-auto flex-1">
+
+                    {/* Campaign + Segment */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-2">
                             <Label>Campaign</Label>
@@ -682,6 +769,7 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
                         </div>
                     </div>
 
+                    {/* Department + Sample CSV */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-2">
                             <Label>Department</Label>
@@ -708,11 +796,11 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
                             {sampleFileName ? (
                                 <div className="h-11 flex items-center gap-2.5 px-3 rounded-md border border-border bg-muted/40">
                                     <Icon icon="solar:file-text-linear" width={16} className="text-primary shrink-0" />
-                                    <span className="text-sm text-foreground truncate">{sampleFileName}</span>
+                                    <span className="text-sm text-foreground truncate flex-1">{sampleFileName}</span>
                                     <button
                                         type="button"
                                         onClick={() => sampleFile && window.open(sampleFile, '_blank')}
-                                        className="ml-auto shrink-0 text-muted-foreground hover:text-primary transition-colors"
+                                        className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
                                         title="Download sample"
                                     >
                                         <Icon icon="solar:download-linear" width={16} />
@@ -726,39 +814,38 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
                         </div>
                     </div>
 
-                    {/* ── File Upload Zone ── */}
-                    <div className="space-y-2">
+                    {/* File Upload */}
+                    <div className="space-y-3">
                         <Label>Upload File</Label>
+
+                        {/* Drop zone */}
                         <div
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
                             onClick={() => departmentId && fileInputRef.current?.click()}
                             className={`
-                border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 select-none
-                ${!departmentId
+                                border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 select-none
+                                ${!departmentId
                                     ? 'opacity-50 cursor-not-allowed border-border bg-muted/10'
                                     : isDragging
-                                        ? 'border-primary bg-lightprimary/40 cursor-copy scale-[1.01]'
+                                        ? 'border-primary bg-lightprimary/40 cursor-copy scale-[1.005]'
                                         : 'border-border hover:border-primary hover:bg-muted/20 cursor-pointer bg-muted/10'
                                 }
-              `}
+                            `}
                         >
-                            <div className="flex flex-col items-center justify-center gap-2">
-                                <div
-                                    className={`h-12 w-12 rounded-xl flex items-center justify-center transition-colors
-                    ${isDragging ? 'bg-primary text-white' : 'bg-lightprimary text-primary'}`}
+                            <div className="flex flex-col items-center gap-2">
+                                <div className={`h-12 w-12 rounded-xl flex items-center justify-center transition-colors
+                                    ${isDragging ? 'bg-primary text-white' : 'bg-lightprimary text-primary'}`}
                                 >
                                     <Upload size={22} />
                                 </div>
-                                <div>
-                                    <p className="text-sm font-medium text-foreground">
-                                        {isDragging ? 'Drop your file here' : 'Drag & drop or click to upload'}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground mt-0.5">
-                                        CSV only · Max {MAX_ROWS.toLocaleString()} rows
-                                    </p>
-                                </div>
+                                <p className="text-sm font-medium text-foreground">
+                                    {isDragging ? 'Drop your file here' : 'Drag & drop or click to upload'}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    CSV only · Max {MAX_ROWS.toLocaleString()} rows
+                                </p>
                             </div>
                             <Input
                                 ref={fileInputRef}
@@ -769,36 +856,28 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
                             />
                         </div>
 
-                        {/* File preview row */}
+                        {/* File preview */}
                         {file && (
                             <div className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2.5">
                                 <FileText size={18} className="text-primary shrink-0" />
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium truncate">{file.name}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                        {(file.size / 1024).toFixed(1)} KB
-                                    </p>
+                                    <p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p>
                                 </div>
                                 {validating && (
-                                    <Icon
-                                        icon="solar:spinner-linear"
-                                        width={18}
-                                        className="animate-spin text-muted-foreground shrink-0"
-                                    />
+                                    <Icon icon="solar:spinner-linear" width={18} className="animate-spin text-muted-foreground shrink-0" />
                                 )}
-                                {!validating && validation?.valid && rowValidation?.invalidRows === 0 && (
+                                {!validating && headerValidation?.valid && rowValidation?.invalidRows === 0 && (
                                     <CheckCircle2 size={18} className="text-success shrink-0" />
                                 )}
-                                {!validating &&
-                                    ((validation && !validation.valid) ||
-                                        (rowValidation && rowValidation.invalidRows > 0)) && (
-                                        <AlertCircle size={18} className="text-error shrink-0" />
-                                    )}
+                                {!validating && ((headerValidation && !headerValidation.valid) || (rowValidation && rowValidation.invalidRows > 0)) && (
+                                    <AlertCircle size={18} className="text-warning shrink-0" />
+                                )}
                             </div>
                         )}
 
-                        {/* ── Header validation errors ── */}
-                        {validation && !validation.valid && (
+                        {/* Header validation errors */}
+                        {headerValidation && !headerValidation.valid && (
                             <div className="rounded-lg border border-error/30 bg-lighterror/50 p-4 space-y-3">
                                 <div className="flex items-center gap-2">
                                     <AlertCircle size={16} className="text-erroremphasis shrink-0" />
@@ -806,34 +885,28 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
                                         Header mismatch — please fix your file
                                     </p>
                                 </div>
-                                {validation.missing.length > 0 && (
+                                {headerValidation.missing.length > 0 && (
                                     <div>
                                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
-                                            Missing columns ({validation.missing.length})
+                                            Missing columns ({headerValidation.missing.length})
                                         </p>
                                         <div className="flex flex-wrap gap-1.5">
-                                            {validation.missing.map((h) => (
-                                                <span
-                                                    key={h}
-                                                    className="text-xs px-2 py-0.5 rounded-md bg-lighterror text-erroremphasis font-medium border border-error/20"
-                                                >
+                                            {headerValidation.missing.map((h) => (
+                                                <span key={h} className="text-xs px-2 py-0.5 rounded-md bg-lighterror text-erroremphasis font-medium border border-error/20">
                                                     {h}
                                                 </span>
                                             ))}
                                         </div>
                                     </div>
                                 )}
-                                {validation.extra.length > 0 && (
+                                {headerValidation.extra.length > 0 && (
                                     <div>
                                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
-                                            Extra columns ({validation.extra.length})
+                                            Extra columns ({headerValidation.extra.length})
                                         </p>
                                         <div className="flex flex-wrap gap-1.5">
-                                            {validation.extra.map((h) => (
-                                                <span
-                                                    key={h}
-                                                    className="text-xs px-2 py-0.5 rounded-md bg-lightwarning text-warningemphasis font-medium border border-warning/20"
-                                                >
+                                            {headerValidation.extra.map((h) => (
+                                                <span key={h} className="text-xs px-2 py-0.5 rounded-md bg-lightwarning text-warningemphasis font-medium border border-warning/20">
                                                     {h}
                                                 </span>
                                             ))}
@@ -845,72 +918,11 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
                                 </p>
                             </div>
                         )}
-
-                        {/* ── Row validation summary ── */}
-                        {validation?.valid && rowValidation && (
-                            <div
-                                className={`rounded-lg border p-4 space-y-3
-                  ${rowValidation.invalidRows === 0
-                                        ? 'border-success/30 bg-lightsuccess/50'
-                                        : 'border-warning/30 bg-lightwarning/30'
-                                    }`}
-                            >
-                                {/* Summary counts */}
-                                <div className="flex items-center gap-4 flex-wrap">
-                                    <div className="flex items-center gap-2">
-                                        <CheckCircle2 size={15} className="text-successemphasis shrink-0" />
-                                        <span className="text-sm font-semibold text-successemphasis">
-                                            {rowValidation.validRows.toLocaleString()} valid rows
-                                        </span>
-                                    </div>
-                                    {rowValidation.invalidRows > 0 && (
-                                        <div className="flex items-center gap-2">
-                                            <AlertCircle size={15} className="text-warningemphasis shrink-0" />
-                                            <span className="text-sm font-semibold text-warningemphasis">
-                                                {rowValidation.invalidRows.toLocaleString()} rows with issues
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Issue breakdown */}
-                                {rowValidation.issues.length > 0 && (
-                                    <div className="space-y-1.5 pl-1">
-                                        {rowValidation.issues.map((issue) => (
-                                            <div
-                                                key={issue.label}
-                                                className="flex items-center gap-2 text-xs text-muted-foreground"
-                                            >
-                                                <span className="w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
-                                                <span>{issue.label}</span>
-                                                <span className="ml-auto font-semibold text-warningemphasis">
-                                                    {issue.count.toLocaleString()} rows
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {/* Upload note when mixed */}
-                                {rowValidation.invalidRows > 0 && rowValidation.canUpload && (
-                                    <p className="text-xs text-muted-foreground border-t border-warning/20 pt-2">
-                                        Only valid rows will be uploaded. Invalid rows will be skipped.
-                                    </p>
-                                )}
-
-                                {/* All invalid */}
-                                {!rowValidation.canUpload && (
-                                    <p className="text-xs text-erroremphasis font-medium">
-                                        No valid rows — please fix your file before uploading.
-                                    </p>
-                                )}
-                            </div>
-                        )}
                     </div>
                 </div>
 
                 {/* ── FOOTER ── */}
-                <DialogFooter className="px-6 py-4 border-t bg-muted/20">
+                <DialogFooter className="px-6 py-4 border-t bg-muted/20 shrink-0">
                     <Button variant="lighterror" onClick={() => onOpenChange(false)} disabled={loading}>
                         Cancel
                     </Button>
@@ -928,7 +940,10 @@ const SentinelBatchUploadDialog = ({ open, onOpenChange }: Props) => {
                         ) : (
                             <span className="flex items-center gap-2">
                                 <Upload size={14} />
-                                Upload Batch
+                                {rowValidation?.canUpload && rowValidation.invalidRows > 0
+                                    ? `Upload ${rowValidation.validRows.toLocaleString()} Valid Rows`
+                                    : 'Upload Batch'
+                                }
                             </span>
                         )}
                     </Button>
